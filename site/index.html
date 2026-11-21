@@ -1,7 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>scree · Lamorinda</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>escape · Lamorinda</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* scree dashboard.
+/* escape dashboard.
    Components: the team's glass UI tokens (font, capsule controls, 31px panels, dark and light themes), drawn flat with no gradients.
    Layout: a slim icon rail, a row of stat chips with search, a title row, a map control row, and one large map panel.
    Short views float over the map as a card; long views sit beside it in a second panel.
@@ -578,11 +578,11 @@ body.exploring .maptools .ex-rain{display:flex}
 @media (prefers-reduced-transparency:reduce){.mapkey,.maptools,.stage-hint{background:var(--surface-2);backdrop-filter:none;-webkit-backdrop-filter:none}}
 </style>
 
-<div id="loading"><div><b class="wordmark">scree</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
+<div id="loading"><div><b class="wordmark">escape</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
 
 <div class="app" data-mode="split">
 <nav class="rail" aria-label="Views">
-  <a class="brand" href="#top" data-go="top" aria-label="scree, back to the overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 1.5 20.5h21L12 2.5zm0 6.6 5.1 8.4H6.9L12 9.1z"/></svg></a>
+  <a class="brand" href="#top" data-go="top" aria-label="escape, back to the overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 1.5 20.5h21L12 2.5zm0 6.6 5.1 8.4H6.9L12 9.1z"/></svg></a>
   <hr>
   <a class="nav" href="#top" data-go="top" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span>Overview</span></a>
   <a class="nav" href="#motion" data-go="motion" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span>Ground motion</span></a>
@@ -598,7 +598,7 @@ body.exploring .maptools .ex-rain{display:flex}
 </nav>
 
 <header class="topbar">
-  <h1 class="vh" data-t="h1">scree, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
+  <h1 class="vh" data-t="h1">escape, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
   <div class="stats" role="group" aria-label="Exposure for the storm that is set">
     <a class="chip" href="#storm" data-go="storm" title="Change the storm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c3 3.8 5.5 6.6 5.5 10a5.5 5.5 0 0 1-11 0c0-3.4 2.5-6.2 5.5-10z"/></svg>Storm <b><span id="kpR72">92</span> mm</b> on soil <b><span id="kpApi">156</span> mm</b></a>
     <span class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7.5 4.300v8.400L12 20.5l-7.5-4.300V7.800z"/></svg>High tier <b><span id="stHigh">0</span> km²</b></span>
@@ -614,7 +614,7 @@ body.exploring .maptools .ex-rain{display:flex}
 </header>
 
 <div class="head" role="region" aria-label="View title and alert sensitivity">
-  <div><h2 id="viewTitle">scree</h2><p id="viewSub">Landslide watch for Lafayette, Orinda and Moraga</p></div>
+  <div><h2 id="viewTitle">escape</h2><p id="viewSub">Landslide watch for Lafayette, Orinda and Moraga</p></div>
   <div class="head-r">
     <label class="seg-l" for="regionPick">Area</label>
     <select id="regionPick" class="pick" title="Switch between Lamorinda and San Francisco"><option>Lamorinda, Contra Costa County</option></select>
@@ -663,7 +663,7 @@ body.exploring .maptools .ex-rain{display:flex}
   <main class="view"><div class="view-scroll" id="viewScroll">
   <section id="top" class="on">
     <div class="hero"><span class="badge warn" data-t="topBadge">Sample data</span><h3 class="hero-h" data-t="topH">The hills are moving.</h3></div>
-    <p class="lede" data-t="lede">scree pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
+    <p class="lede" data-t="lede">escape pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
     <div class="row">
       <a class="btn solid" href="#ask" data-go="ask">Check your street</a>
       <a class="btn" href="#replay" data-go="replay">Replay winter 2023</a>
