@@ -119,6 +119,7 @@
     clearTimeout(statTimer); statTimer = setTimeout(stormStats, fromUser ? 90 : 0);
     if (sel) renderInspector();
     if (window.GTEvac && GTEvac.onStorm) GTEvac.onStorm();
+    if (window.GTRides && GTRides.storm) GTRides.storm(S.r72, S.api);
   }
   r72El.addEventListener('input', () => setStorm(+r72El.value, S.api, true));
   $('#exR72').addEventListener('input', e => setStorm(+e.target.value, S.api, true));
@@ -181,6 +182,7 @@
   const SUBS = { top: 'Landslide watch for ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
+  if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
   const shiftO = { v: 0 };
   function updShift(now) {
     const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
