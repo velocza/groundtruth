@@ -118,6 +118,7 @@
     if (active === 'storm' || active === 'ask' || active === 'inspect' || exploring) pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }, fromUser);
     clearTimeout(statTimer); statTimer = setTimeout(stormStats, fromUser ? 90 : 0);
     if (sel) renderInspector();
+    if (window.GTEvac && GTEvac.onStorm) GTEvac.onStorm();
   }
   r72El.addEventListener('input', () => setStorm(+r72El.value, S.api, true));
   $('#exR72').addEventListener('input', e => setStorm(+e.target.value, S.api, true));
@@ -179,6 +180,7 @@
   const NAMES = { top: 'scree', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
   const SUBS = { top: 'Landslide watch for ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
+  if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   const shiftO = { v: 0 };
   function updShift(now) {
     const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
@@ -366,7 +368,8 @@
   $('#gl').addEventListener('pointerup', e => {
     const moved = down && (down.drag || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6); down = null;
     if (moved) return;
-    const ll = Sc.pick(e.clientX, e.clientY); if (ll) select(ll[0], ll[1]);
+    const ll = Sc.pick(e.clientX, e.clientY); if (ll && active === 'evac' && window.GTEvac) return GTEvac.pick(ll[0], ll[1]);
+    if (ll) select(ll[0], ll[1]);
   });
   $('#gl').addEventListener('wheel', e => { if (!exploring) { if (getComputedStyle(document.body).overflowY !== 'hidden') return; setExplore(true); } e.preventDefault(); Sc.orbit.dist = Math.max(3, Math.min(28, Sc.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
   $('#jumpFast').addEventListener('click', () => {

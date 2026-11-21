@@ -582,6 +582,7 @@ body.exploring .maptools .ex-rain{display:flex}
   <a class="nav" href="#inspect" data-go="inspect"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6-11 4 6 2.2-3L21 19z"/></svg><span>Slopes</span></a>
   <div class="sp"></div>
   <a class="nav" href="#ask" data-go="ask"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7.5L7 20.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><span>Ask</span></a>
+  <a class="nav" href="#evac" data-go="evac"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
   <a class="nav" href="#method" data-go="method"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><span>Data and method</span></a>
 </nav>
 
@@ -782,6 +783,78 @@ body.exploring .maptools .ex-rain{display:flex}
     </div>
   </section>
 
+  <section id="evac">
+    <style>
+      #evac .opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12px;color:var(--text-2)}
+      #evac .opts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+      #evac .lim{margin:0;padding-left:18px;display:grid;gap:6px;font-size:12px;color:var(--text-3)}
+      #evac .find{width:100%}
+      #evac .say{font-size:13px;color:var(--text-2);min-height:20px}
+      #evReplay{display:block;width:100%;height:130px}
+      .pin-label.evac-mk{border-radius:4px;box-shadow:0 0 0 1px var(--border-2);font-size:10px}
+      .pin-label.evac-mk::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;transform:rotate(45deg);box-shadow:0 0 0 1.5px currentColor}
+      .pin-label.evac-mk.local::before{border-radius:50%;transform:none}
+    </style>
+    <div class="card-h"><h3>Getting out.</h3><span class="badge quiet">Real streets and buildings</span></div>
+    <p class="body">For the storm you set, which buildings still have a road out of the map, the safest route, and the stretches of road that would cut off the most homes if they failed. A screening view, not an evacuation order.</p>
+    <label class="ctl" for="evR72"><span class="top"><span>Rain forecast, next 72 hours</span><b><span id="evR72v">92</span> mm</b></span><input type="range" id="evR72" min="0" max="300" value="92" step="2"></label>
+    <div class="chips" role="group" aria-label="Load a real day from the rain gauges">
+      <button class="btn sm" data-preset="dry">Dry autumn</button>
+      <button class="btn sm" data-preset="today">Latest gauge reading</button>
+      <button class="btn sm" id="evPeak">Wettest days of January 2023</button>
+    </div>
+    <div class="seg-track multi sm" role="group" aria-label="What blocks roads" id="evMode" style="justify-self:start">
+      <button data-mode="model" aria-pressed="true">Model forecast</button><button data-mode="mapped" aria-pressed="false">Recorded 2023 slides</button><button data-mode="both" aria-pressed="false">Both</button>
+    </div>
+    <div class="opts">
+      <span>Block a road when it scores</span>
+      <div class="seg-track multi sm" role="group" aria-label="Score that blocks a road" id="evThr"><button data-thr="50" aria-pressed="true">Elevated, 50</button><button data-thr="75" aria-pressed="false">High, 75</button></div>
+      <label><input type="checkbox" id="evLocal" checked> Count the ten local reports with the USGS point</label>
+      <label><input type="checkbox" id="evFlood"> Creek flooding (screening proxy, not validated)</label>
+    </div>
+    <div class="readout">
+      <div class="stat"><b id="evStranded">...</b><span>buildings with no road out</span></div>
+      <div class="stat"><b id="evStreets">...</b><span>streets cut off</span></div>
+      <div class="stat"><b id="evBlocked">...</b><span>road segments blocked</span></div>
+    </div>
+    <p class="note" id="evHaz"></p>
+    <p class="note" id="evNote">Bright lines on the map are blocked road segments. Markers labelled USGS mapped are slides the U.S. Geological Survey recorded; round markers are local reports.</p>
+    <div class="group">
+      <h3>Find a way out</h3>
+      <form class="find" id="evFindF" role="search"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.6-4.6"/></svg><label class="vh" for="evFind">Street to leave from</label><input class="field" id="evFind" list="exStreets" placeholder="Type a street, or press a house or road on the map" autocomplete="off" spellcheck="false"><button class="vh" type="submit" tabindex="-1">Go</button></form>
+      <p class="say" id="evRoute" aria-live="polite"></p>
+    </div>
+    <div class="group">
+      <h3>Largest cut-off areas</h3>
+      <ul class="streets" id="evCut"></ul>
+      <p class="note" id="evCutNote"></p>
+    </div>
+    <div class="group">
+      <h3>Single points of failure</h3>
+      <p class="body">Roads that are the only way out for the buildings behind them, whatever the storm.</p>
+      <ol class="streets" id="evSpof"></ol>
+      <p class="say" id="evSpofOut" aria-live="polite"></p>
+      <p class="note" id="evSpofNote"></p>
+    </div>
+    <div class="group">
+      <h3>Winter 2023, day by day</h3>
+      <canvas id="evReplay" role="img" aria-label="Buildings with no road out on each day from December 2022 to March 2023"></canvas>
+      <p class="note" id="evReplayCap"></p>
+      <p class="say" id="evHappened"></p>
+    </div>
+    <div class="group">
+      <h3>Checked against what USGS mapped</h3>
+      <p class="note" id="evVal17">Working...</p>
+      <p class="note" id="evVal23"></p>
+      <p class="note" id="evValRun"></p>
+      <p class="note" id="evValNote"></p>
+    </div>
+    <div class="group">
+      <h3>Limits of this view</h3>
+      <ul class="lim" id="evLimits"></ul>
+    </div>
+  </section>
+
   <section id="method">
     <h3 style="font-size:16px">Real terrain, real rain. The model comes next.</h3>
     <p class="body" data-t="methodBody">Everything on this map except ground motion was pulled from public data for this exact box of hills. The risk score is a hand-set placeholder that marks where the trained model will plug in.</p>
@@ -859,5 +932,8 @@ body.exploring .maptools .ex-rain{display:flex}
 <script src="js/model.js"></script>
 <script src="js/local-model.js"></script>
 <script src="js/scene.js"></script>
+<script src="data/roads_graph.js"></script>
+<script src="data/usgs_inventory.js"></script>
+<script src="js/evac.js"></script>
 <script src="js/app.js"></script>
 </body></html>
