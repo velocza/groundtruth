@@ -652,6 +652,24 @@ End with one sentence saying what the tool results say about the ground motion i
   function reportButton(d, street, lines) { const b = document.createElement('button'); b.className = 'btn sm act'; b.style.marginLeft = '8px'; b.textContent = 'Download report'; b.addEventListener('click', () => saveFile('groundtruth_' + street.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.txt', 'GROUNDTRUTH STREET REPORT\n\n' + [].concat(lines, GUIDE).join('\n\n') + '\n', 'text/plain')); d.appendChild(b); const m = $('#msgs'); if (d.offsetHeight > m.clientHeight) m.scrollTop = d.offsetTop - m.offsetTop; else m.scrollTop = m.scrollHeight; }
   function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
 
+
+  /* Area-wide forecast for open questions ("what's your prediction", "will there be landslides"). Uses the same placeholder score the map draws. */
+  const GENERAL_Q = /\b(predict\w*|forecast\w*|outlook|landslides?|slides?|risk\w*|danger\w*|safe|overall|area|everywhere|anywhere|today|tonight|now|this week(end)?|storm|expect\w*|happen\w*|will there|how bad|should i (worry|be worried)|what do you think)\b/i;
+  function forecastAnswer(r72, api, rainFrom) {
+    const sc = { r72, api, era: 0, amt: 0 }, a = Mo.areaStats(sc), rk = Mo.rankStreets(sc, 3), b = Mo.buildingsAt(sc), T = Mo.Tof(sc);
+    let n = 0; for (let d = 0; d < HN - 3; d++) if (hT[d] >= T) n++;
+    const peak = rk.top.length ? rk.top[0].score : 0;
+    const level = rk.high ? 'High' : rk.elevated ? 'Elevated' : Mo.tier(peak);
+    const pct = v => (v * 100).toFixed(1) + '%';
+    const out = [`Prediction for ${REG.places}: overall ${level}. ${rk.high ? `${fmt(rk.high)} of ${fmt(rk.total)} scored streets reach High and ${fmt(rk.elevated)} reach Elevated or higher.` : rk.elevated ? `${fmt(rk.elevated)} of ${fmt(rk.total)} scored streets reach Elevated, and none reach High.` : `None of the ${fmt(rk.total)} scored streets reach Elevated. The highest street score is ${Math.round(peak)} out of 100.`}`,
+      `On the map, ${pct(a.high)} of the ground scores High and ${pct(a.elevated)} scores Elevated. ${fmt(b.hi)} buildings stand on High ground and ${fmt(b.el)} on Elevated ground, out of ${fmt(b.total)} mapped.`];
+    if (rk.top.length) out.push('Most at risk: ' + rk.top.map(s => `${s.name}, ${s.town} (${Math.round(s.score)}, ${Mo.tier(s.score)})`).join('; ') + '.');
+    out.push(`What drives it: ${rainFrom}, ${Math.round(r72)} mm of rain in 72 hours on soil at a wetness index of ${Math.round(api)} mm. That rain is ${fmt(r72 / 201 * 100)}% of the worldwide 72 hour landslide threshold (Caine 1980, 201 mm). ${n ? `The real gauges saw rain and soil this wet or wetter on ${fmt(n)} of ${fmt(HN - 3)} days since October 2015.` : 'Nothing in the gauge record since October 2015 was this wet.'}`);
+    out.push('This uses the placeholder score the map shows, ' + (Mo.opts.motion ? 'including simulated sample ground motion' : 'from real terrain and rain only') + '. It is relative risk, not a chance of a slide, and it never means a slope is safe. Follow National Weather Service warnings, and for a real concern call city engineering staff or a licensed geotechnical engineer.');
+    const d = bubble('', out, 'Dashboard placeholder score · same as the map');
+    if (rk.top.length) { flyToStreet(rk.top[0].k); }
+    return d;
+  }
   async function ask(q) {
     q = q.trim(); if (!q) return;
     bubble('me', q); $('#askIn').value = ''; hideSugg();
@@ -673,6 +691,8 @@ End with one sentence saying what the tool results say about the ground motion i
     const nq = ' '+norm(q).replace(/\bstreet\b/g,'st')+' ';
     const named = sIndex.filter(x=>nq.includes(' '+x.key+' ')).filter((x,_,all)=>!all.some(y=>y!==x && y.key.length>x.key.length && y.key.includes(x.key)));
     ks = [...new Set(named.map(x=>x.k))];
+    const rainFrom = rainMatch ? 'the rain you named' : followSim ? 'the historical playback on ' + localSimulation.simulation_date : 'the storm set on the page';
+    if (!named.length && GENERAL_Q.test(q) && !findStreet(q.replace(new RegExp(GENERAL_Q.source, 'gi'), ' ')).length && !/\b(worst|highest|top streets|which streets|briefing|brief me)\b/i.test(q)) { forecastAnswer(r72, api, rainFrom); return; }
     if (/\b(worst|highest|top streets|which streets|briefing|brief me)\b/i.test(q)) {
       const wait = bubble('wait','Scoring streets locally...');
       await new Promise(resolve=>setTimeout(resolve,30));
@@ -690,7 +710,8 @@ End with one sentence saying what the tool results say about the ground motion i
     }
     if (!ks.length) ks=findStreet(q);
     if (ks.length!==1 && named.length<2) {
-      bubble('',ks.length ? ['Please choose a street:',...ks.map(k=>G.streets[k].n+', '+G.streets[k].t)] : 'Name a street in ' + REG.placesOr + ', compare two streets, ask for the top streets, or ask about model validation. Example: ' + (REG.example || 'Miner Road with 100 mm rain') + '.'); return;
+      if (!ks.length) { const d = forecastAnswer(r72, api, rainFrom); const p = document.createElement('p'); p.textContent = 'For one street, name it in ' + REG.placesOr + '. Example: ' + (REG.example || 'Miner Road with 100 mm rain') + '.'; d.insertBefore(p, d.querySelector('.src')); return; }
+      bubble('',['Please choose a street:',...ks.map(k=>G.streets[k].n+', '+G.streets[k].t)]); return;
     }
     const paras=[`Local model scenario${followSim ? ' (historical playback '+localSimulation.simulation_date+')' : ''}: ${r72.toFixed(1)} mm rain in 72 hours, antecedent wetness ${api} mm.`];
     let first=null;
@@ -727,7 +748,7 @@ End with one sentence saying what the tool results say about the ground motion i
     if (sugg.hidden || !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return; e.preventDefault(); if (e.key === 'Escape') return hideSugg();
     const bs = $$('#sugg button'), i = bs.findIndex(b => b.classList.contains('act')), n = (i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach(b => b.classList.remove('act')); bs[n].classList.add('act');
   });
-  bubble('', 'Local ML is ready. Ask about a street, compare streets, or enter a rain amount such as ' + (REG.example || 'Miner Road with 100 mm rain') + '. Answers run on this computer using an experimental trained tree model. Scores are not calibrated failure probabilities. Ask about model validation to see the results.');
+  bubble('', 'Local ML is ready. Ask for the prediction across the area, ask about a street, compare streets, or enter a rain amount such as ' + (REG.example || 'Miner Road with 100 mm rain') + '. Answers run on this computer using an experimental trained tree model. Scores are not calibrated failure probabilities. Ask about model validation to see the results.');
 
   /* ------------------------------------------------ guided tour: drives the real controls so a viewer sees every tool in about a minute */
   let tour = null;
