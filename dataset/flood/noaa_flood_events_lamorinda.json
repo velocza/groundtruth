@@ -1,0 +1,200 @@
+[
+ {
+  "date": "1996-12-22",
+  "type": "Flood",
+  "lat": null,
+  "lon": null,
+  "inbox": false,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "3.01\" of rain fell in the usually dry region of Orinda. More than 2\" of rain blanketed the Bay area from Vallejo and Marin South to Redwood City. Causing widespread urban street and Hwy flooding. 13,000 customers were without power.",
+  "src": "5575586"
+ },
+ {
+  "date": "1997-01-02",
+  "type": "Flash Flood",
+  "lat": null,
+  "lon": null,
+  "inbox": false,
+  "place": "COUNTYWIDE",
+  "county": "CONTRA COSTA",
+  "text": "Spotter reports of flooding in the cities of Orinda, Pleasant Hill, and Concord. Over the past hour 88D radar has shown another band of moderate to heavy rain moving over the warned areas.  Rainfall rates of 1/3 to 1/2 inch per hour have been noted.  Expect smaller rivers and streams to rise the next few hours.",
+  "src": "5624333"
+ },
+ {
+  "date": "2000-02-13",
+  "type": "Flash Flood",
+  "lat": null,
+  "lon": null,
+  "inbox": false,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "A 6 foot wall of water and mud flowed through the yardsand residences  along Glorietta court near Moraga way. Widespread rain with twenty four hour accumulations of more than 5 inches occured over the area on Feb 13 into February 14th. Urban and small stream  flooding occured in nost counties of the area. Many roads including Hwy 1 and Hwy 116 were closed. Hwy 129 was closed by a mudslide in Santa",
+  "src": "5134646"
+ },
+ {
+  "date": "2005-12-31",
+  "type": "Flood",
+  "lat": 37.86667,
+  "lon": -121.71667,
+  "inbox": false,
+  "place": "COUNTYWIDE",
+  "county": "CONTRA COSTA",
+  "text": "Widespread county flooding occurred after 2 to 4 inches of rain fell on the area in about 24 hours. Urban flooding initiated landslides that contributed to the damage, and small streams and creeks overflowed their banks. Much of the damage was done in Walnut Creek, Richmond, San Pablo, Martinez and Orinda. Included in the damages were schools, park areas and several Government Agency structures. A",
+  "src": "5482521"
+ },
+ {
+  "date": "2006-01-01",
+  "type": "Flood",
+  "lat": 37.86667,
+  "lon": -121.71667,
+  "inbox": false,
+  "place": "COUNTYWIDE",
+  "county": "CONTRA COSTA",
+  "text": "Widespread flooding continued into early 2006 after very heavy rains through December 31st brought 3 to 4 inches in a 24 hour period. Urban flooding initiated landslides that contributed to the damage, and small streams and creeks overflowed their banks. Much of the damage was in Walnut Creek, Richmond, San Pablo, Martinez and Orinda. Included in the damages were schools, park areas and several Go",
+  "src": "5486537"
+ },
+ {
+  "date": "2010-01-19",
+  "type": "Flood",
+  "lat": 37.8621,
+  "lon": -122.2094,
+  "inbox": true,
+  "place": "ORINDA VLG",
+  "county": "CONTRA COSTA",
+  "text": "Heavy rain caused flooding within the Caldecott Tunnel of State Route 24 causing lanes of traffic to be closed at times along the northern most bore throughout the morning. The second in a series of significant storms brought strong winds and heavy rain to the San Francisco and Monterey Bay area. This storm developed over the Pacific Ocean with a strong parent low pressure based in the Gulf of Ala",
+  "src": "213615"
+ },
+ {
+  "date": "2012-12-02",
+  "type": "Flood",
+  "lat": 37.8788,
+  "lon": -122.1709,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "During heavy rainfall, a 24 inch culvert failed and collapsed, opening up a 20 foot sinkhole on Tarabrook Drive. One lane of traffic could still get by the sinkhole. The Orinda City Council declared a state of emergency due to this large sinkhole. A series of significant winter storms impacted the district during late November and early December 2012. The first storm arrived November 28 and then w",
+  "src": "426214"
+ },
+ {
+  "date": "2017-04-07",
+  "type": "Flood",
+  "lat": 37.8915,
+  "lon": -122.1545,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "Flooding in off ramps of SR24 at Acalanes Rd. A potent upper level trough with associated cold front moved through on April 6th causing roadway flooding, gusty winds over both land and sea, as well as strong swells which sunk a Bart Barge over the SF Bay. Post frontal conditions on the 8th brought scattered showers, frigid temperatures, and isolated thunderstorms with small hail.",
+  "src": "692362"
+ },
+ {
+  "date": "2018-01-09",
+  "type": "Flood",
+  "lat": 37.89,
+  "lon": -122.06,
+  "inbox": true,
+  "place": "WALNUT CREEK",
+  "county": "CONTRA COSTA",
+  "text": "I 680 southbound lanes flooded. The combination of two storm systems, one off the northern California coast and one southwest of Los Angeles, produced heavy rainfall across the central coast over January 8th to the 9th. Rain caused minor roadway flooding and a few small debris flows.",
+  "src": "730260"
+ },
+ {
+  "date": "2018-01-08",
+  "type": "Flood",
+  "lat": 37.9067,
+  "lon": -122.0702,
+  "inbox": true,
+  "place": "WALNUT CREEK",
+  "county": "CONTRA COSTA",
+  "text": "Roadway flooding reported at I 680S and Ygnacio Valley Road on ramp. Six inches of standing water. The combination of two storm systems, one off the northern California coast and one southwest of Los Angeles, produced heavy rainfall across the central coast over January 8th to the 9th. Rain caused minor roadway flooding and a few small debris flows.",
+  "src": "729848"
+ },
+ {
+  "date": "2018-11-23",
+  "type": "Flood",
+  "lat": 37.8932,
+  "lon": -122.0674,
+  "inbox": true,
+  "place": "WALNUT CREEK",
+  "county": "CONTRA COSTA",
+  "text": "Roadway flooding reported at I680 N and Olympic Blvd on ramp, 8-10 inches of water in number 2 lane. A couple of storm systems moved through the region just before and on the Thanksgiving Holiday. These systems brought heavy rainfall and gusty winds resulting in minor debris flows and roadway flooding.",
+  "src": "788423"
+ },
+ {
+  "date": "2019-03-06",
+  "type": "Flood",
+  "lat": 37.8925,
+  "lon": -122.1714,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "Roadway flooding at SR-24 E and Saint Stephens Dr off ramp. A weak atmospheric river impacted the region in early march bringing minor roadway flooding and breezy winds to the region. The main moisture plume made landfall to the south of our region, keeping most of the impacts confined to southern California.",
+  "src": "805519"
+ },
+ {
+  "date": "2019-01-06",
+  "type": "Flood",
+  "lat": 37.8915,
+  "lon": -122.1541,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "Roadway flooding at SR 24E at Acalanes Rd. A vigorous cold front swept through California on January 5th bringing widespread rainfall and gusty winds. Unstable air behind the frontal passage and sufficient low level shear allowed shallow thunderstorms to develop over the coastal waters, some of which contained rotating cells. Two waterspouts developed and made landfall as tornadoes on the 6th. Add",
+  "src": "796065"
+ },
+ {
+  "date": "2019-11-26",
+  "type": "Flood",
+  "lat": 37.8996,
+  "lon": -122.0597,
+  "inbox": true,
+  "place": "WALNUT CREEK",
+  "county": "CONTRA COSTA",
+  "text": "Media reported flooded roads at the intersection of Broadway and Cypress St in Walnut Creek. A rapidly intensifying and ultimately record setting low pressure system moved into northern California and the Pacific Northwest in late November. A strong cold front associated with this system swept through the Bay Area bringing heavy rain, roadway flooding, strong winds, low elevation snow, small hail,",
+  "src": "860168"
+ },
+ {
+  "date": "2024-11-23",
+  "type": "Flood",
+  "lat": 37.8835,
+  "lon": -122.1801,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "Water was reported on all lanes of Westbound State Highway 24 at Camino Pablo. The first atmospheric river of the winter storm season created flooding across the North Bay between November 20 and 23. The atmospheric river was accompanied by a very rapidly intensifying cyclone that deepened by 66 millibars within 24 hours, easily meeting the criteria for bomb cyclogenesis. The greatest impacts were",
+  "src": "1220585"
+ },
+ {
+  "date": "2024-12-27",
+  "type": "Flood",
+  "lat": 37.8917,
+  "lon": -122.1707,
+  "inbox": true,
+  "place": "ORINDA",
+  "county": "CONTRA COSTA",
+  "text": "Water was reported across all lanes of eastbound State Highway 24 at the junction with St Stephens Drive. Multiple weather systems moved through California from December 26 to 29, bringing localized flooding and gusty winds to the region.",
+  "src": "1229334"
+ },
+ {
+  "date": "2025-02-04",
+  "type": "Flood",
+  "lat": 37.8972,
+  "lon": -122.0816,
+  "inbox": true,
+  "place": "WALNUT CREEK",
+  "county": "CONTRA COSTA",
+  "text": "Around 8 inches of water were reported on the ramp that connects eastbound State Route 24 to southbound Interstate 680. An intense atmospheric river impacted the Bay Area from February 3rd to the 4th, bringing heavy rain and strong wind to the region, especially across the North Bay. The Russian River near Guerneville flooded due to the heavy rain.",
+  "src": "1252657"
+ },
+ {
+  "date": "2026-01-05",
+  "type": "Flood",
+  "lat": 37.8206,
+  "lon": -122.2062,
+  "inbox": true,
+  "place": "PIEDMONT",
+  "county": "ALAMEDA",
+  "text": "Onramp from Park Boulevard to northbound California Highway 13 was flooded. A series of storms impacted the Bay Area and Central Coast from January 1st to the 5th, causing numerous flooding impacts and scattered thunderstorms. A low pressure system on the 1st was followed by a strong cold front and associated atmospheric river late on the 2nd into the morning of the 3rd.  A second cold front follo",
+  "src": "1299373"
+ }
+]

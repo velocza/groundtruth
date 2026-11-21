@@ -245,6 +245,21 @@
 
   API.addMeasure({ id: 'flood', order: 20, run(c) {
     const { hit, fc } = c, fl = flood(hit), creek = c.prior.landslideRaw ? c.prior.landslideRaw.creek : null;
+    if (fl.area !== 'ok' && root.GTFloodL && root.GTFloodL.at(hit.lon, hit.lat)) {   /* Lamorinda flood score (floodl.js) */
+      const st = c.storms, FL = root.GTFloodL, f = FL.at(hit.lon, hit.lat), M = FL.meta, chk = M.checks || [], rc = M.rain_checks || [];
+      const sNext = f.at(st.next.r72, st.next.api), sBig = f.at(st.big.r72, st.big.api), cTxt = f.creekM >= 1000 ? 'over 1 km' : f.creekM < 20 ? 'right beside you' : fmt(Math.round(f.creekM / 10) * 10) + ' m';
+      const rs = rc.map(r => r.r72).sort((a, b) => a - b);
+      return { title: 'Flooding', icon: 'flood', level: f.level, score: sBig, kicker: `In ${st.big.short}`, chip: f.level,
+        line: (f.fema === '1%' ? `Ground within about 60 m of you is in a FEMA 1% annual chance flood zone${f.floodway ? ' (the floodway)' : ''}.` : f.fema === '0.2%' ? 'Ground within about 60 m of you is in FEMA\'s 0.2% annual chance (500 year) flood zone.' : 'You are outside FEMA\'s mapped flood zones.') + ` More flood-prone than ${fmt(Math.round(f.below * 100))}% of the area.`,
+        stats: [[fmt(sBig, 0) + '/100', 'flood score in that storm'], [cTxt, 'to the nearest creek'], [`${fmt(Math.round(f.hand * 2) / 2, 1)} m`, 'above the creek bed']],
+        todo: f.level === 'Low' ? ['Keep the storm drain and gutters near you clear of leaves before big storms.', ALERTS()] : ['Before a storm: move cars, valuables and anything that floats out of garages and low rooms, and keep sandbags handy (Lafayette, Orinda and Moraga hand them out before big storms).', 'Never drive or walk through moving water or cross a flooded creek crossing. A foot of moving water can float a car.', 'FEMA flood zones are where flood insurance matters most. Homeowner policies usually do not cover floods.', ALERTS()],
+        how: [`Flood score: ${fmt(sNext, 0)} out of 100 for ${st.next.name}, and ${fmt(sBig, 0)} in ${st.big.short}.` + (f.creekName ? ` Nearest creek: ${f.creekName} or a branch of it.` : '') + (f.handMin < f.hand ? ` The lowest ground within 60 m sits about ${fmt(Math.round(f.handMin * 2) / 2, 1)} m above the creek bed.` : ''),
+          rs.length ? `When to watch: the creek floods NOAA logged in and around Lamorinda since 2015 came with ${rainTxt(rs[0])} to ${rainTxt(rs[rs.length - 1])} of rain over 3 days.` + (st.next.live ? (st.next.r72 >= rs[0] ? ` The forecast brings ${rainTxt(st.next.r72)}, in that range.` : ` The forecast (${rainTxt(st.next.r72)}) is below that.`) : '') : '',
+          'How the score works: FEMA\'s National Flood Hazard Layer zones come first. Outside them, ground that is low (under about 3 m above the nearest USGS-mapped creek) and close to the creek scores higher. A small amount is added for low, wet hollows. The storm factor grows with 3 day rain and how wet the soil already is. Weights are set by hand from these real public layers. It is not trained on past floods, because too few Lamorinda floods have a recorded location to train or fairly test one.',
+          chk.length ? `Checked against ${chk.length} NOAA Storm Events flood reports with a location inside the map: ${chk.filter(x => x.score >= 45).length} of them land on ground this score calls Elevated or High (NOAA positions are approximate). That is a thin check, not proof.` : 'There are no located past flood reports inside the map to check it against, so it is untested.',
+          `Data: ${M.sources.join('; ')}.`],
+        actions: [['Show flood-prone ground on the map', open('top', () => { FL.show(); app.flyTo && app.flyTo(hit.lon, hit.lat, 5.6); })]] };
+    }
     if (fl.area !== 'ok') return { title: 'Flooding', icon: 'flood', tone: 'none', big: 'No prediction', chip: 'No model',
       line: `There is no flood model for ${REG.short} yet.`, stats: creek != null ? [[creekTxt(creek), 'to the nearest creek']] : [],
       todo: creek != null && creek < 150 ? ['Creeks can rise fast in heavy rain. Never cross a flooded road or creek.', ALERTS()] : [ALERTS()] };

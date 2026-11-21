@@ -30,7 +30,7 @@
     U.uEra.value = sc.era; U.uAmt.value = sc.amt;
     gsap.to(view, { r72: sc.r72, api: sc.api, duration: fast ? 0.15 : 0.6, ease: 'power2.out', overwrite: true,
       onUpdate() { U.uR72.value = view.r72; U.uApi.value = view.api; Sc.rain.value = Math.min(1, view.r72 / 220); } });
-    if (LSM) { const lay = Mo.lsLayer(sc); if (lay !== lsShown) { lsShown = lay; Sc.setLandslide(lay, !fast); } }   // the trained model's map for this storm
+    if (LSM) { const lay = Mo.lsLayer(sc); if (lay !== lsShown) { lsShown = lay; if (!(window.GTFloodL && GTFloodL.on)) Sc.setLandslide(lay, !fast); } }   // the trained model's map for this storm
   }
   const LSM = Mo.landslide();                                      // Lamorinda: the map, chips and backtest use the trained landslide model
   let lsShown = null;
@@ -188,6 +188,7 @@
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
   if (window.GTStormResp && GTStormResp.register) GTStormResp.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Storm response view adds itself (San Francisco only)
+  if (window.GTFloodL && GTFloodL.register) GTFloodL.register({ restore: () => { if (LSM && lsShown) Sc.setLandslide(lsShown, true); } });   // Lamorinda flood map puts the landslide layer back
   if (window.GTAddress && GTAddress.register) GTAddress.register({ S, flyTo, replaySc, peakDay, go: (id, q) => go(id, q), active: () => active, select: (lo, la) => select(lo, la), setStorm: (r, a) => setStorm(r, a, true) });   // the address check on the Overview
   const shiftO = { v: 0 };
   function updShift(now) {
@@ -227,6 +228,7 @@
   }
   function go(id, quiet) {                                        // switch the view: panel, look, camera
     if (!POSES[id]) return;
+    if (window.GTFloodL) GTFloodL.hide();                          // the Lamorinda flood map is shown from the address answer only
     if (exploring) { active = id; setExplore(false); } else enter(id);
     gsap.to(Sc.cam, { ...POSES[id], duration: reduce ? 0 : 1.3, ease: 'power3.inOut', overwrite: true });
     const vs = $('#viewScroll'); vs.scrollTop = 0;
@@ -736,6 +738,24 @@ End with one sentence saying that the score is a ranking, not a calibrated proba
     const m = window.GT_FLOOD.meta;
     return `Flood model (separate from the landslide score): ${m.trees} gradient-boosted trees of depth ${m.depth}, picked from ${fmt(m.configs_tried)} settings by spatial cross-validation on SF 311 flood reports filed before October 2022 (area under the curve ${m.cv_auc.toFixed(2)}). Scored once afterwards on data it never saw: winter 2023 ${m.test_winter2023.toFixed(2)}, the November 2026 storm ${m.test_nov2026.toFixed(2)} (${m.test_nov2026_where.toFixed(2)} on where alone). 0.5 is a coin flip. ${m.caveat}`;
   }
+  /* Lamorinda flood score: FEMA flood zones, USGS creeks and height above them, storm rain. Hand set from real layers, not trained (js/floodl.js) */
+  function floodAboutL() {
+    const m = GTFloodL.meta, c = m.checks || [], hit = c.filter(x => x.score >= 45).length, rs = (m.rain_checks || []).map(r => r.r72).sort((a, b) => a - b);
+    return `Lamorinda flood score (separate from the landslide model): FEMA's flood zones first, then how low the ground sits above the nearest USGS-mapped creek and how close it is, times a storm factor from 3 day rain and soil wetness. The weights are set by hand, not trained, because too few Lamorinda floods have a recorded place. Thin check: ${hit} of ${c.length} NOAA Storm Events flood reports with a location in the map fall on ground it calls Elevated or High, and a report spot outscored a random spot ${(m.beats_random * 10).toFixed(1)} times in 10. Every dated local flood since 2015 came after ${rs.length ? fmt(rs[0]) + ' to ' + fmt(rs[rs.length - 1]) + ' mm' : 'heavy'} of rain in 3 days, in the wettest 9% of days.`;
+  }
+  function floodAnswerL(q, r72, api, named) {
+    const F = GTFloodL, ks = findStreet(q.replace(/\bflood\w*\b/gi, ' ')), all = F.streets(), stormTxt = named ? `${fmt(r72)} mm of rain in 3 days` : `the storm on the sliders (${fmt(r72)} mm in 3 days)`;
+    const SRC = 'Lamorinda flood score · FEMA zones, USGS creeks and elevation · hand set, not trained';
+    if (ks.length) {
+      const paras = [];
+      for (const k of ks.slice(0, 4)) { const o = F.streetByName(G.streets[k].n); if (!o) { paras.push(`${G.streets[k].n}: no flood score (too short or off the map).`); continue; }
+        const lv = F.placeLevel(o.w); paras.push(`${o.n}: flood-prone ground ${lv} (${fmt(o.w / 2.55, 0)} / 100), ranked ${fmt(o.rank)} of ${fmt(all.length)} Lamorinda streets (1 is the most flood-prone). ${o.fema ? `${fmt(o.fema)} of its ${fmt(o.cells)} cells are in a FEMA 1% flood zone.` : 'None of it is in a FEMA 1% flood zone.'} With ${stormTxt}, its score is ${fmt(F.score(o.w, r72, api), 0)} / 100.`); }
+      bubble('', paras.concat(floodAboutL()), SRC); return;
+    }
+    const top = all.slice(0, 10).map(o => `${o.n} (${fmt(F.score(o.w, r72, api), 0)})`).join(', ');
+    bubble('', [`Lamorinda streets with the most flood-prone ground, with ${stormTxt}: ${top}. Scores are out of 100; ties are broken by how much of the street lies in FEMA flood zones.`,
+      `About ${fmt(F.meta.share_high * 100, 1)}% of the map area scores High (FEMA 1% zone or right on a creek) and ${fmt(F.meta.share_elev * 100, 1)}% Elevated. Type your address on the Overview to see it on the map.`, floodAboutL()], SRC);
+  }
   function floodAnswer() {
     const F = window.GT_FLOOD, m = F.meta, top = Object.entries(F.streets).sort((a, b) => a[1][1] - b[1][1]).slice(0, 8);
     const town = n => { const k = G.streets.findIndex(s => s.n === n); return k >= 0 ? G.streets[k].t : ''; };
@@ -762,6 +782,7 @@ End with one sentence saying that the score is a ranking, not a calibrated proba
     const limit = ml ? LS_LIMIT : PH_LIMIT;
     const FL = REG.id === 'sf' && window.GT_FLOOD;          // San Francisco flood model (local_model_sf), saved predictions for the November 2026 storm
     if (FL && /\bflood\w*\b/i.test(q) && !findStreet(q.replace(/\bflood\w*\b/gi, ' ')).length) { floodAnswer(); return; }
+    if (REG.id === 'lamorinda' && window.GTFloodL && /\bflood\w*\b/i.test(q)) { floodAnswerL(q, r72, api, !!rainMatch); return; }   // Lamorinda flood score (js/floodl.js)
     if (/\b(model|trained|training|accuracy|validation|validated|backtest|how good|how accurate)\b/i.test(q) && !findStreet(q).length) {
       if (ml) bubble('', [].concat(lsValidation(true), 'The map, the stat chips, the backtest view and Ask all use this model. Alert sensitivity on the map shifts its scores up for more alerts; Ask reports the model as trained.'), LS_SRC);
       else bubble('', [REG.short + ' has no trained landslide model yet. Ask and the map use the placeholder score from real terrain and rain. The trained landslide model covers Lamorinda only, where the USGS mapped the 2016 to 2017 slides.'].concat(FL ? [floodAbout()] : []), FL ? 'San Francisco flood model · trained on SF 311 reports' : source);
