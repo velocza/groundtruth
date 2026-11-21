@@ -4,6 +4,18 @@ Browser Ask → Python inference API → durable local outbox → Supabase Postg
 The repository-only GBM runs on the laptop. Supabase stores model versions, street
 geometry, scenario runs and prediction details. No new training data is added.
 
+## Deployed project
+
+The cloud database is deployed to project `waybjrxxtqbbsiukusli` (`groundtruth`,
+Canada Central). Open the [project dashboard](https://supabase.com/dashboard/project/waybjrxxtqbbsiukusli).
+The schema was applied through the SQL editor and all four tables were verified
+with RLS enabled. The local prediction service is configured separately through
+an ignored `.env` file; credentials are not included in this repository.
+
+The initial upload registered one model and 1,625 streets. Simulation and Ask runs
+sync in the background. The inference server remains on the laptop at
+http://127.0.0.1:8765; this deployment does not publish it as an internet API.
+
 ## Connect the cloud project
 
 1. Create a Supabase project named `groundtruth` in the intended organization.

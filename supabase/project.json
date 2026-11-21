@@ -1,0 +1,11 @@
+{
+  "name": "groundtruth",
+  "project_ref": "waybjrxxtqbbsiukusli",
+  "url": "https://waybjrxxtqbbsiukusli.supabase.co",
+  "region": "ca-central-1",
+  "dashboard": "https://supabase.com/dashboard/project/waybjrxxtqbbsiukusli",
+  "schema": "migrations/202611210001_groundtruth.sql",
+  "inference": "local Python backend",
+  "storage": "Supabase Postgres",
+  "credentials": "server environment or ignored .env only"
+}
