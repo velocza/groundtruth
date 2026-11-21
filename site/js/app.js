@@ -178,10 +178,10 @@
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
   const NAMES = { top: 'scree', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
   const SUBS = { top: 'Landslide watch for ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
-  const SPLIT = { top: 1, motion: 1, storm: 1, replay: 1, backtest: 1, inspect: 1, ask: 1, method: 1 };   // every view sits beside the map (old map system)
+  const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   const shiftO = { v: 0 };
   function updShift(now) {
-    const on = !SPLIT[active] && $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
+    const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
     gsap.to(shiftO, { v: px, duration: reduce || now ? 0 : 0.7, ease: 'power3.inOut', overwrite: true, onUpdate: () => Sc.setShift(shiftO.v) });
   }
   let active = 'top', exploring = false, replayDay = D0;
@@ -199,7 +199,7 @@
     active = id; applyLook(id);
     $$('.rail a.nav').forEach(a => a.dataset.go === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     ORDER.forEach(k => $('#' + k).classList.toggle('on', k === id)); $('#viewTitle').textContent = NAMES[id]; $('#viewSub').textContent = SUBS[id];
-    $('.app').dataset.mode = SPLIT[id] === 0 ? 'overlay' : 'split'; Sc.resize(); updShift();
+    $('.app').dataset.mode = 'split';   // old map system: every view sits beside the map (SPLIT is kept for views that register) Sc.resize(); updShift();
     if (id === 'top') pushScenario({ r72: 140, api: 230, era: 0, amt: 0 });
     else if (id === 'motion' || id === 'method') pushScenario({ r72: 0, api: 60, era: 0, amt: 0 });
     else if (id === 'replay') setReplay(replayDay, true);
