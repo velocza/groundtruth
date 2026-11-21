@@ -1,4 +1,4 @@
-/* GroundTruth page logic: scroll story (GSAP ScrollTrigger), storm controls, 2023 replay, slope inspector, street agent. */
+/* GroundTruth dashboard logic: view switching, storm controls, 2023 replay, slope inspector, street agent. */
 (async function () {
   const G = window.GT, Mo = window.GTModel, Sc = window.GTScene;
   const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
@@ -12,7 +12,6 @@
   catch (err) { $('#loading p').textContent = 'The 3D map could not start in this browser. The rest of the page still works.'; $('#loading .bar').hidden = true; setTimeout(() => $('#loading').classList.add('off'), 2600); console.error(err); return; }
   Sc.setReduced(reduce);
   const U = Sc.u;
-  gsap.registerPlugin(ScrollTrigger);
 
   /* ------------------------------------------------ scenario state */
   const S = { r72: 60, api: 120, era: 0, amt: 0 };                 // what the storm panel is set to (used by the agent too)
@@ -104,7 +103,7 @@
   function setStorm(r72, api, fromUser) {
     S.r72 = Math.round(r72); S.api = Math.round(api);
     r72El.value = S.r72; apiEl.value = S.api; fill(r72El); fill(apiEl);
-    $('#r72v').textContent = S.r72; $('#apiv').textContent = S.api; { const x = $('#exR72'); x.value = S.r72; fill(x); $('#exR72v').textContent = S.r72; }
+    $('#r72v').textContent = S.r72; $('#apiv').textContent = S.api; { const x = $('#exR72'); x.value = S.r72; fill(x); $('#exR72v').textContent = S.r72; $('#kpR72').textContent = S.r72; $('#kpApi').textContent = S.api; }
     if (active === 'storm' || active === 'ask' || active === 'inspect' || exploring) pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }, fromUser);
     clearTimeout(statTimer); statTimer = setTimeout(stormStats, fromUser ? 90 : 0);
     if (sel) renderInspector();
@@ -115,7 +114,7 @@
     $('#exFindF').addEventListener('submit', e => { e.preventDefault(); const q = $('#exFind').value.trim().toLowerCase(), out = $('#exFindOut'); if (!q) return;
       let k = G.streets.findIndex(s => s.n.toLowerCase() === q); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().startsWith(q)); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().includes(q));
       if (k < 0) { out.textContent = 'No street by that name on this map.'; return; }
-      const r = Mo.streetScore(k, stormSc()); flyToStreet(k); if (!r) { out.textContent = G.streets[k].n + ": at the edge of the map, no score."; return; } out.textContent = `${G.streets[k].n}, ${G.streets[k].t || ''}: ${Math.round(r.score)} ${Mo.tier(r.score)}`.replace(', :', ':'); }); }
+      const r = Mo.streetScore(k, stormSc()); flyToStreet(k); if (!r) { out.textContent = G.streets[k].n + ": at the edge of the map, no score."; return; } out.textContent = `${G.streets[k].n}, ${G.streets[k].t || ''}: ${Math.round(r.score)} ${Mo.tier(r.score)}`.replace(', :', ':'); clearTimeout(out._t); out._t = setTimeout(() => out.textContent = '', 6000); }); }
   apiEl.addEventListener('input', () => setStorm(S.r72, +apiEl.value, true));
   const stormPicks = [];
   { /* storm library: the wettest independent storms in the gauge record, at least two weeks apart */
@@ -139,21 +138,21 @@
     flyTo(mid[0], mid[1], 5.2);
   }
   function flyTo(lon, lat, dist) {
-    const p = Sc.focusPose(lon, lat, dist, window.innerWidth > 900 ? (active === 'inspect' ? -0.12 : 0.2) : 0);
+    const p = Sc.focusPose(lon, lat, dist, $('#inspector').classList.contains('on') && $('.stage').clientWidth > 700 ? -0.14 : 0);
     if (exploring) { gsap.to(Sc.orbit, { tx: p.tx, tz: p.tz, dist: dist * 1.25, duration: reduce ? 0 : 1.4, ease: 'power3.inOut' }); }
     else gsap.to(Sc.cam, { ...p, duration: reduce ? 0 : 1.6, ease: 'power3.inOut', overwrite: 'auto' });
   }
 
-  /* ------------------------------------------------ scroll story */
+  /* ------------------------------------------------ views */
   const POSES = {
-    top: { px: -1.6, py: 4.9, pz: 11.2, tx: 1.4, ty: 0, tz: -1.2 },
-    motion: { px: 5.6, py: 4.4, pz: 6.4, tx: 1.8, ty: 0.2, tz: -1.4 },
-    storm: { px: -1.5, py: 9.5, pz: 11.5, tx: 0, ty: 0, tz: -1.6 },
-    replay: { px: 0.4, py: 12.6, pz: 9.6, tx: 0.2, ty: 0, tz: 0.2 },
-    backtest: { px: 3.4, py: 10.5, pz: 10.4, tx: 2.2, ty: 0, tz: -0.2 },
-    inspect: { px: 7.8, py: 4.2, pz: 4.6, tx: 3.4, ty: 0.2, tz: -1.8 },
-    ask: { px: 6.6, py: 6.8, pz: 9.4, tx: 2.6, ty: 0, tz: -0.4 },
-    method: { px: 0, py: 15, pz: 15, tx: 0, ty: 0, tz: 1.5 }
+    top: { px: -1.2, py: 6.4, pz: 12.4, tx: 0, ty: 0, tz: -0.4 },
+    motion: { px: 4.4, py: 4.6, pz: 6.6, tx: 1.2, ty: 0.2, tz: -1.2 },
+    storm: { px: -0.8, py: 10.2, pz: 11.6, tx: 0, ty: 0, tz: -0.2 },
+    replay: { px: 0.3, py: 13.2, pz: 9.8, tx: 0, ty: 0, tz: 0.3 },
+    backtest: { px: 1.2, py: 12.2, pz: 10.6, tx: 0.2, ty: 0, tz: 0.2 },
+    inspect: { px: 5.6, py: 4.6, pz: 5.4, tx: 2.2, ty: 0.2, tz: -1.4 },
+    ask: { px: 3.6, py: 7.6, pz: 10.2, tx: 0.8, ty: 0, tz: -0.2 },
+    method: { px: 0, py: 14, pz: 13, tx: 0, ty: 0, tz: 0.6 }
   };
   const LOOKS = {                                                  // what the terrain shows in each chapter
     top: { risk: 0.75, motion: 0.55, roads: 0, splitVis: 0, dim: 0, bld: 0 },
@@ -163,9 +162,10 @@
     backtest: { risk: 1, motion: 0.1, roads: 0.45, splitVis: 0, dim: 0, bld: 0.5 },
     inspect: { risk: 0.7, motion: 0.9, roads: 0.2, splitVis: 0, dim: 0, bld: 0.6 },
     ask: { risk: 1, motion: 0.2, roads: 1, splitVis: 0, dim: 0, bld: 0.9 },
-    method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.45, bld: 0 }
+    method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
   };
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'];
+  const NAMES = { top: 'Overview', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
   let active = 'top', exploring = false, replayDay = D0;
   Object.assign(Sc.cam, POSES.top);
 
@@ -179,29 +179,32 @@
   function enter(id) {
     if (exploring) return;
     active = id; applyLook(id);
-    $$('.nav nav a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
+    $$('.rail a').forEach(a => a.dataset.go === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+    ORDER.forEach(k => $('#' + k).classList.toggle('on', k === id)); $('#crumb').textContent = NAMES[id];
     if (id === 'top') pushScenario({ r72: 140, api: 230, era: 0, amt: 0 });
     else if (id === 'motion' || id === 'method') pushScenario({ r72: 0, api: 60, era: 0, amt: 0 });
     else if (id === 'replay') setReplay(replayDay, true);
     else if (id === 'backtest') pushScenario(replaySc(peakDay));
     else pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 });
     showEvents(id === 'replay' || id === 'backtest', id === 'backtest');
-    $('#inspector').classList.toggle('on', id === 'inspect' && !!sel);
+    $('#inspector').classList.toggle('on', !!sel);
     samplePts.forEach(p => p.ring.show(id === 'inspect'));
     if (id !== 'ask' && id !== 'storm') { Sc.showStreet(null); streetOn = -1; if (id !== 'inspect' && id !== 'backtest') Sc.highlight(0, 0, false); }
     if (id !== 'inspect') Sc.showPath(null);
     if (reduce) Object.assign(Sc.cam, POSES[id]);
+    requestAnimationFrame(() => { if (id === 'replay') drawRain(); if (id === 'backtest') drawTimeline(); });
   }
+  function go(id, quiet) {                                        // switch the view: panel, look, camera
+    if (!POSES[id]) return;
+    if (exploring) { active = id; setExplore(false); } else enter(id);
+    gsap.to(Sc.cam, { ...POSES[id], duration: reduce ? 0 : 1.3, ease: 'power3.inOut', overwrite: true });
+    const vs = $('#viewScroll'); vs.scrollTop = 0;
+    if (!quiet && getComputedStyle(document.body).overflowY !== 'hidden') { const r = $('.rail').getBoundingClientRect(); if (r.top < 0) window.scrollTo(0, window.scrollY + r.top - 8); }
+    const a = $(`.rail a[data-go="${id}"]`); if (a && a.scrollIntoView && a.parentNode.scrollWidth > a.parentNode.clientWidth) a.parentNode.scrollLeft = a.offsetLeft - 40;
+  }
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); go(a.dataset.go); });
 
   let setReplay = () => {};
-  const replayST = ScrollTrigger.create({ trigger: '#replay', start: 'top top', end: reduce ? '+=1200' : '+=2600', pin: true, anticipatePin: 1, refreshPriority: 1,
-    onUpdate: self => setReplay(D0 + self.progress * (D1 - D0)) });
-  // camera: one scrubbed tween per chapter boundary, created top to bottom (the replay pin above refreshes first)
-  if (!reduce) ORDER.slice(1).forEach((id, n) => {
-    gsap.fromTo(Sc.cam, POSES[ORDER[n]], { ...POSES[id], ease: 'power1.inOut', immediateRender: false,
-      scrollTrigger: { trigger: '#' + id, start: 'top bottom', end: 'top top', scrub: 0.8 } });
-  });
-  ORDER.forEach(id => ScrollTrigger.create({ trigger: '#' + id, start: 'top 55%', end: id === 'replay' ? () => '+=' + (replayST.end - replayST.start + window.innerHeight) : 'bottom 55%', onToggle: st => { if (st.isActive) enter(id); } }));
 
   /* ------------------------------------------------ compare slider */
   $('#split').addEventListener('input', e => { fill(e.target); U.uSplit.value = e.target.value / 100; });
@@ -221,7 +224,7 @@
     if (active === 'replay' && !exploring) pushScenario(sc, true);
     $('#rpDate').textContent = dstr(addDays(R23.start, d)); $('#rpRain').textContent = fmt(sc.r72); $('#rpApi').textContent = fmt(sc.api);
     events.forEach(e => e.mk.show(eventsOn && (eventsAll || e.day <= d)));
-    $('#rpSeason').textContent = fmt(seasonCum[d]);
+    $('#rpSeason').textContent = fmt(seasonCum[d]); { const sc2 = $('#rpScrub'); sc2.value = d; fill(sc2); }
     const log = $('#rpLog'), seen = events.filter(e => e.day <= d).sort((a, b) => a.day - b.day).slice(-4);
     log.textContent = '';
     if (!seen.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'No slides reported yet. The first comes with the New Year\'s Eve storm.'; log.appendChild(li); }
@@ -230,44 +233,45 @@
     drawRain();
   };
   let playing = null;
-  $('#playBtn').addEventListener('click', () => {
-    if (playing) { playing.kill(); playing = null; $('#playBtn').textContent = 'Play the winter'; return; }
-    const st = replayST, o = { y: Math.max(st.start, Math.min(window.scrollY, st.end - 4)) };
-    if (o.y >= st.end - 40) o.y = st.start;
-    window.scrollTo(0, o.y); $('#playBtn').textContent = 'Pause';
-    playing = gsap.to(o, { y: st.end - 2, duration: (st.end - o.y) / (st.end - st.start) * 22, ease: 'none', onUpdate: () => window.scrollTo(0, o.y),
-      onComplete: () => { playing = null; $('#playBtn').textContent = 'Play again'; } });
-  });
-  ['wheel', 'touchstart', 'keydown'].forEach(ev => window.addEventListener(ev, e => { if (playing && !(ev === 'keydown' && e.target === $('#playBtn'))) { playing.kill(); playing = null; $('#playBtn').textContent = 'Play the winter'; } }, { passive: true }));
+  const scrub = $('#rpScrub'); scrub.min = D0; scrub.max = D1; scrub.value = D0;
+  const stopPlay = label => { if (playing) { playing.kill(); playing = null; } $('#playBtn').textContent = label || 'Play the winter'; };
+  function playReplay(seconds) {
+    const o = { d: replayDay >= D1 - 1 ? D0 : replayDay }; $('#playBtn').textContent = 'Pause';
+    return new Promise(done => { playing = gsap.to(o, { d: D1, duration: (D1 - o.d) / (D1 - D0) * (seconds || 22), ease: 'none', onUpdate: () => setReplay(o.d),
+      onComplete: () => { playing = null; $('#playBtn').textContent = 'Play again'; done(); }, onInterrupt: done }); });
+  }
+  $('#playBtn').addEventListener('click', () => { if (playing) stopPlay(); else playReplay(); });
+  scrub.addEventListener('input', () => { if (playing) stopPlay(); setReplay(+scrub.value); });
 
   /* ------------------------------------------------ canvas charts */
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  function prep(cv) { const r = cv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(10, r.width * dpr); cv.height = Math.max(10, r.height * dpr); const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return [x, r.width, r.height]; }
+  let cssEl = document.documentElement;                          // charts read tokens from their own scope: the stage stays dark in the light theme
+  const css = n => getComputedStyle(cssEl).getPropertyValue(n).trim();
+  function prep(cv) { cssEl = cv; const r = cv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(10, r.width * dpr); cv.height = Math.max(10, r.height * dpr); const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return [x, r.width, r.height]; }
   function drawRain() {
     const cv = $('#rainChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv);
     const a = 60, b = D1 + 6, n = b - a, L = 34, Rr = 40, T = 6, B = 20, pw = w - L - Rr, ph = h - T - B;
     const X = d => L + (d - a) / n * pw, maxR = 80, maxA = 300;
-    x.font = '11px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    x.font = '11px "JetBrains Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
     for (const v of [0, 40, 80]) { const y = T + ph - v / maxR * ph; x.beginPath(); x.moveTo(L, y + .5); x.lineTo(L + pw, y + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 6, y + 4); }
     x.textAlign = 'left'; x.fillStyle = css('--accent'); for (const v of [100, 200, 300]) x.fillText(v, L + pw + 6, T + ph - v / maxA * ph + 4);
     x.fillStyle = css('--ink-3'); x.textAlign = 'center';
     for (const [d, lb] of [[61, 'Dec'], [92, 'Jan'], [123, 'Feb'], [151, 'Mar']]) x.fillText(lb, X(d) + 12, h - 5);
     const bw = Math.max(1.5, pw / n - 1.2);
-    for (let d = a; d < b; d++) { const v = R23.mm[d] || 0, bh = Math.min(v, maxR) / maxR * ph; x.fillStyle = d <= replayDay ? '#8fb4ff' : 'rgba(143,180,255,.28)'; x.fillRect(X(d), T + ph - bh, bw, bh); }
+    for (let d = a; d < b; d++) { const v = R23.mm[d] || 0, bh = Math.min(v, maxR) / maxR * ph; x.fillStyle = css('--rain'); x.globalAlpha = d <= replayDay ? 1 : 0.3; x.fillRect(X(d), T + ph - bh, bw, bh); x.globalAlpha = 1; }
     x.beginPath(); for (let d = a; d < b; d++) { const y = T + ph - Math.min(R23.api[d], maxA) / maxA * ph; d === a ? x.moveTo(X(d), y) : x.lineTo(X(d), y); } x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
     for (const e of events) { x.fillStyle = e.day <= replayDay ? css('--t-high') : css('--ink-3'); x.beginPath(); x.arc(X(e.day) + bw / 2, T + 4, 3, 0, 7); x.fill(); }
     const px = X(replayDay) + bw / 2; x.strokeStyle = css('--ink'); x.lineWidth = 1; x.beginPath(); x.moveTo(px, T); x.lineTo(px, T + ph); x.stroke();
   }
   function drawSeries(pt) {
-    const cv = $('#tsChart'), [x, w, h] = prep(cv); if (!pt) { x.fillStyle = css('--ink-3'); x.font = '12.5px "Instrument Sans", sans-serif'; x.fillText('No motion record at this cell in the sample.', 0, 20); return; }
+    const cv = $('#tsChart'), [x, w, h] = prep(cv); if (!pt) { x.fillStyle = css('--ink-3'); x.font = '12.5px "Segoe UI", system-ui, sans-serif'; x.fillText('No motion record at this cell in the sample.', 0, 20); return; }
     const an = Mo.analyseSeries(pt), d = pt.disp_mm, t = an.t, L = 34, R = 8, T = 8, B = 20, pw = w - L - R, ph = h - T - B;
     const lo = Math.min(...d, 0), hi = Math.max(...d, 0), pad = (hi - lo) * 0.08 + 2, X = v => L + v / t[t.length - 1] * pw, Y = v => T + (hi + pad - v) / (hi - lo + 2 * pad) * ph;
-    x.font = '11px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    x.font = '11px "JetBrains Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
     const step = (hi - lo) > 120 ? 50 : (hi - lo) > 40 ? 20 : 10;
     for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) { x.beginPath(); x.moveTo(L, Y(v) + .5); x.lineTo(L + pw, Y(v) + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 6, Y(v) + 4); }
     x.textAlign = 'center'; const y0 = 2016.5; for (let yr = 2018; yr <= 2026; yr += 2) x.fillText(yr, X(yr - y0), h - 5);
     const w23 = [2022.99 - y0, 2023.25 - y0]; x.fillStyle = 'rgba(143,180,255,.14)'; x.fillRect(X(w23[0]), T, X(w23[1]) - X(w23[0]), ph);
-    x.fillStyle = 'rgba(238,240,246,.55)'; for (let k = 0; k < d.length; k++) x.fillRect(X(t[k]) - 1, Y(d[k]) - 1, 2, 2);
+    x.fillStyle = css('--ink-2'); for (let k = 0; k < d.length; k++) x.fillRect(X(t[k]) - 1, Y(d[k]) - 1, 2, 2);
     const th = an.long.theta; x.beginPath(); for (let k = 0; k < t.length; k++) { const v = th[0] + th[1] * t[k] + th[2] * Math.sin(2 * Math.PI * t[k]) + th[3] * Math.cos(2 * Math.PI * t[k]); k ? x.lineTo(X(t[k]), Y(v)) : x.moveTo(X(t[k]), Y(v)); }
     x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
     return an;
@@ -311,7 +315,7 @@
   }
   function drawTip(i, sc, tE, tH) {
     const cv = $('#tipChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv), L = 26, R = 14, T = 4, B = 16, pw = w - L - R, ph = h - T - B, X = r => L + r / 300 * pw, Y = v => T + (100 - v) / 100 * ph;
-    x.font = '10.5px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    x.font = '10.5px "JetBrains Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
     for (const v of [50, 75]) { x.beginPath(); x.setLineDash([3, 3]); x.moveTo(L, Y(v) + .5); x.lineTo(L + pw, Y(v) + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 5, Y(v) + 3.5); }
     x.setLineDash([]); x.textAlign = 'center'; for (const r of [0, 100, 200, 300]) x.fillText(r, X(r), h - 3);
     x.beginPath(); for (let r = 0; r <= 300; r += 6) { const v = Mo.index(i, { ...sc, r72: r }); r ? x.lineTo(X(r), Y(v)) : x.moveTo(X(r), Y(v)); } x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
@@ -321,7 +325,7 @@
   function drawHist(hc) {
     const cv = $('#histChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv), ys = Object.keys(hc.years).map(Number), L = 26, R = 6, T = 4, B = 15, pw = w - L - R, ph = h - T - B;
     const mx = Math.max(4, ...ys.map(y => hc.years[y][0] + hc.years[y][1])), bw = pw / ys.length;
-    x.font = '10.5px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    x.font = '10.5px "JetBrains Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
     x.beginPath(); x.moveTo(L, T + ph + .5); x.lineTo(L + pw, T + ph + .5); x.stroke(); x.textAlign = 'right'; x.fillText(mx, L - 5, T + 8); x.fillText(0, L - 5, T + ph + 3);
     ys.forEach((y, n) => { const [e, hi] = hc.years[y], X0 = L + n * bw + 2, he = e / mx * ph, hh = hi / mx * ph;
       x.fillStyle = css('--t-elevated'); x.fillRect(X0, T + ph - he - hh, bw - 4, he); x.fillStyle = css('--t-high'); x.fillRect(X0, T + ph - hh, bw - 4, hh);
@@ -339,13 +343,13 @@
   $('#inClose').addEventListener('click', () => { sel = null; $('#inspector').classList.remove('on'); Sc.highlight(0, 0, false); Sc.showPath(null); });
   let down = null;
   $('#gl').addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, az: Sc.orbit.az, el: Sc.orbit.el }; if (exploring) $('#gl').setPointerCapture(e.pointerId); });
-  $('#gl').addEventListener('pointermove', e => { if (!down || !exploring) return; Sc.orbit.az = down.az - (e.clientX - down.x) * 0.005; Sc.orbit.el = Math.max(0.18, Math.min(1.45, down.el + (e.clientY - down.y) * 0.004)); });
+  $('#gl').addEventListener('pointermove', e => { if (!down) return; if (!exploring) { if (e.pointerType !== 'mouse' || Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6) return; setExplore(true); down.az = Sc.orbit.az; down.el = Sc.orbit.el; down.x = e.clientX; down.y = e.clientY; down.drag = true; try { $('#gl').setPointerCapture(e.pointerId); } catch (err) {} } Sc.orbit.az = down.az - (e.clientX - down.x) * 0.005; Sc.orbit.el = Math.max(0.18, Math.min(1.45, down.el + (e.clientY - down.y) * 0.004)); });
   $('#gl').addEventListener('pointerup', e => {
-    const moved = down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6; down = null;
-    if (moved || !(exploring || active === 'inspect')) return;
+    const moved = down && (down.drag || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6); down = null;
+    if (moved) return;
     const ll = Sc.pick(e.clientX, e.clientY); if (ll) select(ll[0], ll[1]);
   });
-  $('#gl').addEventListener('wheel', e => { if (!exploring) return; e.preventDefault(); Sc.orbit.dist = Math.max(3, Math.min(28, Sc.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+  $('#gl').addEventListener('wheel', e => { if (!exploring) { if (getComputedStyle(document.body).overflowY !== 'hidden') return; setExplore(true); } e.preventDefault(); Sc.orbit.dist = Math.max(3, Math.min(28, Sc.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
   $('#jumpFast').addEventListener('click', () => {
     const p = samplePts.map(s => s.p).filter(p => p.kind === 'creep').sort((a, b) => a.disp_mm[a.disp_mm.length - 1] - b.disp_mm[b.disp_mm.length - 1])[0];
     select(p.lonlat[0], p.lonlat[1]); flyTo(p.lonlat[0], p.lonlat[1], 4.4);
@@ -405,7 +409,7 @@
     const all = events.map(e => ({ day: e.day + off, test: true })).concat(OTHER.map(e => ({ day: e.day, test: false })));
     const sorted = Float32Array.from(hT.subarray(0, n)).sort(), p95 = sorted[Math.floor(n * 0.95)], tmax = sorted[n - 1] || 1;
     const X = d => L + d / (n - 1) * pw, Y = t => T + ph - t / tmax * ph;
-    x.clearRect(0, 0, w, h); x.font = '10.5px "IBM Plex Mono", monospace'; x.textAlign = 'center';
+    x.clearRect(0, 0, w, h); x.font = '10.5px "JetBrains Mono", monospace'; x.textAlign = 'center';
     for (let d = 0; d < n; d++) { const t = addDays(RL.start, d); if (t.getUTCMonth() === 0 && t.getUTCDate() === 1) { x.fillStyle = css('--ink-3'); x.fillText("'" + String(t.getUTCFullYear()).slice(2), X(d), h - 4); x.fillStyle = css('--line'); x.fillRect(Math.round(X(d)), T, 1, ph); } }
     x.fillStyle = css('--ink-3'); x.globalAlpha = 0.55; for (let px = 0; px < pw; px++) { const d0 = Math.floor(px / pw * n), d1 = Math.max(d0 + 1, Math.floor((px + 1) / pw * n)); let m = 0; for (let d = d0; d < d1 && d < n; d++) if (hT[d] > m) m = hT[d]; if (m >= p95) { x.globalAlpha = 1; x.fillStyle = css('--accent'); } else { x.globalAlpha = 0.55; x.fillStyle = css('--ink-3'); } x.fillRect(L + px, Y(m), 1, T + ph - Y(m)); }
     x.globalAlpha = 1; x.strokeStyle = css('--accent'); x.setLineDash([3, 3]); x.beginPath(); x.moveTo(L, Y(p95) + .5); x.lineTo(L + pw, Y(p95) + .5); x.stroke(); x.setLineDash([]);
@@ -514,12 +518,12 @@
   /* ------------------------------------------------ explore mode */
   const exBtn = $('#exploreBtn');
   function setExplore(on) {
-    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.textContent = on ? 'Back to story' : 'Explore map';
+    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.textContent = on ? 'Back to view' : 'Free look';
     if (on) {
       const c = Sc.cam, dx = c.px - c.tx, dz = c.pz - c.tz; Object.assign(Sc.orbit, { tx: c.tx, tz: c.tz, dist: Math.hypot(dx, c.py, dz), az: Math.atan2(dx, dz), el: Math.atan2(c.py, Math.hypot(dx, dz)), on: true });
-      pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }); syncExplore(); showEvents(false); samplePts.forEach(p => p.ring.show(true)); if (brief.open) brief.close();
+      pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }); syncExplore(); showEvents(false); samplePts.forEach(p => p.ring.show(true));
       $('#inspector').classList.toggle('on', !!sel);
-    } else { Sc.orbit.on = false; $('#inspector').classList.remove('on'); samplePts.forEach(p => p.ring.show(false)); enter(active); ScrollTrigger.update(); }
+    } else { Sc.orbit.on = false; $('#inspector').classList.remove('on'); samplePts.forEach(p => p.ring.show(false)); enter(active); }
   }
   function syncExplore() {
     const on = id => $(id).getAttribute('aria-pressed') === 'true';
@@ -527,7 +531,7 @@
     gsap.to(U.uRoads, { value: on('#exRoads') ? 1 : 0, duration: .4 }); gsap.to(U.uBld, { value: on('#exBld') ? 1 : 0, duration: .4 }); gsap.to(U.uSplitVis, { value: on('#exSat') ? 1 : 0, duration: .4 }); U.uSplit.value = 0; gsap.to(U.uDim, { value: 0, duration: .4 });
   }
   exBtn.addEventListener('click', () => setExplore(!exploring));
-  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); syncExplore(); }));
+  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
   window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
 
   /* ------------------------------------------------ street agent */
@@ -570,7 +574,7 @@
     for (const p of [].concat(paras)) { const el = document.createElement('p'); el.textContent = p; d.appendChild(el); }
     if (src) { const s = document.createElement('span'); s.className = 'src'; s.textContent = src; d.appendChild(s); }
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
-    if (!reduce) gsap.from(d, { y: 14, autoAlpha: 0, duration: 0.5, ease: 'expo.out' });
+    if (!reduce) gsap.from(d, { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out' });
     return d;
   }
   let sampler; const getSampler = () => sampler !== undefined ? Promise.resolve(sampler) : (window.claude && window.claude.use ? Promise.race([window.claude.use('sample'), new Promise(r => setTimeout(() => r(null), 4000))]).catch(() => null) : Promise.resolve(null)).then(s => (sampler = s || null));
@@ -686,46 +690,57 @@ End with one sentence saying what the tool results say about the ground motion i
   /* ------------------------------------------------ guided tour: drives the real controls so a viewer sees every tool in about a minute */
   let tour = null;
   const tourUI = (on, txt) => { $('#tour').hidden = !on; document.body.classList.toggle('touring', on); if (txt) $('#tourTxt').textContent = txt; };
-  function stopTour() { if (!tour) return; tour.dead = true; if (tour.tw) tour.tw.kill(); tour = null; tourUI(false); }
+  function stopTour() { if (!tour) return; tour.dead = true; if (tour.tw) tour.tw.kill(); tour = null; stopPlay(); tourUI(false); }
   async function runTour() {
     if (tour) return; if (exploring) setExplore(false);
     const me = tour = { dead: false, tw: null }, k = reduce ? 0.35 : 1;
     const wait = ms => new Promise(r => setTimeout(r, ms * k)), alive = () => !me.dead;
-    const topOf = id => $(id).getBoundingClientRect().top + window.scrollY + 4;
-    const scrollToY = (y, dur) => new Promise(r => { const o = { y: window.scrollY }; me.tw = gsap.to(o, { y, duration: reduce ? 0 : dur, ease: 'power2.inOut', onUpdate: () => window.scrollTo(0, o.y), onComplete: r, onInterrupt: r }); });
+    const show = async (id, ms) => { go(id); await wait(ms == null ? 1300 : ms); };
     const steps = [
-      ['1 of 7. Radar sees slopes creep', async () => { await scrollToY(topOf('#motion'), 1.6); const sp = $('#split'), o = { v: 50 }; await new Promise(r => { me.tw = gsap.to(o, { v: 18, duration: 1.6 * k, yoyo: true, repeat: 1, ease: 'sine.inOut', onUpdate: () => { sp.value = o.v; sp.dispatchEvent(new Event('input')); }, onComplete: r, onInterrupt: r }); }); await wait(600); }],
-      ['2 of 7. Set a storm and watch exposure rise', async () => { await scrollToY(topOf('#storm'), 1.6); await wait(900); $('[data-preset=peak]').click(); await wait(2600); setBias(-4.9); await wait(2400); setBias(-6.5); await wait(900); }],
-      ['3 of 7. Winter 2023, replayed from real rain', async () => { await scrollToY(replayST.start + 4, 1.6); await wait(500); await scrollToY(replayST.end - 4, 9); await wait(500); }],
-      ['4 of 7. Scored against the slides that were reported', async () => { await scrollToY(topOf('#backtest'), 1.4); await wait(4200); }],
-      ['5 of 7. Open a slope: tipping point, history, debris path', async () => { await scrollToY(topOf('#inspect'), 1.6); await wait(600); $('#jumpFast').click(); await wait(3200); $('#runBtn').click(); await wait(4200); }],
-      ['6 of 7. Ask about a street', async () => { await scrollToY(topOf('#ask'), 1.6); await wait(500); ask('Where would debris from Miner Road go, and how many buildings are near the path?'); await wait(6500); }],
-      ['7 of 7. What is real and what comes next', async () => { await scrollToY(topOf('#method'), 1.6); await wait(3500); }]
+      ['1 of 7. Radar sees slopes creep', async () => { await show('motion'); const sp = $('#split'), o = { v: 50 }; await new Promise(r => { me.tw = gsap.to(o, { v: 18, duration: 1.6 * k, yoyo: true, repeat: 1, ease: 'sine.inOut', onUpdate: () => { sp.value = o.v; sp.dispatchEvent(new Event('input')); }, onComplete: r, onInterrupt: r }); }); await wait(600); }],
+      ['2 of 7. Set a storm and watch exposure rise', async () => { await show('storm'); $('[data-preset=peak]').click(); await wait(2600); setBias(-4.9); await wait(2400); setBias(-6.5); await wait(900); }],
+      ['3 of 7. Winter 2023, replayed from real rain', async () => { await show('replay', 900); setReplay(D0, true); await playReplay(9 * k); await wait(500); }],
+      ['4 of 7. Scored against the slides that were reported', async () => { await show('backtest'); await wait(3600); }],
+      ['5 of 7. Open a slope: tipping point, history, debris path', async () => { await show('inspect'); $('#jumpFast').click(); await wait(3200); $('#runBtn').click(); await wait(4200); }],
+      ['6 of 7. Ask about a street', async () => { await show('ask'); ask('Where would debris from Miner Road go, and how many buildings are near the path?'); await wait(6500); }],
+      ['7 of 7. What is real and what comes next', async () => { await show('method'); await wait(3000); }]
     ];
     for (const [label, fn] of steps) { if (!alive()) return; tourUI(true, label); await fn(); }
-    if (alive()) { tour = null; tourUI(false); }
+    if (alive()) { tour = null; tourUI(false); go('top'); }
   }
   $('#tourBtn').addEventListener('click', runTour); $('#tourStop').addEventListener('click', stopTour);
-  ['wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, e => { if (tour && !(e.target.closest && e.target.closest('#tour'))) stopTour(); }, { passive: true }));
   window.addEventListener('keydown', e => { if (tour && e.key === 'Escape') stopTour(); });
 
   /* ------------------------------------------------ first paint + entrances */
   setStorm(92, 156); setReplay(D0, true); enter('top'); drawSeries(null);
   setTimeout(renderBacktest, 900);
   { const p = PRESETS.today(), sc = { r72: p.r72, api: p.api, era: 0, amt: 0 }, rk = Mo.rankStreets(sc, 1), ld = addDays(RNOW.start, lastNow);
-    $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The glow behind this text shows a 140 mm storm on wet soil.`; }
-  window.addEventListener('resize', () => { drawRain(); if (sel) renderInspector(); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ScrollTrigger.refresh(); drawRain(); });
+    $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The map in this view shows a 140 mm storm on wet soil.`; }
+  const redraw = () => { if (active === 'replay') drawRain(); if (active === 'backtest') drawTimeline(); if (sel) renderInspector(); };
+  window.addEventListener('resize', redraw);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+  /* segmented tracks: one thumb glides to the pressed tab */
+  $$('.seg-track').forEach(tr => {
+    const th = document.createElement('i'); th.className = 'thumb'; th.setAttribute('aria-hidden', 'true'); tr.prepend(th);
+    const place = () => { const b = tr.querySelector('button[aria-pressed="true"]'); if (!b || !b.offsetWidth) { th.style.width = '0'; return; } th.style.width = b.offsetWidth + 'px'; th.style.transform = `translateX(${b.offsetLeft}px)`; };
+    new MutationObserver(place).observe(tr, { attributes: true, attributeFilter: ['aria-pressed'], subtree: true, childList: true, characterData: true });
+    if (window.ResizeObserver) new ResizeObserver(place).observe(tr); place();
+  });
+  /* pointer light on large glass cards */
+  $$('.lit').forEach(el => el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px'); }));
+  /* theme */
+  function setTheme(t, save) {
+    document.documentElement.dataset.theme = t; $$('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === t));
+    if (save) { try { localStorage.setItem('gt-theme', t); } catch (err) {} }
+    requestAnimationFrame(redraw);
+  }
+  $$('[data-theme-set]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeSet, true)));
+  { let t = null; try { t = localStorage.getItem('gt-theme'); } catch (err) {} setTheme(t === 'light' || t === 'dark' ? t : 'dark'); }
+
   $('#loading').classList.add('off');
   if (!reduce) {
-    gsap.timeline({ delay: 0.25, defaults: { ease: 'expo.out' } })
-      .from('h1 .line > span', { yPercent: 110, duration: 1.3, stagger: 0.12 })
-      .from('#top .lede, .hero-cta, #nowLine', { y: 22, autoAlpha: 0, duration: 1, stagger: 0.1 }, '-=0.85')
-      .from(Sc.cam, { py: '+=5', pz: '+=7', duration: 2.6, ease: 'power3.out' }, 0)
-      .from('.nav', { autoAlpha: 0, duration: 0.8 }, 0.5);
-    // chapter entrances: text columns slide up from a clip, tool panels rise; each family is authored differently
-    $$('#motion .col, #backtest .col, #inspect .col, #ask .chat').forEach(el => gsap.from(el.children, { y: 34, autoAlpha: 0, duration: 0.9, ease: 'expo.out', stagger: 0.07, scrollTrigger: { trigger: el, start: 'top 78%', once: true } }));
-    gsap.from('#storm .panel', { y: 60, autoAlpha: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#storm .wrap', start: 'top 85%', once: true } });
-    gsap.from('#method .grid > *', { y: 40, autoAlpha: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '#method .grid', start: 'top 82%', once: true } });
+    gsap.from(Sc.cam, { py: '+=4', pz: '+=6', duration: 2.2, ease: 'power3.out' });
+    gsap.from('.bar, .rail, .kpis, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });
   }
 })();

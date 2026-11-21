@@ -89,7 +89,7 @@
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     scene = new THREE.Scene();
-    const bg = new THREE.Color(0x090b12); renderer.setClearColor(bg, 1);
+    const bg = new THREE.Color(0x0b0c10); renderer.setClearColor(bg, 1);
     camera = new THREE.PerspectiveCamera(36, 1, 0.1, 200);
 
     const segX = 300, segZ = 284, geo = new THREE.PlaneGeometry(SX, SZ, segX, segZ);
@@ -122,7 +122,7 @@
     }));
     rain.frustumCulled = false; scene.add(rain);
 
-    resize(); window.addEventListener('resize', resize);
+    resize(); window.addEventListener('resize', resize); if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
     document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { last = performance.now(); requestAnimationFrame(frame); } });
     requestAnimationFrame(frame);
   }

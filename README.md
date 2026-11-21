@@ -6,7 +6,7 @@ Satellite landslide early warning for Lafayette, Orinda and Moraga, California.
 
 | Folder | What it is |
 |---|---|
-| `site/` | The 3D site. Open `site/index.html`, or run `python3 -m http.server` inside `site/` and open http://localhost:8000. No build step. |
+| `site/` | The dashboard: a 3D terrain stage with a navigation rail, a KPI strip and one view panel, in dark and light themes. Open `site/index.html`, or run `python3 -m http.server` inside `site/` and open http://localhost:8000. No build step. |
 | `dataset/` | The sample data the site runs on, as CSV, PNG and one NumPy archive. See `dataset/README.md`. |
 | `model/real_label_experiment.py` | First run on real labels: leave-one-slide-out on the ten reported 2023 slides with real static features. Result in `model/real_label_experiment.json`: AUC 0.51 for the GBM, 0.59 for slope alone. Ten weak labels are not enough to train on. |
 | `MODEL_HANDOFF.md` | **Start here if you are training the model.** Inputs, labels, the output file the site reads, how to check it and how to send it back. |
@@ -51,4 +51,4 @@ Not trained yet: `model/gbm.py` passes its tests, and its only contact with real
 
 ## Site files
 
-`site/page.html` is the page body, `site/index.html` is the same page wrapped to open directly. three.js 0.160 and GSAP 3.12.5 are in `site/vendor/` so the site works offline apart from web fonts. The street chat falls back to a written template answer when no language model is available.
+`site/page.html` is the page body, `site/index.html` is the same page wrapped to open directly. The styles follow the team's glass UI spec: one token block per theme at the top of the stylesheet, capsule controls and one 31px radius for every panel. three.js 0.160 and GSAP 3.12.5 are in `site/vendor/` so the site works offline apart from web fonts. The street chat falls back to a written template answer when no language model is available.
