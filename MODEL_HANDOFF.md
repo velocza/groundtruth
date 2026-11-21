@@ -101,8 +101,11 @@ If you swap in a different model (a neural net, a library), that is fine. Only t
 | | Beats a random street spot | Slides caught at 2.6% / 7.6% / 17% of the map flagged |
 |---|---|---|
 | Slope alone | 5.8 in 10 | 3 / 3 / 10 of 10 |
-| Placeholder on the site (real inputs) | 6.6 in 10 | 2 / 3 / 9 of 10 |
+| Placeholder on the site (real inputs) | 6.6 in 10 | 2 / 3 / 8 of 10, at its own 1.6% / 5.2% / 13% |
 | Your model | ? | ? |
+
+Storms before a slide count only rain logged up to the report date (`Rain.storm_before`), for training labels and
+for scoring alike. The checker also scores the four slides from other winters as a separate line.
 
 The honest test is the winter 2023 slides with a model that never saw them. Report that number, whatever it is.
 

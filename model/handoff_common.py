@@ -97,10 +97,17 @@ class Rain:
         """Day index -> (rain in the following 72 hours, soil wetness that day). Matches the site."""
         return float(self.mm[i + 1] + self.mm[i + 2] + self.mm[i + 3]), float(self.api[i])
 
+    def storm_before(self, i, d):
+        """Like storm_at(i), but for a slide reported on day d: rain logged after the report date is left out.
+        Each gauge value covers the 24 hours up to that morning, so without the cap the morning before a report
+        would be credited with up to two days of rain that fell after the slide was already reported."""
+        return float(self.mm[i + 1:min(i + 3, d) + 1].sum()), float(self.api[i])
+
     def before_report(self, date):
-        """For a slide reported on `date`: the wettest of the three mornings before it, as (day index, r72, api)."""
-        d = self.idx[date]; best = max(range(max(0, d - 3), d), key=lambda i: trigger_T(*self.storm_at(i)))
-        return (best,) + self.storm_at(best)
+        """For a slide reported on `date`: the wettest of the three mornings before it, as (day index, r72, api),
+        counting only rain logged up to the report date."""
+        d = self.idx[date]; best = max(range(max(0, d - 3), d), key=lambda i: trigger_T(*self.storm_before(i, d)))
+        return (best,) + self.storm_before(best, d)
 
 
 def read_labels(path):
