@@ -29,9 +29,9 @@ class BackendTests(unittest.TestCase):
 
     def test_scoring_validation_and_durable_history(self):
         prediction = self.backend.score(self.street, 171.5, 76.5)
-        self.assertAlmostEqual(prediction['score'], 43.2, delta=.1)
+        self.assertAlmostEqual(prediction['score'], 45.3, delta=.1)   # landslide model (local_model_landslide)
         self.assertFalse(prediction['calibrated'])
-        self.assertEqual(len(prediction['explanation']), 4)
+        self.assertEqual(len(prediction['explanation']), 6)
         run = self.backend.save([prediction], 'ask', 171.5, 76.5)
         self.assertEqual(self.backend.history(self.street)[0]['run']['id'], run['id'])
         self.assertEqual(self.backend.history(-1), [])

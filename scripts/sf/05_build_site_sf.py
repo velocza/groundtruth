@@ -1,4 +1,4 @@
-"""Pack the San Francisco dataset for the dashboard: site/data_sf/{assets,buildings,data,rainlong,local-model}.js.
+"""Pack the San Francisco dataset for the dashboard: site/data_sf/{assets,buildings,data,rainlong}.js.
 Same shapes as the Lamorinda files in site/data/, so the same page code runs on either area.
 Real data only: there is no ground motion layer for San Francisco, so the motion texture is a flat zero and no motion points are listed.
 
@@ -91,16 +91,7 @@ GT = dict(
     events=EV, streets=st_out)
 open(f"{OUT}/data.js", "w").write("window.GT=" + json.dumps(GT, separators=(",", ":")) + ";")
 
-# ---------------- local tree model: the trees trained on Lamorinda reports, read against San Francisco terrain ----------------
-src = open(f"{ROOT}/site/data/local-model.js").read()
-art = json.loads(src[src.index("{"):src.rindex("}") + 1])
-z = np.load(f"{DS}/grid_480x456_all_layers.npz")
-a, s = np.deg2rad(z["aspect"]), np.deg2rad(z["slope"])
-Xs = np.stack([z["slope"], np.cos(a) * np.sin(s), np.sin(a) * np.sin(s), z["plan_curv"], z["twi"], z["dist_stream"]], -1).reshape(-1, 6).astype("<f4")
-assert art["static_count"] == 6 and art["features"][:6] == ["slope_deg", "northness", "eastness", "plan_curv", "twi", "dist_stream_m"], art["features"]
-art["static_f32_base64"] = base64.b64encode(Xs.tobytes()).decode()
-art["transferred_to"] = "san_francisco"
-open(f"{OUT}/local-model.js", "w").write("window.GT_LOCAL_ARTIFACT = " + json.dumps(art, separators=(",", ":")) + ";\n")
+# No landslide model for San Francisco: the Lamorinda landslide trees are not transferred (site/data_sf/local-model.js is not written).
 
 print("streets", len(st_out), "areas", [(t[0], len(cent[t[0]])) for t in towns], "events", [(e["date"], e["where"], e["town"]) for e in EV], "rain to", last, "buildings", nb)
 print({f: os.path.getsize(f"{OUT}/{f}") // 1000 for f in sorted(os.listdir(OUT))}, "KB")

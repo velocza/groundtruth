@@ -654,21 +654,47 @@ End with one sentence saying what the tool results say about the ground motion i
   function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
 
 
-  /* Area-wide forecast for open questions ("what's your prediction", "will there be landslides"). Uses the same placeholder score the map draws. */
+  /* Area-wide forecast for open questions ("what's your prediction", "will there be landslides").
+     Lamorinda: the trained landslide model scores every 29 m cell and every street. San Francisco has no landslide model, so it uses the placeholder score the map draws. */
   const GENERAL_Q = /\b(predict\w*|forecast\w*|outlook|landslides?|slides?|risk\w*|danger\w*|safe|overall|area|everywhere|anywhere|today|tonight|now|this week(end)?|storm|expect\w*|happen\w*|will there|how bad|should i (worry|be worried)|what do you think)\b/i;
-  function forecastAnswer(r72, api, rainFrom) {
-    const sc = { r72, api, era: 0, amt: 0 }, a = Mo.areaStats(sc), rk = Mo.rankStreets(sc, 3), b = Mo.buildingsAt(sc), T = Mo.Tof(sc);
+  const LS = () => REG.landslideModel && window.GTLocalModel;
+  const LS_SRC = 'Trained landslide model · 1,398 USGS mapped slides · scored in this browser';
+  function lsValidation(long) {
+    const rp = LS().report, cv = rp.best_cv, ho = rp.holdout_winter2023, t = ho.tuned, sl = ho.slope_alone;
+    const short = `Model check: in 5-fold spatial cross-validation it ranked slide cells above others ${(cv.auc * 10).toFixed(1)} times in 10 (${(cv.where * 10).toFixed(1)} on where alone). On the ${t.events.length} winter 2023 slides it never saw, a slide site sat on average above ${Math.round(t.mean_land_percentile * 100)}% of the land (slope alone: ${Math.round(sl.mean_land_percentile * 100)}%) and above ${Math.round(t.mean_share_street_spots_beaten * 100)}% of random street spots (slope alone: ${Math.round(sl.mean_share_street_spots_beaten * 100)}%).`;
+    if (!long) return short;
+    const c = rp.best_cfg;
+    return [`Landslide model for ${rp.area}: ${c.n_trees} gradient-boosted trees of depth ${c.max_depth}, trained on ${fmt(rp.data.slides)} slides the USGS mapped in the 2016 to 2017 storm season (${fmt(rp.data.positive_cells)} slide cells). Slide-free ground was sampled only inside the area the USGS mapped, at least 90 m from any slide. Inputs: terrain (slope, steepest slope within 90 m, relief within 150 m, aspect, curvature, wetness index, distance to a stream) and the storm (72 hour rain, soil wetness). Elevation, distance to a road and vegetation are left out on purpose. Settings were picked from ${fmt(rp.configs_tried)} tries by spatial cross-validation.`,
+      short, 'Scores rank ground from 0 to 100. They are not calibrated chances of a slide, and 11 test slides are a small test: promising, not proven. Rain in the tests is the observed gauge rain, used as a perfect forecast.'];
+  }
+  const LS_LIMIT = 'Scores rank ground and are not calibrated chances of a slide, and they never mean a slope is safe. For a real concern call city engineering staff or a licensed geotechnical engineer.';
+  const PH_LIMIT = REG.short + ' has no trained landslide model yet, so this is the placeholder score the map draws from real terrain and rain. It is relative risk, not a chance of a slide, and it never means a slope is safe. For a real concern call city engineering staff or a licensed geotechnical engineer.';
+  const bandOf = v => Mo.tier(v);                                  // the same 25 / 50 / 75 bands the map uses, named Guarded, Elevated, High
+  async function forecastAnswer(r72, api, rainFrom) {
+    const sc = { r72, api, era: 0, amt: 0 }, ml = LS(), T = Mo.Tof(sc), pct = v => (v * 100).toFixed(1) + '%';
     let n = 0; for (let d = 0; d < HN - 3; d++) if (hT[d] >= T) n++;
-    const peak = rk.top.length ? rk.top[0].score : 0;
-    const level = rk.high ? 'High' : rk.elevated ? 'Elevated' : Mo.tier(peak);
-    const pct = v => (v * 100).toFixed(1) + '%';
-    const out = [`Prediction for ${REG.places}: overall ${level}. ${rk.high ? `${fmt(rk.high)} of ${fmt(rk.total)} scored streets reach High and ${fmt(rk.elevated)} reach Elevated or higher.` : rk.elevated ? `${fmt(rk.elevated)} of ${fmt(rk.total)} scored streets reach Elevated, and none reach High.` : `None of the ${fmt(rk.total)} scored streets reach Elevated. The highest street score is ${Math.round(peak)} out of 100.`}`,
-      `On the map, ${pct(a.high)} of the ground scores High and ${pct(a.elevated)} scores Elevated. ${fmt(b.hi)} buildings stand on High ground and ${fmt(b.el)} on Elevated ground, out of ${fmt(b.total)} mapped.`];
-    if (rk.top.length) out.push('Most at risk: ' + rk.top.map(s => `${s.name}, ${s.town} (${Math.round(s.score)}, ${Mo.tier(s.score)})`).join('; ') + '.');
+    let top, hiS, elS, total, aHi, aEl, bHi = 0, bEl = 0, bTot = Mo.buildingsAt(sc).total, src;
+    if (ml) {
+      const wait = bubble('wait', 'Scoring every slope with the landslide model...'); await new Promise(r => setTimeout(r, 30));
+      const cells = ml.area(r72, api), rk = ml.rank(r72, api, G.streets.length), L = Mo.L; let v = 0, h = 0, e = 0;
+      for (let i = 0; i < cells.length; i++) { if (!ml.valid[i]) continue; v++; const x = cells[i]; if (x >= 75) { h++; if (L.bld) bHi += L.bld[i]; } else if (x >= 50) { e++; if (L.bld) bEl += L.bld[i]; } }
+      wait.remove();
+      top = rk.slice(0, 3).map(s => ({ k: s.k, name: G.streets[s.k].n, town: G.streets[s.k].t, score: s.score }));
+      hiS = rk.filter(s => s.score >= 75).length; elS = rk.filter(s => s.score >= 50).length; total = rk.length; aHi = h / v; aEl = e / v; src = LS_SRC;
+    } else {
+      const a = Mo.areaStats(sc), rk = Mo.rankStreets(sc, 3), b = Mo.buildingsAt(sc);
+      top = rk.top; hiS = rk.high; elS = rk.elevated; total = rk.total; aHi = a.high; aEl = a.elevated; bHi = b.hi; bEl = b.el; src = 'Dashboard placeholder score · same as the map';
+    }
+    const peak = top.length ? top[0].score : 0, level = hiS ? 'High' : elS ? 'Elevated' : bandOf(peak);
+    const what = ml ? 'the landslide model' : 'the map score';
+    const out = [`Prediction for ${REG.places} from ${what}: overall ${level}. ${hiS ? `${fmt(hiS)} of ${fmt(total)} scored streets reach High and ${fmt(elS)} reach Elevated or higher.` : elS ? `${fmt(elS)} of ${fmt(total)} scored streets reach Elevated, and none reach High.` : `None of the ${fmt(total)} scored streets reach Elevated. The highest street score is ${Math.round(peak)} out of 100.`}`,
+      `${pct(aHi)} of the ground scores High (75 or more) and ${pct(aEl)} scores Elevated (50 to 75). ${fmt(bHi)} buildings stand on High ground and ${fmt(bEl)} on Elevated ground, out of ${fmt(bTot)} mapped.`];
+    if (top.length) out.push('Most at risk: ' + top.map(s => `${s.name}, ${s.town} (${Math.round(s.score)}, ${bandOf(s.score)})`).join('; ') + '.');
     out.push(`What drives it: ${rainFrom}, ${Math.round(r72)} mm of rain in 72 hours on soil at a wetness index of ${Math.round(api)} mm. That rain is ${fmt(r72 / 201 * 100)}% of the worldwide 72 hour landslide threshold (Caine 1980, 201 mm). ${n ? `The real gauges saw rain and soil this wet or wetter on ${fmt(n)} of ${fmt(HN - 3)} days since October 2015.` : 'Nothing in the gauge record since October 2015 was this wet.'}`);
-    out.push('This uses the placeholder score the map shows, ' + (Mo.opts.motion ? 'including simulated sample ground motion' : 'from real terrain and rain only') + '. It is relative risk, not a chance of a slide, and it never means a slope is safe. Follow National Weather Service warnings, and for a real concern call city engineering staff or a licensed geotechnical engineer.');
-    const d = bubble('', out, 'Dashboard placeholder score · same as the map');
-    if (rk.top.length) { flyToStreet(rk.top[0].k); }
+    if (ml) out.push('The High and Elevated bands are the map\'s 75 and 50 cut points applied to the model score. They are not validated alert levels, and the map itself still draws the placeholder score. ' + lsValidation(false), LS_LIMIT);
+    else out.push(PH_LIMIT);
+    const d = bubble('', out, src);
+    if (top.length) flyToStreet(top[0].k);
     return d;
   }
   /* San Francisco flood model: trees trained on SF 311 rain-linked flood reports (model/train_sf_flood.py). The page shows its saved street predictions for the
@@ -690,67 +716,74 @@ End with one sentence saying what the tool results say about the ground motion i
   async function ask(q) {
     q = q.trim(); if (!q) return;
     bubble('me', q); $('#askIn').value = ''; hideSugg();
-    const ml = window.GTLocalModel;
-    if (!ml) { bubble('', 'The local model did not load. Run model/train_local.py and reload this page.'); return; }
+    const ml = LS();
+    if (REG.landslideModel && !ml) { bubble('', 'The landslide model did not load. Run model/export_landslide_site.py and reload this page.'); return; }
     const rainMatch = q.match(/(\d+(?:\.\d+)?)\s*(mm|millimet(?:ers|res)?|inches|inch|in\b|")/i);
     const followSim = REG.id === 'lamorinda' && $('#simFollow').checked && localSimulation;
     const r72 = rainMatch ? Math.max(0,Math.min(400,parseFloat(rainMatch[1]) * (/^(mm|millimet)/i.test(rainMatch[2]) ? 1 : 25.4))) : followSim ? localSimulation.rain_72h_mm : S.r72;
     const apiMatch = q.match(/(?:wetness|api)\s*(?:of|=|:)?\s*(\d+(?:\.\d+)?)/i);
     const api = apiMatch ? Math.max(0,Math.min(280,+apiMatch[1])) : followSim ? localSimulation.api_mm : S.api;
-    let source = 'Browser-local trained GBM · experimental score, not probability';
-    const limit = (REG.id === 'lamorinda' ? '' : 'These trees were trained in Lamorinda and are read against ' + REG.short + ' terrain without retraining. ') + 'Trained on four pre-2022 reports at three approximate locations. Scores are uncalibrated, and do not establish that a property is safe. The map and other dashboard tools still use the original placeholder formula. For site concerns contact city engineering staff or a licensed geotechnical engineer.';
+    const sc = { r72, api, era: 0, amt: 0 };
+    let source = ml ? LS_SRC : 'Dashboard placeholder score · same as the map';
+    const limit = ml ? LS_LIMIT : PH_LIMIT;
     const FL = REG.id === 'sf' && window.GT_FLOOD;          // San Francisco flood model (local_model_sf), saved predictions for the November 2026 storm
     if (FL && /\bflood\w*\b/i.test(q) && !findStreet(q.replace(/\bflood\w*\b/gi, ' ')).length) { floodAnswer(); return; }
-    if (/\b(model|trained|training|accuracy|validation|backtest)\b/i.test(q) && !findStreet(q).length) {
-      const rp=ml.report;
-      bubble('', [`Local model: ${rp.params.n_trees} depth-${rp.params.max_depth} gradient-boosted trees, trained on ${rp.training_events} older reports at ${rp.unique_training_locations} locations. No simulated motion or later vegetation is used.`,
-        `The exploratory held-out 2023 check beat ${(rp.heldout_mean_share_random_street_spots_beaten*100).toFixed(1)}% of 100 randomly sampled street spots on average, using the same 300 m search radius. This is a ranking statistic, not accuracy or a failure probability. Future observed gauge rain was used as a perfect-rain scenario.`, limit].concat(FL ? [floodAbout()] : []),source); return;
+    if (/\b(model|trained|training|accuracy|validation|validated|backtest|how good|how accurate)\b/i.test(q) && !findStreet(q).length) {
+      if (ml) bubble('', [].concat(lsValidation(true), 'The map, the stat chips and the backtest view still use the original placeholder formula. Ask uses this model.'), LS_SRC);
+      else bubble('', [REG.short + ' has no trained landslide model yet. Ask and the map use the placeholder score from real terrain and rain. The trained landslide model covers Lamorinda only, where the USGS mapped the 2016 to 2017 slides.'].concat(FL ? [floodAbout()] : []), FL ? 'San Francisco flood model · trained on SF 311 reports' : source);
+      return;
     }
-    let ks;
     const nq = ' '+norm(q).replace(/\bstreet\b/g,'st')+' ';
     const named = sIndex.filter(x=>nq.includes(' '+x.key+' ')).filter((x,_,all)=>!all.some(y=>y!==x && y.key.length>x.key.length && y.key.includes(x.key)));
-    ks = [...new Set(named.map(x=>x.k))];
+    let ks = [...new Set(named.map(x=>x.k))];
     const rainFrom = rainMatch ? 'the rain you named' : followSim ? 'the historical playback on ' + localSimulation.simulation_date : 'the storm set on the page';
-    if (!named.length && GENERAL_Q.test(q) && !findStreet(q.replace(new RegExp(GENERAL_Q.source, 'gi'), ' ')).length && !/\b(worst|highest|top streets|which streets|briefing|brief me)\b/i.test(q)) { forecastAnswer(r72, api, rainFrom); return; }
-    if (/\b(worst|highest|top streets|which streets|briefing|brief me)\b/i.test(q)) {
-      const wait = bubble('wait','Scoring streets locally...');
-      await new Promise(resolve=>setTimeout(resolve,30));
-      let scores=[];
-      for (let k=0;k<G.streets.length;k++) {
-        const v=ml.street(k,r72,api); if(v && v.cells>=12) scores.push({k,...v});
-        if (k%100===0) await new Promise(resolve=>setTimeout(resolve,0));
-      }
+    const TOP_Q = /\b(worst|highest|top streets|which streets|briefing|brief me)\b/i;
+    if (!named.length && GENERAL_Q.test(q) && !findStreet(q.replace(new RegExp(GENERAL_Q.source, 'gi'), ' ')).length && !TOP_Q.test(q)) { await forecastAnswer(r72, api, rainFrom); return; }
+    if (TOP_Q.test(q)) {
       const town = TOWN_NAMES.find(t=>new RegExp('\\b'+t+'\\b','i').test(q));
+      let scores;
+      if (ml) { const wait = bubble('wait','Scoring every street with the landslide model...'); await new Promise(resolve=>setTimeout(resolve,30)); scores = ml.rank(r72, api, G.streets.length); wait.remove(); }
+      else scores = Mo.rankStreets(sc, 0).all;
       if (town) scores=scores.filter(v=>G.streets[v.k].t===town);
-      scores.sort((a,b)=>b.score-a.score); wait.remove();
-      bubble('', [`Local experimental ranking${town?' for '+town:''}: ${r72.toFixed(1)} mm in 72 hours; antecedent wetness ${api} mm.`,
-        ...scores.slice(0,5).map((v,n)=>`${n+1}. ${G.streets[v.k].n}, ${G.streets[v.k].t}: ${v.score.toFixed(1)} / 100 classification score.`), limit],source);
+      bubble('', [`${ml ? 'Landslide model ranking' : 'Map score ranking'}${town?' for '+town:''}: ${r72.toFixed(0)} mm of rain in 72 hours on soil at a wetness index of ${Math.round(api)} mm (${rainFrom}).`,
+        ...scores.slice(0,5).map((v,n)=>`${n+1}. ${G.streets[v.k].n}, ${G.streets[v.k].t}: ${v.score.toFixed(1)} out of 100, ${bandOf(v.score)}.`)].concat(ml ? [lsValidation(false)] : [], [limit]),source);
       if(scores.length) flyToStreet(scores[0].k); return;
     }
     if (!ks.length) ks=findStreet(q);
     if (ks.length!==1 && named.length<2) {
-      if (!ks.length) { const d = forecastAnswer(r72, api, rainFrom); const p = document.createElement('p'); p.textContent = 'For one street, name it in ' + REG.placesOr + '. Example: ' + (REG.example || 'Miner Road with 100 mm rain') + '.'; d.insertBefore(p, d.querySelector('.src')); return; }
+      if (!ks.length) { const d = await forecastAnswer(r72, api, rainFrom); const p = document.createElement('p'); p.textContent = 'For one street, name it in ' + REG.placesOr + '. Example: ' + (REG.example || 'Miner Road with 100 mm rain') + '.'; d.insertBefore(p, d.querySelector('.src')); return; }
       bubble('',['Please choose a street:',...ks.map(k=>G.streets[k].n+', '+G.streets[k].t)]); return;
     }
-    const paras=[`Local model scenario${followSim ? ' (historical playback '+localSimulation.simulation_date+')' : ''}: ${r72.toFixed(1)} mm rain in 72 hours, antecedent wetness ${api} mm.`];
-    let first=null;
+    const paras=[`${ml ? 'Landslide model' : 'Map score'}${followSim ? ', historical playback '+localSimulation.simulation_date : ''}: ${r72.toFixed(0)} mm of rain in 72 hours on soil at a wetness index of ${Math.round(api)} mm (${rainFrom}).`];
+    let first=null; const scored=[];
     for (const k of ks.slice(0,4)) {
-      let serverPrediction = null;
-      try { serverPrediction = await backendStreet(k,r72,api); } catch (_) { paras.push('The server could not score this request; using browser-local inference. This result was not saved to history.'); }
-      const st=G.streets[k], v=serverPrediction || ml.street(k,r72,api); if(!v) {paras.push(st.n+': no cells inside the study grid.');continue;}
-      if (serverPrediction) source = 'Python backend · trained GBM · prediction saved to history';
-      if(!first) first={k,v};
-      const lo=serverPrediction ? {score:serverPrediction.half_rain_score} : ml.street(k,r72*.5,api), hi=serverPrediction ? {score:serverPrediction.more_rain_score} : ml.street(k,r72*1.5,api);
-      paras.push(`${st.n}, ${st.t}: ${v.score.toFixed(1)} / 100 experimental classification score (not a percent chance). Half the rain: ${lo.score.toFixed(1)}; 1.5 times the rain: ${hi.score.toFixed(1)}. No validated alert tier is assigned.`);
-      const changes=(serverPrediction ? serverPrediction.explanation : ml.explain(k,r72,api)).filter(x=>x.change>0.1).slice(0,3);
-      if(changes.length) paras.push('Sensitivity at the highest-scoring cell: '+changes.map(x=>`${x.name} (${x.change.toFixed(1)} score points versus its reference)`).join(', ')+'. These are counterfactual comparisons, not causal explanations.');
-      if (/\b(debris|runout|path|downhill)\b/i.test(q)) {
-        const ro=Mo.runout(v.worst); Sc.showPath(ro.path.map(Mo.lonlatOf));
-        paras.push(`Terrain-only screening path: ${ro.length} m long, ${ro.drop} m elevation drop. This is not an ML runout prediction.`);
+      const st=G.streets[k];
+      if (!ml) {
+        const r = Mo.streetScore(k, sc); if (!r) { paras.push(st.n+': no cells inside the study grid.'); continue; }
+        if (!first) first = { k, v: r }; scored.push({ k, score: r.score });
+        const lo = Mo.streetScore(k, { ...sc, r72: r72 * .5 }).score, hi = Mo.streetScore(k, { ...sc, r72: Math.min(400, r72 * 1.5) }).score, t = Mo.terms(r.worst, sc);
+        const why = t.parts.filter(p => p[1] > 0.15).sort((a, b) => b[1] - a[1]).slice(0, 3).map(p => p[0].toLowerCase());
+        paras.push(`${st.n}, ${st.t}: ${Math.round(r.score)} out of 100, ${Mo.tier(r.score)}. Half the rain: ${Math.round(lo)}; 1.5 times the rain: ${Math.round(hi)}.${why.length ? ' What drives it at the riskiest spot: ' + why.join(', ') + '.' : ''}`);
+      } else {
+        let serverPrediction = null;
+        try { serverPrediction = await backendStreet(k,r72,api); } catch (_) { paras.push('The server could not score this request; using the same model in your browser. This result was not saved to history.'); }
+        const v=serverPrediction || ml.street(k,r72,api); if(!v) {paras.push(st.n+': no cells inside the study grid.');continue;}
+        if (serverPrediction) source = 'Trained landslide model · Python backend · prediction saved to history';
+        if(!first) first={k,v}; scored.push({ k, score: v.score });
+        const lo=serverPrediction ? {score:serverPrediction.half_rain_score} : ml.street(k,r72*.5,api), hi=serverPrediction ? {score:serverPrediction.more_rain_score} : ml.street(k,r72*1.5,api);
+        paras.push(`${st.n}, ${st.t}: ${v.score.toFixed(1)} out of 100, ${bandOf(v.score)} band (a ranking score, not a chance of a slide). Half the rain: ${lo.score.toFixed(1)}; 1.5 times the rain: ${hi.score.toFixed(1)}.`);
+        const changes=(serverPrediction ? serverPrediction.explanation : ml.explain(k,r72,api)).filter(x=>x.change>0.1).slice(0,3);
+        if(changes.length) paras.push('What pushes the score up at its highest-scoring spot: '+changes.map(x=>`${x.name} (${x.change.toFixed(1)} points against a flat, dry reference)`).join(', ')+'. These are what-if comparisons, not causes.');
+      }
+      if (/\b(debris|runout|path|downhill)\b/i.test(q) && first && first.k === k) {
+        const ro=Mo.runout(first.v.worst); Sc.showPath(ro.path.map(Mo.lonlatOf));
+        paras.push(`Terrain-only screening path from that spot: ${ro.length} m long, ${ro.drop} m elevation drop. A steepest-descent trace, not a model runout prediction.`);
       }
     }
+    if (scored.length > 1) { const w = scored.slice().sort((a, b) => b.score - a.score)[0]; paras.push(`Of these, ${G.streets[w.k].n} scores highest.`); }
     if (FL) for (const k of ks.slice(0, 4)) { const f = FL.streets[G.streets[k].n]; if (f) paras.push(`Flood model, a separate model for street flooding: on the ${FL.meta.rain_72h_mm.toFixed(0)} mm storm of November 18, 2026, ${G.streets[k].n} scored ${f[0].toFixed(1)} / 100 and ranked ${fmt(f[1])} of ${fmt(FL.meta.n_streets)} streets (1 is the most flood-prone). A ranking, not a chance of flooding.`); }
-    if (/\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('Historical alert counts, exposure tiers and tipping points are not validated for this experimental model. Those tools elsewhere on the dashboard use the placeholder score.');
+    if (ml && /\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('History, building counts and tipping points for a street are in the slope panel and the Storm view, which still use the placeholder score.');
+    if (ml) paras.push(lsValidation(false));
     paras.push(limit);
     const d=bubble('',paras,source);
     if(first) {flyToStreet(first.k); Sc.highlight(...Mo.lonlatOf(first.v.worst),true); watchButton(d,G.streets[first.k].n); reportButton(d,G.streets[first.k].n,paras);}
@@ -768,7 +801,7 @@ End with one sentence saying what the tool results say about the ground motion i
     if (sugg.hidden || !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return; e.preventDefault(); if (e.key === 'Escape') return hideSugg();
     const bs = $$('#sugg button'), i = bs.findIndex(b => b.classList.contains('act')), n = (i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach(b => b.classList.remove('act')); bs[n].classList.add('act');
   });
-  bubble('', 'Local ML is ready. Ask for the prediction across the area, ask about a street, compare streets, or enter a rain amount such as ' + (REG.example || 'Miner Road with 100 mm rain') + '. Answers run on this computer using an experimental trained tree model. Scores are not calibrated failure probabilities. Ask about model validation to see the results.');
+  bubble('', (LS() ? 'The landslide model is ready: 300 trees trained on 1,398 slides the USGS mapped in winter 2016 to 2017, running in your browser. ' : REG.short + ' has no trained landslide model yet, so answers use the map\'s placeholder score from real terrain and rain. ' + (window.GT_FLOOD ? 'Ask about flooding for the San Francisco flood model. ' : '')) + 'Ask for the prediction across the area, ask about a street, compare streets, or name a rain amount such as ' + (REG.example || 'Miner Road with 100 mm rain') + '. Ask how the model was checked to see its validation.');
 
   /* ------------------------------------------------ guided tour: drives the real controls so a viewer sees every tool in about a minute */
   let tour = null;

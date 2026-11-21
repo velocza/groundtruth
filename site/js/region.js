@@ -2,7 +2,7 @@
    Lamorinda text is the page default. Elements marked data-only="<area>" show for that area only, and elements marked data-t="<key>" take the text below. */
 (function () {
   var REGIONS = {
-    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: true,
+    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: true, landslideModel: true,
       towns: [['Lafayette', -122.118, 37.886], ['Orinda', -122.183, 37.877], ['Moraga', -122.130, 37.835]], tourQ: 'Where would debris from Miner Road go, and how many buildings are near the path?', example: 'Miner Road with 100 mm rain' },
     sf: { id: 'sf', dir: 'data_sf', files: ['flood_model', 'storm_response'], label: 'San Francisco, San Francisco County', sub: 'City of San Francisco', short: 'San Francisco', places: 'San Francisco', placesOr: 'San Francisco', motion: false,
       tourQ: 'Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', example: 'Twin Peaks Boulevard with 100 mm rain',
@@ -18,7 +18,7 @@
         btOf: 'of 6 sat near Elevated or High ground beforehand', btListH: 'The six mapped slides',
         inBody: 'Click the terrain to read one 30 m cell: its slope, its drainage, and what is pushing its score up.', jump: 'Show the most exposed slope',
         askLabel: 'Name a street in San Francisco',
-        askHelp: 'Ask runs in your browser for San Francisco. The trees were trained on four older Lamorinda reports and are read here against San Francisco terrain without retraining, so treat the scores as a demonstration. Ask about flooding for the separate San Francisco flood model, trained on the city\'s 311 flood reports. The dashboard map uses the original placeholder.',
+        askHelp: 'San Francisco has no trained landslide model yet, so street and area answers here use the map\'s placeholder score from real terrain and rain. Ask about flooding for the separate San Francisco flood model, trained on the city\'s 311 flood reports.',
         methodH: 'Real terrain, real rain. The model comes next.',
         methodBody: 'Everything on this map was pulled from public data for this exact box of the city. The risk score is a hand-set placeholder that marks where the trained model will plug in.',
         srcRain: 'NOAA GHCN-Daily and CoCoRaHS gauges with the downtown gauge, 2008 to 2026-11-20',
@@ -38,7 +38,7 @@
   window.GT_REGIONS = REGIONS; window.GT_REGION = R;
   document.documentElement.setAttribute('data-region', id);
   if (R.title) document.title = R.title;
-  ['assets', 'buildings', 'data', 'rainlong', 'local-model', 'roads_graph', 'usgs_inventory', 'census_bg'].concat(R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
+  ['assets', 'buildings', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model'] : [], ['roads_graph', 'usgs_inventory', 'census_bg'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
 
   /* switch area: remember the choice and reload with that area's data */
   window.GT_setRegion = function (next) {

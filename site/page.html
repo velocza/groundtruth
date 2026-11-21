@@ -979,7 +979,7 @@ body.exploring .maptools .ex-rain{display:flex}
         <input class="field" id="askIn" type="text" placeholder="El Toyonal, Rheem Boulevard, Happy Valley Road" aria-describedby="askHelp">
         <button class="btn accent" type="submit">Ask</button>
       </form>
-      <p class="note" id="askHelp" data-t="askHelp">Ask uses the Python prediction backend with browser-local fallback. Supabase stores history when connected. Experimental scores from four older reports are not calibrated probabilities; the dashboard map uses the original placeholder.</p>
+      <p class="note" id="askHelp" data-t="askHelp">Ask uses the trained landslide model, 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017, through the Python backend when it is running and in your browser otherwise. Scores rank ground and are not calibrated chances. The map still draws the original placeholder.</p>
     </div>
   </section>
 
@@ -1076,7 +1076,7 @@ body.exploring .maptools .ex-rain{display:flex}
       <h3>The model</h3>
       <p class="body">The model itself is a gradient-boosted tree ensemble the team writes by hand. It trains on mapped landslides up to 2022 and is then tested on winter 2023, using only what was known each morning.</p>
       <p class="body" data-only="sf">For San Francisco the package also holds 16,658 rain-linked street flooding cells from the city's 311 records. In a first check, the hand-built trees trained on reports before October 2022 ranked the cells that flooded in the November 2026 storm above the rest about 9 times in 10: 8.3 in 10 on where alone and 9.6 in 10 on which days. That is a flooding model, separate from the landslide score on this map. A tuned version (300 trees, chosen from 1,303 settings using only reports before October 2022) scored 9.1 in 10 on the November 2026 storm and 8.9 in 10 on winter 2023. Ask shows its street ranking for that storm when you ask about flooding.</p>
-      <p class="body" data-only="lamorinda">A first trial on real labels is in the package: the hand-built model trained on nine of the reported slides and was asked to find the tenth. It scored 5.1 in 10, a coin flip, and plain steepness scored 5.9. Ten street-level reports are too few to learn from, which is why the labels come next.</p>
+      <p class="body" data-only="lamorinda">The trained Lamorinda landslide model now answers in Ask: 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017. In spatial cross-validation it ranked slide cells above others 8.5 times in 10. On the 11 winter 2023 slides it never saw, a slide site sat on average above 91% of the land, against 85% for slope alone, and above 65% of random street spots, about the same as slope alone. A small test: promising, not proven. The map still draws the placeholder.</p>
       <div class="row"><a class="btn" href="https://claude.ai/artifact/TfBUtdaM77hQaFJraNHKLW" target="_blank" rel="noopener">Read the model plan</a></div>
     </div>
     <div class="group">
@@ -1087,6 +1087,7 @@ body.exploring .maptools .ex-rain{display:flex}
         <li class="done">Write the boosting code by hand</li>
         <li class="done">Backtest tools, runout tracing, tipping points</li>
         <li class="done">First trial on ten real slides: too few labels</li>
+        <li class="done" data-only="lamorinda">Train on 1,398 USGS mapped slides and wire it into Ask</li>
         <li>Download the real InSAR stack</li>
         <li>Build labels from USGS and state maps</li>
         <li>Train with spatial cross-validation</li>

@@ -19,7 +19,9 @@ from datetime import datetime, timezone
 
 import numpy as np
 from local_simulation import predict, street_cells, C
-from model.train_local import static
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent/'model'))
+from landslide_live import MODEL_DIR, static, TERRAIN
 
 ROOT = Path(__file__).resolve().parent
 
@@ -64,10 +66,10 @@ class Backend:
         self.db = self.runtime/'predictions.sqlite3'
         with self.connect() as db:
             db.execute('create table if not exists runs (id text primary key, payload text not null, synced integer not null default 0)')
-        raw = (ROOT/'local_model/trees.json').read_bytes()
+        raw = (MODEL_DIR/'trees.json').read_bytes()
         self.model_id = hashlib.sha256(raw).hexdigest()
         self.artifact = json.loads(raw)
-        self.report = json.loads((ROOT/'local_model/report.json').read_text())
+        self.report = json.loads((MODEL_DIR/'report.json').read_text())
         text = (ROOT/'site/data/data.js').read_text(encoding='utf-8')
         self.streets = json.loads(text[text.index('{'):].strip().rstrip(';'))['streets']
         self.Xs = static()
@@ -122,8 +124,12 @@ class Backend:
         x = C.with_storm(self.Xs[[worst]], rain, api)
         base = float(predict(self.artifact, x)[0])
         references = []
-        a = x.copy(); a[0, :3] = [5, 0, 0]; references.append(('terrain slope', a))
-        a = x.copy(); a[0, 4] = 5; references.append(('terrain wetness index', a))
+        # Same references as site/js/local-model.js, by feature name.
+        for name, ref in (('terrain slope', dict(slope_deg=5, slope_max_90m=5, northness=0, eastness=0)), ('local relief', dict(relief_150m=5)),
+                          ('terrain wetness index', dict(twi=5)), ('distance to a stream', dict(dist_stream_m=500))):
+            a = x.copy()
+            for col, val in ref.items(): a[0, TERRAIN.index(col)] = val
+            references.append((name, a))
         references += [('storm rain', C.with_storm(self.Xs[[worst]], 0, api)),
                        ('antecedent wetness', C.with_storm(self.Xs[[worst]], rain, 0))]
         reasons = sorted([dict(name=name, change=base-float(predict(self.artifact, a)[0])) for name, a in references], key=lambda v: -v['change'])
