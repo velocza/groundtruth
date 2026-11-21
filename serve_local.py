@@ -1,8 +1,13 @@
-"""Loopback-only app server with a continuously running historical simulation."""
+"""App server with a continuously running historical simulation.
+
+Loopback-only by default. On a host such as Render, pass --host 0.0.0.0; the port
+comes from $PORT and the public origin from $PUBLIC_ORIGIN or $RENDER_EXTERNAL_URL.
+"""
 import argparse
 import functools
 import http.server
 import json
+import os
 from pathlib import Path
 import threading
 import urllib.request
@@ -15,9 +20,13 @@ ROOT = Path(__file__).resolve().parent
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--no-browser', action='store_true')
-    ap.add_argument('--port', type=int, default=8765)
+    ap.add_argument('--host', default=os.environ.get('HOST', '127.0.0.1'))
+    ap.add_argument('--port', type=int, default=int(os.environ.get('PORT', '8765')))
     args = ap.parse_args()
     url = f'http://127.0.0.1:{args.port}'
+    loopback = args.host in ('127.0.0.1', 'localhost', '::1')
+    public = (os.environ.get('PUBLIC_ORIGIN') or os.environ.get('RENDER_EXTERNAL_URL') or '').rstrip('/')
+    origins = {url, public} - {''}
     simulation = None
     backend = None
 
@@ -47,7 +56,7 @@ def main():
             self.wfile.write(data)
 
         def do_POST(self):
-            if self.headers.get('Origin') != url:
+            if self.headers.get('Origin') not in origins:
                 self.send_error(403); return
             if self.path == '/api/predict':
                 try:
@@ -64,14 +73,14 @@ def main():
                 self.send_json(simulation.set_paused(True))
             elif self.path == '/api/simulation/resume':
                 self.send_json(simulation.set_paused(False))
-            elif self.path == '/api/shutdown':
+            elif self.path == '/api/shutdown' and loopback:
                 self.send_json({'stopping': True})
                 threading.Thread(target=server.shutdown, daemon=True).start()
             else: self.send_error(404)
 
     handler = functools.partial(Handler, directory=str(ROOT/'site'))
     try:
-        server = http.server.ThreadingHTTPServer(('127.0.0.1', args.port), handler)
+        server = http.server.ThreadingHTTPServer((args.host, args.port), handler)
     except OSError:
         try:
             with urllib.request.urlopen(url+'/api/simulation', timeout=2) as response:
