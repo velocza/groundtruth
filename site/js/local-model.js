@@ -39,6 +39,12 @@
   function area(r72, api) {
     [r72, api] = clampStorm(r72, api);
     const key = r72 + ':' + api; if (areaCache.has(key)) return areaCache.get(key);
+    const lay = root.GTModel && root.GTModel.lsLayer && root.GTModel.lsLayer({ r72, api });
+    if (lay && lay.length === NC) {                                  // the precomputed map (model/export_landslide_layers.py), same trees to 0.4 points
+      const out = new Float32Array(NC); for (let i = 0; i < NC; i++) out[i] = lay[i] / 2.55;
+      if (areaCache.size > 3) areaCache.delete(areaCache.keys().next().value);
+      areaCache.set(key, out); return out;
+    }
     const out = new Float32Array(NC), x = new Float64Array(NF); x[SC] = r72; x[SC + 1] = api; x[SC + 2] = trig(r72, api);
     for (let i = 0; i < NC; i++) { for (let j = 0; j < SC; j++) x[j] = features[i * SC + j]; out[i] = predict(x); }
     if (areaCache.size > 3) areaCache.delete(areaCache.keys().next().value);
@@ -55,7 +61,7 @@
     if (cache.has(key)) return cache.get(key);
     const ids = root.GTModel.cellsForStreet(k);
     if (!ids.length) return null;
-    const pre = areaCache.get(r72 + ':' + api), values = []; let worst = ids[0], peak = -1;
+    const pre = areaCache.get(r72 + ':' + api) || (root.GTModel.landslide && root.GTModel.landslide() ? area(r72, api) : null), values = []; let worst = ids[0], peak = -1;
     for (const i of ids) {
       const v = pre ? pre[i] : predict(cellFeatures(i, r72, api)); values.push(v);
       if (v > peak) { peak = v; worst = i; }
@@ -84,11 +90,15 @@
   ];
   function explain(k, r72, api) {
     const s = street(k, r72, api); if (!s) return null;
+    return explainCell(s.worst, s.r72, s.api);
+  }
+  function explainCell(cell, r72, api) {
+    const s = { worst: cell, r72, api };
     const x = cellFeatures(s.worst, s.r72, s.api), baseline = predict(x);
     // Counterfactual score changes, not causal effects or additive attribution.
     const checks = REFS.filter(([, ref]) => Object.keys(ref).every(n => F(n) >= 0)).map(([name, ref]) => [name, () => { const a = x.slice(); for (const n in ref) a[F(n)] = ref[n]; return a; }])
       .concat([['storm rain', () => cellFeatures(s.worst, 0, s.api)], ['antecedent wetness', () => cellFeatures(s.worst, s.r72, 0)]]);
     return checks.map(([name, make]) => ({ name, change: baseline - predict(make()) })).sort((a, b) => b.change - a.change);
   }
-  root.GTLocalModel = { predict, cellFeatures, street, explain, area, rank, valid, cells: NC, report: A.report };
+  root.GTLocalModel = { predict, cellFeatures, street, explain, explainCell, area, rank, valid, cells: NC, report: A.report };
 })(typeof window === 'undefined' ? globalThis : window);

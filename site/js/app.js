@@ -30,7 +30,10 @@
     U.uEra.value = sc.era; U.uAmt.value = sc.amt;
     gsap.to(view, { r72: sc.r72, api: sc.api, duration: fast ? 0.15 : 0.6, ease: 'power2.out', overwrite: true,
       onUpdate() { U.uR72.value = view.r72; U.uApi.value = view.api; Sc.rain.value = Math.min(1, view.r72 / 220); } });
+    if (LSM) { const lay = Mo.lsLayer(sc); if (lay !== lsShown) { lsShown = lay; Sc.setLandslide(lay, !fast); } }   // the trained model's map for this storm
   }
+  const LSM = Mo.landslide();                                      // Lamorinda: the map, chips and backtest use the trained landslide model
+  let lsShown = null;
 
   /* ------------------------------------------------ rain record helpers (real gauges) */
   const R23 = G.rain.wy2023, RNOW = G.rain.recent;
@@ -66,7 +69,7 @@
   function hindcast(score) {                                       // score(sc) -> 0..100
     const years = {}; let el = 0, hi = 0, worst = -1, wd = 0;
     for (let y = hWY[0]; y <= hWY[HN - 1]; y++) years[y] = [0, 0];
-    const tMin = (-Mo.opts.bias - 6) / 7.1 - 0.01;                  // below this trigger the score cannot reach 50 even on the steepest, fastest cell
+    const tMin = LSM ? -1 : (-Mo.opts.bias - 6) / 7.1 - 0.01;       // placeholder: below this trigger the score cannot reach 50 even on the steepest, fastest cell
     for (let d = 0; d < HN - 3; d++) { if (hT[d] < tMin) continue; const v = score(hsc(d)); if (v > worst) { worst = v; wd = d; } if (v >= 75) { hi++; years[hWY[d]][1]++; } else if (v >= 50) { el++; years[hWY[d]][0]++; } }
     return { years, el, hi, worst, worstDate: dstr(addDays(RL.start, wd)) };
   }
@@ -390,7 +393,7 @@
   }
   const SENS = { '-6.5': 'Fewer alerts', '-5.7': 'Balanced', '-4.9': 'More alerts' };
   function setBias(b) {
-    Mo.opts.bias = b; gsap.to(U.uBias, { value: b, duration: reduce ? 0 : 0.6 });
+    Mo.opts.bias = b; gsap.to(U.uBias, { value: b, duration: reduce ? 0 : 0.6 }); gsap.to(U.uLSOff, { value: b + 6.5, duration: reduce ? 0 : 0.6 });
     $$('[data-bias]').forEach(x => x.setAttribute('aria-pressed', +x.dataset.bias === b));
     stormStats(); if (sel) renderInspector(); renderBacktest();
   }
@@ -416,6 +419,12 @@
   /* alert burden: days in the 11 year gauge record on which 100 or more buildings would sit on Elevated or High ground. The score only sees rain through T, so buildings are tabulated per T step. */
   const ALERT_BLD = 100;
   function alertDays() {
+    if (LSM) {                                                     // the model sees rain and soil wetness separately, so tabulate buildings per storm region
+      const per = new Map(), cnt = d => { const sc = hsc(d), lay = Mo.lsLayer(sc); if (!per.has(lay)) { const b = Mo.buildingsAt(sc); per.set(lay, b.el + b.hi); } return per.get(lay); };
+      const years = {}; for (let y = hWY[0]; y <= hWY[HN - 1]; y++) years[y] = 0;
+      let total = 0; for (let d = 0; d < HN - 3; d++) if (cnt(d) >= ALERT_BLD) { total++; years[hWY[d]]++; }
+      const ys = Object.keys(years); return { total, years, n: ys.length, perYear: total / ys.length, wy23: years[2023] || 0, quiet: ys.filter(y => !years[y]).length };
+    }
     const tab = new Int32Array(143).fill(-1), at = t => { const k = Math.min(142, Math.round(t * 100)); if (tab[k] < 0) { const T = k / 100, sc = T <= 0.825 ? { r72: T * 200 / 0.55, api: 0, era: 0, amt: 0 } : { r72: 300, api: (T - 0.825) * 200 / 0.45, era: 0, amt: 0 }, b = Mo.buildingsAt(sc); tab[k] = b.el + b.hi; } return tab[k]; };
     const years = {}; for (let y = hWY[0]; y <= hWY[HN - 1]; y++) years[y] = 0;
     let total = 0; for (let d = 0; d < HN - 3; d++) if (at(hT[d]) >= ALERT_BLD) { total++; years[hWY[d]]++; }
@@ -467,7 +476,7 @@
     const mo = Mo.opts.motion, bias = Mo.opts.bias, K = (m, b) => m + '|' + b;
     const get = (m, b) => { const k = K(m, b); if (!btCache[k]) { Mo.opts.motion = m; Mo.opts.bias = b; btCache[k] = backtest(); btCache[k].alerts = alertDays(); Mo.opts.motion = mo; Mo.opts.bias = bias; } return btCache[k]; };
     const key = mo;
-    const bt = get(mo, bias), o = get(mo ? 0 : 1, bias), pc = v => fmt(v * 100, v < 0.1 ? 1 : 0) + '%';
+    const bt = get(mo, bias), o = LSM ? bt : get(mo ? 0 : 1, bias), pc = v => fmt(v * 100, v < 0.1 ? 1 : 0) + '%';
     $('#btHit').textContent = bt.hits; $('#btTop').textContent = pc(bt.top); $('#btAuc').textContent = fmt(bt.auc * 10, 1);
     $('#btNull').textContent = pc(bt.nullTop);
     const roc = $('#btRoc'); roc.textContent = '';
@@ -485,8 +494,9 @@
       li.appendChild(b); ol.appendChild(li);
     }
     renderOther();
-    const verdict = bt.auc >= 0.6 && bt.hits < 5 ? 'The placeholder ranks these slopes better than chance but under-warns at this setting. Raising the sensitivity catches more slides and flags more of the map, which is the trade every warning system has to pick.' : bt.auc >= 0.6 ? 'The placeholder ranks these slopes better than chance.' : 'The placeholder does little better than chance here.';
-    $('#btNote').innerHTML = `<b>${verdict}</b> ${!REG.motion ? 'This run uses real terrain and real gauge rain only.' : `${key ? 'This run includes the simulated ground motion. With it removed' : 'This run uses real terrain and real gauge rain only. With the simulated motion added'}: ${o.hits} of 10 flagged, median rank top ${pc(o.top)}, ${fmt(o.auc * 10, 1)} in 10 against random street spots.`} Across ${bt.alerts.n} winters of gauge rain this setting would have called an alert day, meaning ${ALERT_BLD} or more buildings on Elevated or High ground, ${fmt(bt.alerts.total)} times: ${fmt(bt.alerts.wy23)} in winter 2023 and none at all in ${bt.alerts.quiet} of the winters. Slides from other winters were not collected, so alert days outside 2023 cannot be checked either way. The rain is the gauge record, so it stands in for a perfect forecast. Report dates can lag the slide, slides get reported where there are roads, and ${events.length === 10 ? 'ten' : events.length} events cannot prove a model.`;
+    const SN = LSM ? 'The landslide model' : 'The placeholder';
+    const verdict = bt.auc >= 0.6 && bt.hits < 5 ? SN + ' ranks these slopes better than chance but under-warns at this setting. Raising the sensitivity catches more slides and flags more of the map, which is the trade every warning system has to pick.' : bt.auc >= 0.6 ? SN + ' ranks these slopes better than chance.' : SN + ' does little better than chance here.';
+    $('#btNote').innerHTML = `<b>${verdict}</b> ${LSM ? 'The landslide model uses real terrain and real gauge rain only; the simulated ground motion never feeds it. None of these slides were used to train it.' : !REG.motion ? 'This run uses real terrain and real gauge rain only.' : `${key ? 'This run includes the simulated ground motion. With it removed' : 'This run uses real terrain and real gauge rain only. With the simulated motion added'}: ${o.hits} of 10 flagged, median rank top ${pc(o.top)}, ${fmt(o.auc * 10, 1)} in 10 against random street spots.`} Across ${bt.alerts.n} winters of gauge rain this setting would have called an alert day, meaning ${ALERT_BLD} or more buildings on Elevated or High ground, ${fmt(bt.alerts.total)} times: ${fmt(bt.alerts.wy23)} in winter 2023 and none at all in ${bt.alerts.quiet} of the winters. Slides from other winters were not collected, so alert days outside 2023 cannot be checked either way. The rain is the gauge record, so it stands in for a perfect forecast. Report dates can lag the slide, slides get reported where there are roads, and ${events.length === 10 ? 'ten' : events.length} events cannot prove a model.`;
   }
 
   /* ------------------------------------------------ storm briefing + exports */
@@ -511,7 +521,7 @@
     if (similar != null) { const sd = addDays(R23.start, similar), near = events.filter(e => Math.abs(e.day - similar) <= 4); out.push(`Closest day in the winter 2023 record: ${dstr(sd)} (${fmt(replaySc(similar).r72)} mm in the following 72 hours, wetness ${fmt(R23.api[similar])} mm).` + (near.length ? ` Slides reported within four days of it: ${near.map(e => e.where).join('; ')}.` : ' No slides were reported within four days of it.')); }
     if (watch.length) out.push('Watched streets:\n' + rk.all.filter(s => watch.includes(s.name)).map(s => `${s.name}: ${Math.round(s.score)} (${Mo.tier(s.score)}). ${tipText(Mo.tipStreet(s.k, sc, 50), Mo.tipStreet(s.k, sc, 75))}`).join('\n'));
     { const se = seasonStats(HN - 1); if (se.pct != null) out.push(`Season so far (gauges, to ${dstr(addDays(RL.start, HN - 1))}): ${fmt(se.total)} mm since October 1, ${fmt(se.pct)}% of the average for this date.` + (se.pct >= 150 ? ' In a season this wet, slow deep slides can move between storms. This score keys on three day rain and does not capture that.' : '')); }
-    out.push(`Limits: ${Mo.opts.motion ? 'ground motion in this run is simulated sample data' : 'this run uses real terrain and rain only, with no ground motion input'}, and the score is a placeholder formula, not a trained or validated model. Use it to see how the tool works. For real decisions follow the National Weather Service and city engineering staff.`);
+    out.push(`Limits: ${Mo.opts.motion ? 'ground motion in this run is simulated sample data' : 'this run uses real terrain and rain only, with no ground motion input'}, and ${LSM ? 'the score is the trained landslide model, a ranking learned from 1,398 USGS mapped slides that is not yet calibrated or validated as a warning' : 'the score is a placeholder formula, not a trained or validated model. Use it to see how the tool works'}. For real decisions follow the National Weather Service and city engineering staff.`);
     return out.join('\n\n');
   }
   /* five day outlook: carry soil wetness forward day by day (API_d = 0.92 x API_d-1 + rain_d, as in the gauge record) */
@@ -592,7 +602,7 @@
     if (rec.buildings_along_street.total) out.push(`${rec.buildings_along_street.on_ground_scored_elevated_or_high} of the ${rec.buildings_along_street.total} buildings along it stand on ground scored Elevated or High in this storm.`);
     { const h = rec.history_from_real_rain_since_oct_2015; out.push(`Scored against every day of real rain since October 2015, it reaches Elevated on ${h.days_scored_elevated} ${h.days_scored_elevated === 1 ? 'day' : 'days'} and High on ${h.days_scored_high}. Its worst day is ${h.worst_day} at ${h.worst_day_score}.`); }
     if (rec.reported_slides_winter_2023_within_450m.length) out.push(`Reported nearby in winter 2023: ${rec.reported_slides_winter_2023_within_450m.join(' ')}`);
-    out.push((Mo.opts.motion ? 'The ground motion input is simulated sample data' : 'This run leaves ground motion out') + ' and the score is a placeholder, so this shows how the tool works. It is not a reading of the real street. For a real concern, call your city engineering staff or a licensed geotechnical engineer.');
+    out.push((Mo.opts.motion ? 'The ground motion input is simulated sample data' : 'This run leaves ground motion out') + (LSM ? ' and the score is the trained landslide model, a ranking that is not yet calibrated. It is not an inspection of the real street.' : ' and the score is a placeholder, so this shows how the tool works. It is not a reading of the real street.') + ' For a real concern, call your city engineering staff or a licensed geotechnical engineer.');
     return out;
   }
   const msgs = $('#msgs');
@@ -691,7 +701,7 @@ End with one sentence saying what the tool results say about the ground motion i
       `${pct(aHi)} of the ground scores High (75 or more) and ${pct(aEl)} scores Elevated (50 to 75). ${fmt(bHi)} buildings stand on High ground and ${fmt(bEl)} on Elevated ground, out of ${fmt(bTot)} mapped.`];
     if (top.length) out.push('Most at risk: ' + top.map(s => `${s.name}, ${s.town} (${Math.round(s.score)}, ${bandOf(s.score)})`).join('; ') + '.');
     out.push(`What drives it: ${rainFrom}, ${Math.round(r72)} mm of rain in 72 hours on soil at a wetness index of ${Math.round(api)} mm. That rain is ${fmt(r72 / 201 * 100)}% of the worldwide 72 hour landslide threshold (Caine 1980, 201 mm). ${n ? `The real gauges saw rain and soil this wet or wetter on ${fmt(n)} of ${fmt(HN - 3)} days since October 2015.` : 'Nothing in the gauge record since October 2015 was this wet.'}`);
-    if (ml) out.push('The High and Elevated bands are the map\'s 75 and 50 cut points applied to the model score. They are not validated alert levels, and the map itself still draws the placeholder score. ' + lsValidation(false), LS_LIMIT);
+    if (ml) out.push('The High and Elevated bands are the map\'s 75 and 50 cut points applied to the model score, the same score the map draws. They are not validated alert levels. ' + lsValidation(false), LS_LIMIT);
     else out.push(PH_LIMIT);
     const d = bubble('', out, src);
     if (top.length) flyToStreet(top[0].k);
@@ -729,7 +739,7 @@ End with one sentence saying what the tool results say about the ground motion i
     const FL = REG.id === 'sf' && window.GT_FLOOD;          // San Francisco flood model (local_model_sf), saved predictions for the November 2026 storm
     if (FL && /\bflood\w*\b/i.test(q) && !findStreet(q.replace(/\bflood\w*\b/gi, ' ')).length) { floodAnswer(); return; }
     if (/\b(model|trained|training|accuracy|validation|validated|backtest|how good|how accurate)\b/i.test(q) && !findStreet(q).length) {
-      if (ml) bubble('', [].concat(lsValidation(true), 'The map, the stat chips and the backtest view still use the original placeholder formula. Ask uses this model.'), LS_SRC);
+      if (ml) bubble('', [].concat(lsValidation(true), 'The map, the stat chips, the backtest view and Ask all use this model. Alert sensitivity on the map shifts its scores up for more alerts; Ask reports the model as trained.'), LS_SRC);
       else bubble('', [REG.short + ' has no trained landslide model yet. Ask and the map use the placeholder score from real terrain and rain. The trained landslide model covers Lamorinda only, where the USGS mapped the 2016 to 2017 slides.'].concat(FL ? [floodAbout()] : []), FL ? 'San Francisco flood model · trained on SF 311 reports' : source);
       return;
     }
@@ -782,7 +792,7 @@ End with one sentence saying what the tool results say about the ground motion i
     }
     if (scored.length > 1) { const w = scored.slice().sort((a, b) => b.score - a.score)[0]; paras.push(`Of these, ${G.streets[w.k].n} scores highest.`); }
     if (FL) for (const k of ks.slice(0, 4)) { const f = FL.streets[G.streets[k].n]; if (f) paras.push(`Flood model, a separate model for street flooding: on the ${FL.meta.rain_72h_mm.toFixed(0)} mm storm of November 18, 2026, ${G.streets[k].n} scored ${f[0].toFixed(1)} / 100 and ranked ${fmt(f[1])} of ${fmt(FL.meta.n_streets)} streets (1 is the most flood-prone). A ranking, not a chance of flooding.`); }
-    if (ml && /\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('History, building counts and tipping points for a street are in the slope panel and the Storm view, which still use the placeholder score.');
+    if (ml && /\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('History, building counts and tipping points for a street are in the slope panel and the Storm view, which use the same model; tipping points are coarse because the model only tells a few rain levels apart.');
     if (ml) paras.push(lsValidation(false));
     paras.push(limit);
     const d=bubble('',paras,source);

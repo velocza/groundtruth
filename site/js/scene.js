@@ -27,7 +27,7 @@
     void main(){ vUv = uv; vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
   const FRAG = `precision highp float;
     varying vec2 vUv; varying vec3 vN; varying vec3 vW;
-    uniform sampler2D tSatA, tSatB, tTerrain, tMotion, tRoads, tBld;
+    uniform sampler2D tSatA, tSatB, tTerrain, tMotion, tRoads, tBld, tLSA, tLSB; uniform float uLS, uLSMix, uLSOff;
     uniform float uBld; uniform vec2 uGrid;
     uniform float uSplit, uSplitVis, uR72, uApi, uEra, uAmt, uRisk, uMotion, uRoads, uTime, uDim, uHiOn, uHiR, uUseMotion, uBias;
     uniform vec2 uHi; uniform vec3 uSun, uBg;
@@ -45,6 +45,7 @@
       float T = 0.55 * min(1.5, uR72 / 200.0) + 0.45 * min(1.3, uApi / 200.0);
       float z = uBias + 3.0*s + 0.8*h + 1.0*mm + 1.2*a + 3.5*T + 2.0*s*T + 1.6*mm*T;
       float idx = 1.0 / (1.0 + exp(-z));
+      if (uLS > 0.5) { float p = clamp(mix(texture2D(tLSA, vUv).r, texture2D(tLSB, vUv).r, uLSMix), 0.002, 0.998); idx = 1.0 / (1.0 + exp(-(log(p / (1.0 - p)) + uLSOff))); }   // trained landslide model (Lamorinda)
 
       vec3 sat = mix(texture2D(tSatA, vUv).rgb, texture2D(tSatB, vUv).rgb, step(uSplit, vUv.x));
       float lum = dot(sat, vec3(0.299,0.587,0.114));
@@ -100,7 +101,7 @@
 
     const I = Mo.images;
     uniforms = {
-      tSatA: { value: tex(I.s2_2023) }, tSatB: { value: tex(I.s2_2026) }, tTerrain: { value: tex(I.terrain) }, tMotion: { value: tex(I.motion) }, tRoads: { value: tex(I.roads) }, tBld: { value: tex(I.buildings || I.roads, false) }, uBld: { value: 0 }, uGrid: { value: new THREE.Vector2(Mo.NX, Mo.NY) },
+      tSatA: { value: tex(I.s2_2023) }, tSatB: { value: tex(I.s2_2026) }, tTerrain: { value: tex(I.terrain) }, tMotion: { value: tex(I.motion) }, tRoads: { value: tex(I.roads) }, tBld: { value: tex(I.buildings || I.roads, false) }, uBld: { value: 0 }, tLSA: { value: null }, tLSB: { value: null }, uLS: { value: 0 }, uLSMix: { value: 1 }, uLSOff: { value: 0 }, uGrid: { value: new THREE.Vector2(Mo.NX, Mo.NY) },
       uSplit: { value: 0 }, uSplitVis: { value: 0 }, uR72: { value: 60 }, uApi: { value: 120 }, uEra: { value: 0 }, uAmt: { value: 0 },
       uRisk: { value: 0.6 }, uMotion: { value: 0.6 }, uRoads: { value: 0 }, uTime: { value: 0 }, uDim: { value: 0 }, uHiOn: { value: 0 }, uHiR: { value: 0.012 }, uUseMotion: { value: 1 }, uBias: { value: -6.5 },
       uHi: { value: new THREE.Vector2(0.5, 0.5) }, uSun: { value: new THREE.Vector3(-0.55, 0.62, 0.35) }, uBg: { value: bg }
@@ -203,7 +204,19 @@
     return { px: p.x - d * 0.2 - sx, py: p.y + d * 0.62, pz: p.z + d * 0.82, tx: p.x - sx, ty: p.y, tz: p.z };
   }
 
-  window.GTScene = { build, cam, orbit, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
+  /* the trained model's score layer for the current storm (Uint8 per cell, rows north to south); fades from the previous one */
+  const lsTex = [];
+  function setLandslide(layer, fade) {
+    if (!uniforms || !layer) return;
+    const cv = document.createElement('canvas'); cv.width = Mo.NX; cv.height = Mo.NY; const x = cv.getContext('2d'), im = x.createImageData(Mo.NX, Mo.NY);
+    for (let i = 0; i < layer.length; i++) { const o = i * 4; im.data[o] = im.data[o + 1] = im.data[o + 2] = layer[i]; im.data[o + 3] = 255; }
+    x.putImageData(im, 0, 0); const t = tex(cv);
+    if (!lsTex.length) { uniforms.tLSA.value = uniforms.tLSB.value = t; lsTex.push(t); uniforms.uLS.value = 1; uniforms.uLSMix.value = 1; return; }
+    const prev = uniforms.tLSB.value; uniforms.tLSA.value = prev; uniforms.tLSB.value = t; uniforms.uLSMix.value = 0;
+    if (lsTex.length > 2) lsTex.shift().dispose(); lsTex.push(t);
+    if (fade && window.gsap && !reduced) gsap.to(uniforms.uLSMix, { value: 1, duration: 0.5, ease: 'power2.out', overwrite: true }); else uniforms.uLSMix.value = 1;
+  }
+  window.GTScene = { setLandslide, build, cam, orbit, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
     setReduced(v) { reduced = v; }, resize, setShift,
     project(lon, lat, lift) { const p = worldOf(lon, lat, lift || 0.05).project(camera); return p.z < 1 ? [(p.x + 1) / 2 * canvas.clientWidth, (1 - p.y) / 2 * canvas.clientHeight] : null; } };   // screen position of a place, for 2D overlays
 })();
