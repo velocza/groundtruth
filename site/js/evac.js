@@ -200,7 +200,7 @@
 
   API.register = function (a) {                            // called once from app.js: adds this view to its tables, then waits to be opened
     app = a; Mo = root.GTModel; Sc = root.GTScene; G = root.GT; U_ = root.GT_USGS;
-    if (!$('#evac') || !root.GT_ROADS || !U_) return;
+    if (!$('#evac') || !root.GT_ROADS || !U_ || (root.GT_REGION && root.GT_REGION.id !== 'lamorinda')) return;   // the road graph and the USGS clip are built for the Lamorinda box only
     a.POSES.evac = { px: -0.6, py: 11.4, pz: 11.2, tx: 0, ty: 0, tz: 0 }; a.LOOKS.evac = { risk: 0.8, motion: 0, roads: 1, splitVis: 0, dim: 0.12, bld: 0.9 };
     a.ORDER.splice(Math.max(0, a.ORDER.indexOf('method')), 0, 'evac'); a.NAMES.evac = 'Getting out'; a.SUBS.evac = 'Which homes still have a road out in this storm'; a.SPLIT.evac = 1;
     new MutationObserver(() => { const now = $('#evac').classList.contains('on'); if (now !== on) { on = now; now ? open() : close(); } }).observe($('#evac'), { attributes: true, attributeFilter: ['class'] });
@@ -396,7 +396,7 @@
       `Buildings are placed on the nearest named street. ${fmt(m.buildings_no_road)} of ${fmt(m.buildings)} (${pc(m.buildings_no_road)}) have none within ${fmt(m.max_bld_m)} m, and ${fmt(m.buildings_unlinked)} more (${pc(m.buildings_unlinked)}) sit on streets with no link to the map edge in this data. Both groups are left out, never counted as stranded.`,
       `Roads are blocked by the site's current score, which is a fixed formula and not a trained or calibrated model, read on 29 m cells along each road. A blocked road here means "scores at or above the level you picked", not a forecast that it will fail.`,
       `Debris paths are a downhill trace from the ${RUNOUT_CAP} highest-scoring cells near roads, a screening estimate of direction and reach.`,
-      `The USGS inventories are incomplete. The January 2023 one is a reconnaissance with limited staff, time and road access: ${fmt(U_.meta.y2023.inside)} of its ${fmt(U_.meta.y2023.total)} points fall in this map. The 2016-17 map was drawn from one satellite image and has no dates. A road with no mapped slide is unconfirmed, not safe.`,
+      `The USGS inventories are incomplete. The January 2023 one is a reconnaissance with limited staff, time and road access: ${fmt(U_.meta.y2023.inside)} of its ${fmt(U_.meta.y2023.total)} points ${U_.meta.y2023.inside === 1 ? 'falls' : 'fall'} in this map. The 2016-17 map was drawn from one satellite image and has no dates. A road with no mapped slide is unconfirmed, not safe.`,
       'There is no wildfire, earthquake or flood model here. The creek switch is a screening proxy and has not been checked against anything.'
     ]) { const li = document.createElement('li'); li.textContent = t; $('#evLimits').appendChild(li); }
   }
