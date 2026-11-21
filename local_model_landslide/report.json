@@ -1,0 +1,424 @@
+{
+  "area": "Lamorinda (Lafayette, Orinda, Moraga)",
+  "hazard": "landslide",
+  "labels": "USGS 2016-17 storm-season inventory (SIM 3503), 1,398 slides in the box; negatives only inside the mapped boundary",
+  "status": "experimental; uncalibrated ranking scores",
+  "data": {
+    "slides": 1398,
+    "positive_cells": 2298,
+    "mapped_cells": 214439,
+    "neg_pool": 183056,
+    "storm_mornings": [
+      [
+        "2017-01-08",
+        167.0,
+        97.7
+      ],
+      [
+        "2017-01-09",
+        116.1,
+        144.4
+      ],
+      [
+        "2017-01-10",
+        76.4,
+        173.9
+      ],
+      [
+        "2017-01-20",
+        57.4,
+        171.1
+      ],
+      [
+        "2017-01-11",
+        5.0,
+        231.5
+      ],
+      [
+        "2017-01-19",
+        61.5,
+        162.1
+      ]
+    ]
+  },
+  "features": [
+    "slope_deg",
+    "slope_max_90m",
+    "relief_150m",
+    "northness",
+    "eastness",
+    "plan_curv",
+    "prof_curv",
+    "twi",
+    "dist_stream_m",
+    "rain_72h_mm",
+    "api_mm",
+    "trigger_T"
+  ],
+  "excluded": [
+    "elevation (memorises areas)",
+    "distance to road (reporting proxy)",
+    "NDVI 2023/2026 (after the test slides)"
+  ],
+  "search_minutes": 20.0,
+  "configs_tried": 381,
+  "best_cfg": {
+    "n_trees": 300,
+    "eta": 0.05,
+    "max_depth": 3,
+    "min_leaf": 200,
+    "lam": 3.0,
+    "subsample": 0.6,
+    "colsample": 0.8,
+    "max_bins": 32
+  },
+  "best_cv": {
+    "auc": 0.8486989527128624,
+    "where": 0.8313392087898601,
+    "when": 0.9939764102542485
+  },
+  "baseline_cv": {
+    "auc": 0.8461548842619516,
+    "where": 0.8285580805593025,
+    "when": 0.9934283085223108
+  },
+  "holdout_winter2023": {
+    "tuned": {
+      "mean_share_street_spots_beaten": 0.6509090909090909,
+      "mean_land_percentile": 0.9121178894205209,
+      "events": [
+        {
+          "where": "Cedar Lane",
+          "date": "2023-01-19",
+          "rain_72h_mm": 8.0,
+          "api_mm": 264.3,
+          "beats_street_spots": 0.93,
+          "land_percentile": 0.9970074926900585
+        },
+        {
+          "where": "Pleasant Hill Road between Springhill Road and Deer Hill Roa",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.78,
+          "land_percentile": 0.977937682748538
+        },
+        {
+          "where": "Lafayette Ridge Trail",
+          "date": "2023-01-01",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.92,
+          "land_percentile": 0.9956368786549707
+        },
+        {
+          "where": "St. Mary's Road, about 300 ft south of Driftwood Drive",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.45,
+          "land_percentile": 0.8473318713450292
+        },
+        {
+          "where": "Miner Road",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.66,
+          "land_percentile": 0.9562134502923977
+        },
+        {
+          "where": "Wilder",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.3,
+          "land_percentile": 0.6251005116959064
+        },
+        {
+          "where": "57 Tarry Lane",
+          "date": "2023-02-07",
+          "rain_72h_mm": 24.8,
+          "api_mm": 66.9,
+          "beats_street_spots": 0.44,
+          "land_percentile": 0.8337490862573099
+        },
+        {
+          "where": "Bollinger Canyon Road",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.77,
+          "land_percentile": 0.9740908260233918
+        },
+        {
+          "where": "Rheem Boulevard",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.52,
+          "land_percentile": 0.8970668859649122
+        },
+        {
+          "where": "Mulholland Ridge above Camino Ricardo and Ashbrook Place",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.68,
+          "land_percentile": 0.9598638523391813
+        },
+        {
+          "where": "USGS 2023 point 117",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.71,
+          "land_percentile": 0.9692982456140351
+        }
+      ]
+    },
+    "slope_alone": {
+      "mean_share_street_spots_beaten": 0.6627272727272726,
+      "mean_land_percentile": 0.8531457668793195,
+      "events": [
+        {
+          "where": "Cedar Lane",
+          "date": "2023-01-19",
+          "rain_72h_mm": 8.0,
+          "api_mm": 264.3,
+          "beats_street_spots": 0.75,
+          "land_percentile": 0.910453216374269
+        },
+        {
+          "where": "Pleasant Hill Road between Springhill Road and Deer Hill Roa",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.67,
+          "land_percentile": 0.8826069078947368
+        },
+        {
+          "where": "Lafayette Ridge Trail",
+          "date": "2023-01-01",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.92,
+          "land_percentile": 0.9853298611111111
+        },
+        {
+          "where": "St. Mary's Road, about 300 ft south of Driftwood Drive",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.63,
+          "land_percentile": 0.8552951388888889
+        },
+        {
+          "where": "Miner Road",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.76,
+          "land_percentile": 0.9140579312865497
+        },
+        {
+          "where": "Wilder",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.63,
+          "land_percentile": 0.8521107456140351
+        },
+        {
+          "where": "57 Tarry Lane",
+          "date": "2023-02-07",
+          "rain_72h_mm": 24.8,
+          "api_mm": 66.9,
+          "beats_street_spots": 0.31,
+          "land_percentile": 0.5846125730994152
+        },
+        {
+          "where": "Bollinger Canyon Road",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.83,
+          "land_percentile": 0.9480263157894737
+        },
+        {
+          "where": "Rheem Boulevard",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.39,
+          "land_percentile": 0.6891812865497076
+        },
+        {
+          "where": "Mulholland Ridge above Camino Ricardo and Ashbrook Place",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.56,
+          "land_percentile": 0.8053088450292397
+        },
+        {
+          "where": "USGS 2023 point 117",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.84,
+          "land_percentile": 0.9576206140350877
+        }
+      ]
+    },
+    "old_4_report_model": {
+      "mean_share_street_spots_beaten": 0.5468181818181819,
+      "mean_land_percentile": 0.8476815855927697,
+      "events": [
+        {
+          "where": "Cedar Lane",
+          "date": "2023-01-19",
+          "rain_72h_mm": 8.0,
+          "api_mm": 264.3,
+          "beats_street_spots": 0.1,
+          "land_percentile": 0.5365405701754385
+        },
+        {
+          "where": "Pleasant Hill Road between Springhill Road and Deer Hill Roa",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.915,
+          "land_percentile": 0.9915021929824561
+        },
+        {
+          "where": "Lafayette Ridge Trail",
+          "date": "2023-01-01",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.05,
+          "land_percentile": 0.4119654605263158
+        },
+        {
+          "where": "St. Mary's Road, about 300 ft south of Driftwood Drive",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.445,
+          "land_percentile": 0.8592379385964912
+        },
+        {
+          "where": "Miner Road",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.8500000000000001,
+          "land_percentile": 0.9823236476608187
+        },
+        {
+          "where": "Wilder",
+          "date": "2023-01-10",
+          "rain_72h_mm": 78.4,
+          "api_mm": 215.5,
+          "beats_street_spots": 0.445,
+          "land_percentile": 0.8592379385964912
+        },
+        {
+          "where": "57 Tarry Lane",
+          "date": "2023-02-07",
+          "rain_72h_mm": 24.8,
+          "api_mm": 66.9,
+          "beats_street_spots": 0.23500000000000001,
+          "land_percentile": 0.877001096491228
+        },
+        {
+          "where": "Bollinger Canyon Road",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.895,
+          "land_percentile": 0.9879111842105263
+        },
+        {
+          "where": "Rheem Boulevard",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.785,
+          "land_percentile": 0.9775127923976609
+        },
+        {
+          "where": "Mulholland Ridge above Camino Ricardo and Ashbrook Place",
+          "date": "2023-01-11",
+          "rain_72h_mm": 73.0,
+          "api_mm": 213.6,
+          "beats_street_spots": 0.8500000000000001,
+          "land_percentile": 0.9823236476608187
+        },
+        {
+          "where": "USGS 2023 point 117",
+          "date": "2022-12-31",
+          "rain_72h_mm": 171.5,
+          "api_mm": 76.5,
+          "beats_street_spots": 0.445,
+          "land_percentile": 0.8589409722222222
+        }
+      ]
+    }
+  },
+  "feature_importance": [
+    [
+      "relief_150m",
+      0.2235
+    ],
+    [
+      "northness",
+      0.1873
+    ],
+    [
+      "rain_72h_mm",
+      0.142
+    ],
+    [
+      "plan_curv",
+      0.0877
+    ],
+    [
+      "slope_deg",
+      0.0851
+    ],
+    [
+      "slope_max_90m",
+      0.0757
+    ],
+    [
+      "api_mm",
+      0.0555
+    ],
+    [
+      "dist_stream_m",
+      0.0517
+    ],
+    [
+      "eastness",
+      0.0286
+    ],
+    [
+      "prof_curv",
+      0.0262
+    ],
+    [
+      "trigger_T",
+      0.0202
+    ],
+    [
+      "twi",
+      0.0166
+    ]
+  ],
+  "limitations": [
+    "2016-17 slides are undated within the season; storm columns are paired with the six wettest mornings.",
+    "Held-out test is 11 slides placed at street level, so a small, noisy check.",
+    "Slides under tree cover or already repaired by March 2017 can be missing from the inventory."
+  ]
+}
