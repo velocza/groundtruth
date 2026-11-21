@@ -1,0 +1,13 @@
+cgs_layer,objectid,lon,lat,geometry,area_m2,activity,type,movement_year,map_year,evidence,citation
+dc1_older_10,50738,-122.365711,37.808044,Polygon,5795.059008595,dormant,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_older_10,50741,-122.36777,37.81197,Polygon,6306.94473017,dormant,debris slide,,2000,Map I-239,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_5,3442,-122.427366,37.70579,Point,,historic,debris flow source,1982,1982,,Landslide Index 01041982 South Bay
+dc1_younger_9,8418,-122.426699,37.705414,LineString,,historic,dft,,1982,,Landslide Index 01041982 South Bay
+dc1_younger_10,50733,-122.370458,37.813458,Polygon,2615.572068055,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50734,-122.372439,37.810507,Polygon,3195.296323865,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50735,-122.371244,37.809398,Polygon,1839.97083131,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50736,-122.370621,37.809144,Polygon,2379.164273525,historic,debris slide,,2000,air photo,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50737,-122.366595,37.80767,Polygon,1431.61792451,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50739,-122.363937,37.807609,Polygon,1956.96976292,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc1_younger_10,50740,-122.363072,37.807516,Polygon,2215.060096045,historic,debris slide,,2000,air photo - wave erosion at the toe,"CGS, Seismic Hazard Zone Report 043"
+dc2_13,14746,-122.505388,37.824643,Polygon,263716.767369905,,debris flow,,,"Rice and Smith, 1976,  1:12000",CGS OFR 76-02
