@@ -1,0 +1,1818 @@
+street,neighbourhood,score,cells
+Divisadero Street,Lower Pacific Heights,82.23,89
+Oak Street,PANHANDLE,82.2,89
+Boswell Street,WESTERN ADDITION,81.56,89
+Page Street,Lower Haight,81.51,89
+Belcher Street,Duboce Triangle,81.2,89
+Hartford Street,Castro,80.6,89
+Bird Street,Mission Dolores,80.54,89
+Dearborn Street,Mission Dolores,80.54,89
+Oak Grove Street,South of Market,80.51,89
+Lapidge Street,Mission Dolores,80.42,89
+Jersey Street,Noe Valley,80.36,89
+Dorland Street,Mission Dolores,80.01,89
+Oakwood Street,Mission Dolores,79.89,89
+Elizabeth Street,Noe Valley,79.87,89
+Bush Street,Lower Nob Hill,79.68,89
+Powers Avenue,Bernal Heights,79.66,89
+Landers Street,Mission Dolores,79.46,89
+18th Street,MISSION,79.33,89
+Clara Street,South of Market,79.14,89
+Sycamore Street,Mission,79.02,89
+Emmett Court,Bernal Heights,79.01,89
+Tiffany Avenue,Bernal Heights,78.94,89
+Fair Avenue,Bernal Heights,78.79,89
+Hidalgo Terrace,Mission Dolores,78.69,89
+Germania Street,Duboce Triangle,78.53,89
+Golden Gate Avenue,Western Addition,78.51,89
+Central Avenue,Panhandle,78.42,89
+Lyell Street,Mission Terrace,78.41,89
+Still Street,Mission Terrace,78.22,89
+Alice B. Toklas Place,Tenderloin,78.14,89
+Haight Street,BUENA VISTA,77.83,89
+Shipley Street,South of Market,77.72,89
+21st Street,Mission,77.71,89
+Erie Street,Mission,77.7,89
+Danton Street,MISSION TERRACE,77.68,89
+Ramona Avenue,Mission Dolores,77.61,89
+Admiral Avenue,Mission Terrace,77.6,89
+13th Street,Mission,77.57,89
+Maxwell Court,Mission Dolores,77.43,89
+Trainor Street,Mission,77.4,89
+Rosa Parks Lane,Mission Dolores,77.39,89
+Birch Street,Hayes Valley,77.33,89
+Myrtle Street,Tenderloin,77.32,89
+Linden Street,Hayes Valley,77.28,89
+Precita Avenue,Bernal Heights,77.24,89
+McAllister Street,Western Addition,77.16,89
+Friendship Court,Western Addition,77.11,89
+Ivy Street,Hayes Valley,77.06,89
+Brady Street,South of Market,77.05,89
+Day Street,Noe Valley,77.05,89
+Ford Street,Castro,76.98,89
+Steiner Street,Lower Pacific Heights,76.97,89
+Kamille Court,Mission,76.92,89
+Treat Way,Mission,76.92,89
+Colusa Place,South of Market,76.86,89
+Geary Boulevard,Inner Richmond,76.84,89
+Hickory Street,Hayes Valley,76.8,89
+Cornwall Street,Inner Richmond,76.74,89
+Mistral Street,Mission,76.63,89
+Linda Street,Mission Dolores,76.59,89
+Rose Street,Lower Haight,76.49,89
+Broderick Street,Pacific Heights,76.47,89
+Valencia Street,Mission,76.39,89
+Ord Street,Lone Mountain,76.33,89
+Colton Street,South of Market,76.32,89
+De Montfort Avenue,Ingleside,76.29,89
+Lafayette Street,South of Market,76.13,89
+Elmwood Way,Westwood Park,76.12,89
+Faxon Avenue,Westwood Park,76.12,89
+Congdon Street,Mission Terrace,76.09,89
+McCoppin Street,South of Market,76.03,89
+26th Street,Mission,76.01,89
+Isis Street,South of Market,76.0,89
+Olive Street,Tenderloin,75.99,89
+Fern Street,Cathedral Hill,75.97,89
+29th Street,Noe Valley,75.94,89
+Kearny Street,Chinatown,75.91,89
+Kingston Street,Bernal Heights,75.8,89
+Octavia Boulevard,Lower Haight,75.77,89
+Brosnan Street,Mission Dolores,75.72,89
+Otis Street,South of Market,75.62,89
+Trumbull Street,Mission Terrace,75.58,89
+Julian Avenue,Mission,75.56,89
+Polk Street,Polk Gulch,75.56,89
+Florida Street,Mission,75.54,89
+Wilder Street,Glen Park,75.42,89
+Shrader Street,Cole Valley,75.38,89
+Hermann Street,Duboce Triangle,75.37,89
+Lily Street,LOWER HAIGHT,75.35,89
+Pearl Street,Mint Hill,75.35,89
+Continuum Way,Civic Center,75.34,89
+Elgin Park,Mint Hill,75.32,89
+Carrie Street,Glen Park,75.31,89
+Cook Street,Lone Mountain,75.28,89
+Dr. Carlton B. Goodlett Place,Civic Center,74.92,89
+Parker Avenue,Lone Mountain,74.86,89
+Clinton Park,Mission Dolores,74.81,89
+Pacific Avenue,Pacific Heights,74.7,89
+Camellia Avenue,Mission Terrace,74.63,89
+Bernice Street,Mission,74.59,89
+30th Street,Fairmount,74.55,89
+Hancock Street,Dolores Heights,74.55,89
+12th Avenue,Inner Sunset,74.54,89
+15th Street,Mission,74.54,89
+Cole Street,Cole Valley,74.53,89
+Thomas Avenue,Mission,74.47,89
+Bartlett Street,Mission,74.39,89
+Grove Street,Alamo Square,74.39,89
+Beaumont Avenue,Lone Mountain,74.38,89
+Beulah Street,Cole Valley,74.38,89
+Pine Street,POLK GULCH,74.32,89
+Lawton Street,Outer Sunset,74.26,89
+Leo Street,Cayuga,74.24,89
+Dorado Terrace,Mt. Davidson Manor,74.23,89
+Scott Street,PACIFIC HEIGHTS,74.22,89
+Sparrow Street,Mission,74.2,89
+Sharon Street,Mission Dolores,74.19,89
+Vallejo Street,Polk Gulch,74.16,89
+19th Street,Mission,74.15,89
+14th Street,Mission Dolores,74.13,89
+Cyril Magnin Street,Downtown / Union Square,74.13,89
+Bell Court,Inner Richmond,74.11,89
+Brompton Avenue,Glen Park,74.07,89
+Mariposa Street,Potrero Hill,74.05,89
+Pierce Street,Pacific Heights,74.05,89
+San Carlos Street,Mission,74.05,89
+Redwood Street,Civic Center,74.03,89
+Fell Street,Alamo Square,74.01,89
+Irving Street,Outer Sunset,73.98,89
+Duboce Avenue,Duboce Triangle,73.95,89
+Merchant Street,CHINATOWN,73.79,89
+Walter Street,Duboce Triangle,73.77,89
+Pond Street,Castro,73.71,89
+Kissling Street,SOUTH OF MARKET,73.69,89
+Guerrero Street,Mission Dolores,73.68,89
+Hilton Street,APPAREL CITY,73.67,89
+Plum Street,South of Market,73.55,89
+11th Street,SOUTH OF MARKET,73.54,89
+London Street,Excelsior,73.54,89
+Post Street,Cathedral Hill,73.51,89
+24th Avenue,Outer Sunset,73.45,89
+Davidson Avenue,CENTRAL WATERFRONT,73.44,89
+Marengo Street,Apparel City,73.44,89
+Waterloo Street,Apparel City,73.44,89
+Sutter Street,Cathedral Hill,73.43,89
+Ruth Street,Cayuga,73.42,89
+Granada Avenue,Ingleside,73.37,89
+Pilgrim Avenue,Mission Terrace,73.35,89
+Drumm Street,Financial District,73.32,89
+Gloria Court,Cayuga,73.29,89
+Bayshore Boulevard,Portola,73.25,89
+Charles J. Brenham Place,Tenderloin,73.25,89
+Rotteck Street,St. Mary's Park,73.25,89
+Bryant Street,Showplace Square,73.24,89
+Henry Adams Street,Showplace Square,73.24,89
+Thor Avenue,Glen Park,73.22,89
+Rickard Street,Portola,73.21,89
+12th Street,SOUTH OF MARKET,73.19,89
+Brook Street,Bernal Heights,73.16,89
+Freelon Street,South of Market,73.14,89
+Jordan Avenue,Laurel Heights / Jordan Park,73.07,89
+Van Ness Avenue,Polk Gulch,73.06,89
+Ahern Way,South of Market,73.04,89
+Laussat Street,LOWER HAIGHT,73.04,89
+Valley Street,Noe Valley,73.04,89
+Eureka Street,Eureka Valley,73.0,89
+Rousseau Street,St. Mary's Park,73.0,89
+Saint Joseph's Avenue,Anza Vista,72.99,89
+Burns Place,SOUTH OF MARKET,72.98,89
+San Gabriel Avenue,Mission Terrace,72.93,89
+Seymour Street,Western Addition,72.92,89
+Colonial Way,MISSION TERRACE,72.91,89
+Grace Street,South of Market,72.87,89
+Lexington Street,Mission,72.87,89
+Larch Street,Cathedral Hill,72.86,89
+Willow Street,Cathedral Hill,72.78,89
+Albion Street,Mission Dolores,72.77,89
+Clay Street,Polk Gulch,72.73,89
+Loomis Street,Apparel City,72.63,89
+Badger Street,Mission Terrace,72.58,89
+Gorham Street,Mission Terrace,72.58,89
+Palm Avenue,Inner Richmond,72.55,89
+Cesar Chavez Street,Peralta Heights,72.4,89
+Dolores Street,Dolores Heights,72.3,89
+Lloyd Street,Duboce Triangle,72.27,89
+Virgil Street,Mission,72.27,89
+Judah Street,Outer Sunset,72.26,89
+Baker Street,Pacific Heights,72.19,89
+Filbert Street,Union Street,72.16,89
+Tingley Street,Mission Terrace,72.16,89
+Hoff Street,Mission,71.97,89
+Wiese Street,Mission,71.97,89
+Fair Oaks Street,Dolores Heights,71.96,89
+Norfolk Street,South of Market,71.88,89
+Webster Street,Japantown,71.81,89
+Barneveld Avenue,Apparel City,71.77,89
+Custer Avenue,Central Waterfront,71.75,89
+Hugo Street,Inner Sunset,71.75,89
+Blake Street,Lone Mountain,71.74,89
+Treat Avenue,Mission,71.66,89
+Storrie Street,Eureka Valley,71.47,89
+Industrial Street,Apparel City,71.43,89
+Cuvier Street,St. Mary's Park,71.41,89
+Chattanooga Street,Dolores Heights,71.39,89
+Sansome Street,North Beach,71.38,89
+Pixley Street,Union Street,71.36,89
+Welsh Street,South of Market,71.32,89
+Bluxome Street,South of Market,71.29,89
+Ellis Street,Cathedral Hill,71.24,89
+Mission Street,Noe Valley,71.24,89
+Prosper Street,Castro,71.21,89
+Harrison Street,Showplace Square,71.18,89
+Capp Street,Mission,71.16,89
+Jackson Street,Pacific Heights,71.12,89
+Palm Lane,Mint Hill,71.06,89
+Funston Avenue,Inner Sunset,71.04,89
+Vandewater Street,NORTH BEACH,70.97,89
+Ney Street,Mission Terrace,70.89,89
+Frederick Street,Cole Valley,70.81,89
+Harriet Street,South of Market,70.8,89
+Lippard Avenue,Glen Park,70.8,89
+Hollis Street,Western Addition,70.79,89
+Juniper Street,South of Market,70.76,89
+Stoneybrook Avenue,Mission Terrace,70.75,89
+Amazon Avenue,Excelsior,70.72,89
+Arguello Boulevard,Presidio Terrace,70.7,89
+Palace Drive,Marina,70.69,89
+Camp Street,Mission Dolores,70.64,89
+Grant Avenue,Chinatown,70.63,89
+Liberty Street,Dolores Heights,70.63,89
+Nantucket Avenue,Mission Terrace,70.58,89
+Larch Way,Western Addition,70.55,89
+Sacramento Street,Pacific Heights,70.54,89
+Columbus Avenue,North Beach,70.5,89
+Plymouth Avenue,Ingleside,70.5,89
+Mason Street,Union Street,70.47,89
+Sunrise Way,Sunnydale,70.47,89
+Chula Lane,Mission Dolores,70.45,89
+Circular Avenue,Sunnyside,70.43,89
+Abbey Street,Mission Dolores,70.4,89
+Malosi Street,Sunnydale,70.38,89
+Patterson Street,Apparel City,70.37,89
+Alabama Street,Mission,70.35,89
+17th Street,Mission,70.32,89
+Hemway Terrace,Lone Mountain,70.32,89
+Santa Marina Street,Holly Park,70.3,89
+Dorman Avenue,Apparel City,70.2,89
+Peter Yorke Way,CATHEDRAL HILL,70.18,89
+27th Street,Noe Valley,70.14,89
+Adair Street,Mission,70.12,89
+Gorgas Avenue,Presidio National Park,70.11,89
+Lombard Street,Marina,70.11,89
+Washington Street,Polk Gulch,70.08,89
+Milton Street,St. Mary's Park,70.05,89
+Falmouth Street,South of Market,70.04,89
+Annie Street,South of Market,70.01,89
+Washburn Street,South of Market,70.0,89
+Holyoke Street,Portola,69.96,89
+Wetmore Street,Nob Hill,69.96,89
+Paradise Avenue,Glen Park,69.95,89
+Girard Road,Marina,69.94,89
+Morrell Place,Nob Hill,69.94,89
+Osage Alley,Mission,69.94,89
+Brannan Street,South of Market,69.93,89
+Commercial Street,Chinatown,69.91,89
+Cabrillo Street,Outer Richmond,69.8,89
+Starr King Way,CATHEDRAL HILL,69.8,89
+Dr. Tom Waddell Place,Civic Center,69.78,89
+Alameda Street,Showplace Square,69.74,89
+Coleridge Street,Bernal Heights,69.73,89
+Valparaiso Street,Russian Hill,69.72,89
+Osgood Place,North Beach,69.71,89
+Boutwell Street,Apparel City,69.69,89
+Division Street,Showplace Square,69.67,89
+Shotwell Street,Mission,69.64,89
+Capistrano Avenue,Mission Terrace,69.63,89
+Fresno Street,North Beach,69.63,89
+Romolo Place,North Beach,69.63,89
+Flower Street,Apparel City,69.62,89
+Townsend Street,South of Market,69.61,89
+Alemany Boulevard,Cayuga,69.58,89
+Long Bridge Street,Mission Bay,69.58,89
+Elm Street,Cathedral Hill,69.55,89
+Wanda Street,Cayuga,69.55,89
+Collingwood Street,Eureka Valley,69.46,89
+Front Street,Northern Waterfront,69.43,89
+Battery Street,Northern Waterfront,69.4,89
+Columbia Square Street,South of Market,69.39,89
+Hattie Street,Eureka Valley,69.36,89
+Bosworth Street,Glen Park,69.32,89
+Vicksburg Street,NOE VALLEY,69.29,89
+Burnside Avenue,Glen Park,69.27,89
+Owens Street,Mission Bay,69.27,89
+Danvers Street,Eureka Valley,69.25,89
+Geary Street,Tenderloin,69.25,89
+26th Avenue,Outer Sunset,69.18,89
+South Van Ness Avenue,Mission,69.17,89
+Bancroft Avenue,Bayview,69.16,89
+Castle Manor Avenue,Mission Terrace,69.15,89
+Richardson Avenue,Marina,69.1,89
+Commonwealth Avenue,Laurel Heights / Jordan Park,69.09,89
+Orben Place,Pacific Heights,69.06,89
+Cypress Street,Mission,69.04,89
+Gough Street,CATHEDRAL HILL,69.03,89
+Castro Street,Eureka Valley,69.01,89
+Norton Street,Mission Terrace,69.0,89
+Natick Street,Glen Park,68.96,89
+Paulding Street,Mission Terrace,68.95,89
+Larkin Street,Polk Gulch,68.92,89
+Market Street,Mission Dolores,68.92,89
+Fillmore Street,Pacific Heights,68.85,89
+Elk Street,Glen Park,68.78,89
+Lilac Street,Mission,68.73,89
+Santa Rosa Avenue,Mission Terrace,68.73,89
+30th Avenue,Outer Sunset,68.7,89
+Caselli Avenue,Eureka Valley,68.7,89
+Ellington Avenue,Outer Mission,68.7,89
+Armstrong Avenue,Bayview,68.62,89
+Urbano Drive,Ingleside Terraces,68.62,89
+Henry Street,Duboce Triangle,68.61,89
+Folsom Street,Mission,68.59,89
+Leidesdorff Street,Financial District,68.56,89
+4th Avenue,Inner Richmond,68.55,89
+23rd Avenue,Outer Sunset,68.53,89
+Justin Drive,St. Mary's Park,68.53,89
+Laskie Street,South of Market,68.52,89
+Southwood Drive,Westwood Park,68.52,89
+Surrey Street,Glen Park,68.48,89
+Florentine Street,Crocker Amazon,68.46,89
+Chilton Avenue,Glen Park,68.38,89
+Mabini Street,South of Market,68.38,89
+2nd Avenue,Inner Richmond,68.36,89
+Davis Street,Financial District,68.34,89
+Tandang Sora Street,South of Market,68.32,89
+20th Street,Mission,68.25,89
+Sierra Street,Potrero Hill,68.25,89
+24th Street,Mission,68.24,89
+Corinne Woods Way,Mission Bay,68.24,89
+Rolph Street,Crocker Amazon,68.23,89
+Masonic Avenue,Western Addition,68.21,89
+Stanyan Street,Golden Gate Park,68.2,89
+McCormick Street,Nob Hill,68.18,89
+1st Street,South of Market,68.17,89
+Prague Street,Crocker Amazon,68.09,89
+Main Street,Financial District,68.05,89
+Beaver Street,Corona Heights,68.02,89
+28th Street,Noe Valley,67.99,89
+Texas Street,Potrero Hill,67.99,89
+Velasco Avenue,Sunnydale,67.96,89
+Claremont Boulevard,WEST PORTAL,67.91,89
+San Juan Avenue,Mission Terrace,67.89,89
+Woolsey Street,Portola,67.88,89
+Buchanan Street,Japantown,67.87,89
+Geneva Avenue,Excelsior,67.87,89
+Theresa Street,Mission Terrace,67.81,89
+Naples Street,Excelsior,67.8,89
+Chancery Lane,Cayuga,67.79,89
+5th Street,South of Market,67.71,89
+Annapolis Terrace,Lone Mountain,67.68,89
+Sherman Street,South of Market,67.68,89
+Gaven Street,Portola,67.63,89
+Farragut Avenue,Outer Mission,67.61,89
+New Montgomery Street,Financial District,67.6,89
+Indiana Street,Central Waterfront,67.58,89
+3rd Street,Central Waterfront,67.55,89
+Cayuga Avenue,Cayuga,67.55,89
+Langton Street,South of Market,67.54,89
+Maynard Street,Mission Terrace,67.5,89
+22nd Street,Mission,67.48,89
+Fremont Street,South of Market,67.48,89
+Cumberland Street,MISSION DOLORES,67.46,89
+Steuart Street,Financial District,67.46,89
+De Soto Street,Ingleside Terraces,67.42,89
+Turk Street,Cathedral Hill,67.42,89
+Angelo's Alley,South of Market,67.4,89
+Onondaga Avenue,CAYUGA,67.36,89
+Junior Terrace,Cayuga,67.31,89
+Walter U. Lum Place,Chinatown,67.3,89
+Hahn Street,Visitacion Valley,67.29,89
+Italy Avenue,Excelsior,67.22,89
+California Street,Lower Pacific Heights,67.21,89
+Stockton Street,Chinatown,67.14,89
+Merritt Street,Eureka Valley,67.08,89
+Berwick Place,South of Market,67.04,89
+Stevenson Street,South of Market,67.02,89
+Homestead Street,Upper Market,66.95,89
+Grattan Street,Ashbury Heights,66.92,89
+Tubbs Street,Central Waterfront,66.89,89
+Cleveland Street,South of Market,66.88,89
+10th Street,SOUTH OF MARKET,66.81,89
+Zoe Street,South of Market,66.77,89
+Mission Bay Drive,Mission Bay,66.76,89
+Burke Avenue,India Basin,66.68,89
+Moulton Street,Union Street,66.64,89
+Mrs. Jackson Way,Sunnydale,66.63,89
+Presidio Avenue,LAUREL HEIGHTS / JORDAN PARK,66.63,89
+Fairfield Way,Mt. Davidson Manor,66.61,89
+Jasper Place,North Beach,66.6,89
+Julia Street,South of Market,66.59,89
+Marin Street,Central Waterfront,66.58,84
+Santa Ysabel Avenue,Mission Terrace,66.58,89
+Channel Street,Mission Bay,66.57,89
+Sanchez Street,Dolores Heights,66.55,89
+O'Farrell Street,Japantown,66.51,89
+Park Presidio Boulevard,Inner Richmond,66.5,89
+Powell Street,Russian Hill,66.47,89
+Munich Street,Crocker Amazon,66.43,89
+Gene Friend Way,Mission Bay,66.42,89
+Beale Street,South of Market,66.4,89
+Stoneridge Lane,Crocker Amazon,66.32,89
+Church Street,Dolores Heights,66.31,89
+Berry Street,Mission Bay,66.28,89
+Carl Street,Parnassus Heights,66.25,89
+23rd Street,Mission,66.24,89
+Anza Street,INNER RICHMOND,66.23,89
+Felton Street,University Mound,66.23,89
+Howard Street,South of Market,66.23,89
+Stoneyford Avenue,Mission Terrace,66.21,89
+Minnesota Street,Dogpatch,66.17,89
+Tehama Street,South of Market,66.16,89
+Boardman Place,South of Market,66.12,89
+Rizal Street,South of Market,66.11,89
+Sunnydale Avenue,Sunnydale,66.03,89
+Tapia Drive,Parkmerced,66.01,89
+Swiss Avenue,Glen Park,66.0,89
+Bannam Place,North Beach,65.92,89
+Marsily Street,St. Mary's Park,65.88,89
+Wood Street,Lone Mountain,65.88,89
+Norwich Street,Bernal Heights,65.87,89
+Tennessee Street,Dogpatch,65.86,89
+6th Street,South of Market,65.85,89
+Hayes Street,Alamo Square,65.85,89
+Sola Avenue,Forest Hill,65.84,89
+Franklin Street,Pacific Heights,65.81,89
+Alma Street,Ashbury Heights,65.8,89
+Broadway,Nob Hill,65.77,89
+Cyrus Place,Nob Hill,65.77,89
+22nd Avenue,Outer Sunset,65.76,89
+Merrimac Street,Mission Bay,65.76,89
+Earl Gage Jr. Street,Western Addition,65.72,89
+Newton Street,Crocker Amazon,65.72,89
+Corona Street,Ingleside Terraces,65.7,89
+Gallagher Lane,South of Market,65.55,89
+Seneca Avenue,Cayuga,65.55,89
+Russia Avenue,Excelsior,65.51,89
+Plaza Street,Forest Hill,65.5,89
+Bannock Street,Cayuga,65.46,89
+Keystone Way,Mt. Davidson Manor,65.41,89
+Mission Bay Boulevard North,Mission Bay,65.41,89
+Hallam Street,South of Market,65.39,89
+MacArthur Avenue,Marina,65.34,89
+Toledo Way,Marina,65.34,89
+Arthur Avenue,Central Waterfront,65.33,79
+Costa Street,PERALTA HEIGHTS,65.33,89
+Hamilton Street,Portola,65.3,89
+Evans Avenue,Bayview,65.29,89
+Calgary Street,Sunnydale,65.27,89
+Clement Street,Outer Richmond,65.27,89
+Hubbell Street,Mission Bay,65.23,89
+Nueva Avenue,Little Hollywood,65.23,89
+Prado Street,Marina,65.19,89
+Harrington Street,Mission Terrace,65.16,89
+Rodgers Street,South of Market,65.15,89
+Lapu Lapu Street,South of Market,65.12,89
+Cambridge Street,University Mound,65.11,89
+Sadowa Street,Oceanview,65.06,89
+Karen Court,Portola,65.05,89
+Spear Street,Financial District,65.05,89
+Horace Street,Mission,65.04,89
+Egbert Avenue,Bret Harte,65.02,89
+Cushman Street,Nob Hill,65.0,89
+Grote Place,RINCON HILL,64.99,89
+Alvarado Street,Noe Valley,64.97,89
+Amherst Street,UNIVERSITY MOUND,64.95,89
+Daggett Street,Mission Bay,64.94,89
+Emerson Street,Laurel Heights / Jordan Park,64.93,89
+Stillman Street,South of Market,64.93,89
+Saint Mary's Avenue,St. Mary's Park,64.92,89
+Dorchester Way,Laguna Honda,64.91,89
+Laurel Street,Laurel Heights / Jordan Park,64.87,89
+18th Avenue,Inner Sunset,64.86,89
+Macondray Lane,RUSSIAN HILL,64.85,89
+25th Street,Mission,64.84,89
+Apparel Way,Apparel City,64.84,89
+Santa Ynez Avenue,Mission Terrace,64.83,89
+Navajo Avenue,Cayuga,64.81,89
+Athens Street,Excelsior,64.79,89
+Ridge Court,Sunnydale,64.79,89
+De Haro Street,Potrero Hill,64.75,89
+B Street,Mission Bay,64.73,89
+Craut Street,Mission Terrace,64.71,89
+Parque Drive,Sunnydale,64.71,89
+Sawyer Street,Visitacion Valley,64.69,89
+Warner Place,Russian Hill,64.68,89
+Lakewood Avenue,Mt. Davidson Manor,64.67,89
+Desmond Street,Visitacion Valley,64.64,89
+Girard Street,Portola,64.59,89
+Minna Street,South of Market,64.55,89
+Waverly Place,CHINATOWN,64.55,89
+Octavia Street,Cathedral Hill,64.51,89
+Burrows Street,University Mound,64.47,89
+Moss Street,South of Market,64.42,89
+Perry Street,South of Market,64.39,89
+Clementina Street,South of Market,64.33,89
+Allen Street,Russian Hill,64.32,89
+Delgado Place,RUSSIAN HILL,64.32,89
+Francisco Street,Russian Hill,64.32,89
+Russell Street,Russian Hill,64.32,89
+Sproule Lane,Nob Hill,64.31,89
+Rivoli Street,Ashbury Heights,64.3,89
+Cross Street,Crocker Amazon,64.29,89
+Rio Verde Street,Sunnydale,64.29,89
+Accacia Street,Sunnydale,64.27,89
+Missouri Street,Potrero Hill,64.26,89
+Hearst Avenue,Sunnyside,64.25,89
+Moultrie Street,Bernal Heights,64.25,89
+Giants Drive,Bret Harte,64.23,89
+Argonaut Avenue,Visitacion Valley,64.22,89
+Burr Avenue,Visitacion Valley,64.22,89
+Yukon Street,Eureka Valley,64.22,89
+Iowa Street,Central Waterfront,64.1,89
+Anderson Street,Bernal Heights,64.08,89
+Gilman Avenue,Bret Harte,64.05,89
+Van Dyke Avenue,Bayview,64.05,89
+Rausch Street,South of Market,64.01,89
+Russ Street,South of Market,64.01,89
+Andover Street,Holly Park,63.98,89
+Faith Street,Peralta Heights,63.95,89
+Laguna Street,Japantown,63.95,89
+Lawrence Avenue,Outer Mission,63.92,89
+Avila Street,Marina,63.91,89
+Talbert Street,Visitacion Valley,63.91,89
+Hill Street,Dolores Heights,63.9,89
+Lathrop Avenue,Little Hollywood,63.83,89
+7th Street,South of Market,63.82,89
+Belvedere Street,Cole Valley,63.82,89
+Edna Street,Sunnyside,63.82,89
+Midway Street,Fisherman's Wharf,63.78,89
+Ringold Street,South of Market,63.76,89
+Randall Street,Fairmount,63.75,89
+Pinto Avenue,Parkmerced,63.71,89
+North Point Street,AQUATIC PARK / FT. MASON,63.7,89
+King Street,Mission Bay,63.69,89
+Nibbi Court,Little Hollywood,63.68,89
+Arlington Street,Fairmount,63.67,89
+Alpine Terrace,Buena Vista,63.63,89
+Habitat Terrace,Oceanview,63.61,89
+Butte Place,South of Market,63.54,89
+Paris Street,Excelsior,63.54,89
+Ocean Avenue,Mt. Davidson Manor,63.49,89
+Marvel Court,Outer Richmond,63.46,89
+Mars Street,Eureka Valley,63.45,89
+Blanken Avenue,Little Hollywood,63.31,89
+Bessie Street,Bernal Heights,63.3,89
+Francis Street,Mission Terrace,63.29,89
+Newhall Street,Bayview,63.28,89
+8th Street,South of Market,63.27,89
+Guy Place,RINCON HILL,63.24,89
+Newcomb Avenue,Bayview,63.23,89
+Taber Place,SOUTH BEACH,63.22,89
+Oakdale Avenue,Silver Terrace,63.16,89
+Cotter Street,Mission Terrace,63.14,89
+Lusk Street,South of Market,63.13,89
+Rome Street,Outer Mission,63.13,89
+Bartol Street,North Beach,63.07,89
+31st Avenue,Outer Sunset,63.05,89
+Gillette Avenue,LITTLE HOLLYWOOD,63.04,89
+Laguna Honda Boulevard,Forest Hill,63.01,89
+Tocoloma Avenue,Little Hollywood,62.99,89
+Stockton Tunnel,Chinatown,62.95,89
+Chestnut Street,Marina,62.94,89
+Alhambra Street,Marina,62.93,89
+McCarthy Avenue,Visitacion Valley,62.92,89
+Palou Avenue,Silver Terrace,62.88,89
+Brotherhood Way,Lakeshore,62.87,89
+Jessie Street,SOUTH OF MARKET,62.87,89
+Thomas More Way,Lakeshore,62.87,89
+Winston Drive,Stonestown,62.87,89
+Buckingham Way,Stonestown,62.86,89
+Borica Street,Ingleside Terraces,62.84,89
+Natoma Street,South of Market,62.8,89
+Edward Street,Lone Mountain,62.75,89
+Green Street,RUSSIAN HILL,62.72,89
+Irwin Street,Showplace Square,62.71,89
+Medau Place,NORTH BEACH,62.71,89
+Roanoke Street,Glen Park,62.69,89
+Stanyan Boulevard,Lone Mountain,62.6,89
+Eastman Place,Russian Hill,62.56,89
+Jennings Street,Bayview,62.55,89
+Yale Street,University Mound,62.54,89
+Bitting Avenue,Bayview,62.42,89
+Lydia Avenue,Bayview,62.42,89
+Harper Street,Fairmount,62.36,89
+Peninsula Avenue,Little Hollywood,62.23,89
+Essex Street,Rincon Hill,62.19,89
+Mallorca Way,Marina,62.17,89
+Entrada Court,INGLESIDE TERRACES,62.13,89
+West Portal Avenue,West Portal,62.12,89
+5th Avenue,Inner Sunset,62.11,89
+Donner Avenue,Bret Harte,62.1,89
+Wallace Avenue,Bayview,61.96,89
+Bennington Street,Holly Park,61.94,89
+Sheridan Street,South of Market,61.94,89
+Arellano Avenue,Parkmerced,61.93,89
+Calhoun Terrace,Telegraph Hill,61.92,89
+Garrison Avenue,Visitacion Valley,61.92,89
+Melra Court,Visitacion Valley,61.88,89
+Bacon Street,Portola,61.86,89
+Lucky Street,Mission,61.85,89
+Rey Street,Visitacion Valley,61.79,89
+Magnolia Street,Marina,61.77,89
+Ashbury Street,Haight Ashbury,61.76,89
+Nelson Rising Lane,Mission Bay,61.76,89
+Princeton Street,University Mound,61.72,89
+Benton Avenue,St. Mary's Park,61.67,89
+Arago Street,Mission Terrace,61.66,89
+Worcester Avenue,Merced Heights,61.65,89
+Mayfair Drive,Laurel Heights / Jordan Park,61.63,89
+Oriente Street,Sunnydale,61.6,89
+Delancey Street,South Beach,61.48,89
+Spruce Street,Laurel Heights / Jordan Park,61.46,89
+University Street,University Mound,61.46,89
+Varney Place,South Beach,61.44,89
+Chumasero Drive,Parkmerced,61.43,89
+Locust Street,Presidio Heights,61.4,89
+Mendell Street,Bayview,61.38,89
+Madrone Avenue,West Portal,61.37,89
+Goettingen Street,Portola,61.36,89
+Ingerson Avenue,Bret Harte,61.35,89
+Montgomery Street,Russian Hill,61.34,89
+Greenwich Street,Russian Hill,61.31,89
+Bocana Street,Bernal Heights,61.24,89
+Chain of Lakes Drive West,GOLDEN GATE PARK,61.23,89
+Flood Avenue,Sunnyside,61.17,89
+Fitzgerald Avenue,Bret Harte,61.16,89
+Taraval Street,Parkside,61.16,89
+Ogden Avenue,Bernal Heights,61.14,89
+Palmetto Avenue,Merced Heights,61.08,89
+Jack London Alley,South Beach,61.07,89
+South Park,South Beach,61.07,89
+Waller Street,Buena Vista,61.06,89
+Dore Street,South of Market,61.04,89
+Key Avenue,Bret Harte,60.99,89
+Redondo Street,Bret Harte,60.99,89
+Terra Vista Avenue,Anza Vista,60.98,89
+Prentiss Street,Bernal Heights,60.93,89
+Pueblo Street,Sunnydale,60.93,89
+Oxford Street,University Mound,60.92,89
+Mount Vernon Avenue,Cayuga,60.91,89
+Mission Bay Boulevard,Mission Bay,60.89,89
+Serrano Drive,Parkmerced,60.83,89
+Spear Avenue,Hunters Point,60.82,89
+Lincoln Way,Outer Sunset,60.78,89
+Union Street,Polk Gulch,60.72,89
+Westpark Drive,Lakeshore,60.72,89
+Ellert Street,Holly Park,60.66,89
+Font Boulevard,Parkmerced,60.65,89
+Maiden Lane,DOWNTOWN / UNION SQUARE,60.61,89
+Capra Way,Marina,60.58,89
+Steuart Lane,Financial District,60.57,86
+Meda Avenue,Cayuga,60.56,89
+34th Avenue,Outer Sunset,60.55,89
+Hawthorne Street,South of Market,60.55,89
+Eagle Street,Eureka Valley,60.53,89
+Cordova Street,Crocker Amazon,60.51,89
+Hale Street,Portola,60.51,89
+17th Avenue,Inner Sunset,60.46,89
+Carroll Avenue,Bayview,60.46,89
+Sagamore Street,Oceanview,60.45,89
+Seville Street,Crocker Amazon,60.44,89
+Otsego Avenue,Mission Terrace,60.41,89
+Schwerin Street,Visitacion Valley,60.4,89
+Crissy Field Avenue,Presidio National Park,60.36,89
+Santos Street,Sunnydale,60.32,89
+Cochrane Street,Hunters Point,60.31,89
+Lucy Street,Silver Terrace,60.29,89
+Young Court,Lone Mountain,60.25,89
+Mangels Avenue,Sunnyside,60.2,89
+Phelps Street,Bayview,60.17,89
+Prospect Avenue,Bernal Heights,60.16,89
+Kirkham Street,Outer Sunset,60.11,89
+Murray Street,St. Mary's Park,60.09,89
+The Embarcadero,Northern Waterfront,60.09,89
+Hampshire Street,Mission,60.05,89
+Mission Bay Boulevard South,Mission Bay,60.05,89
+Del Monte Street,Cayuga,60.03,89
+Pennsylvania Avenue,Potrero Hill,60.01,89
+Lakeview Drive,Lakeshore,60.0,89
+Lyndhurst Drive,Stonestown,59.98,89
+Martha Avenue,Miraloma Park,59.92,89
+Peabody Street,Visitacion Valley,59.9,89
+Davis Court,Northern Waterfront,59.87,89
+Edie Road,Presidio National Park,59.87,89
+Hoffman Avenue,Upper Market,59.87,89
+De Wolf Street,Outer Mission,59.81,89
+Mercury Street,Silver Terrace,59.81,89
+Genoa Place,Telegraph Hill,59.78,89
+Varennes Street,North Beach,59.78,89
+College Avenue,St. Mary's Park,59.76,89
+Forest Side Avenue,West Portal,59.73,89
+Oceanview Terrace,Merced Heights,59.72,89
+Harvard Street,University Mound,59.7,89
+Fulton Street,Inner Richmond,59.69,89
+Hamerton Avenue,Sunnyside,59.67,89
+Chain of Lakes Drive,GOLDEN GATE PARK,59.64,89
+West Pacific Avenue,PRESIDIO HEIGHTS,59.64,89
+Flint Street,Corona Heights,59.63,89
+Temple Street,Corona Heights,59.63,89
+Nido Avenue,Anza Vista,59.62,89
+Randolph Street,Merced Heights,59.6,89
+Jeff Adachi Way,South of Market,59.58,89
+Mission Bay Circle,Mission Bay,59.56,89
+Ottawa Avenue,Outer Mission,59.53,89
+Silliman Street,Portola,59.52,89
+Banks Street,Bernal Heights,59.5,89
+Detroit Street,Sunnyside,59.5,89
+Orsi Circle,Bayview,59.41,89
+Hollister Avenue,Bret Harte,59.32,89
+Foerster Street,Sunnyside,59.22,89
+Melrose Avenue,Miraloma Park,59.22,89
+9th Street,South of Market,59.21,89
+Shriners Avenue,OUTER SUNSET,59.19,89
+Lake Street,Lake Street,59.18,89
+Rutledge Street,Peralta Heights,59.18,89
+21st Avenue,Outer Sunset,59.17,89
+York Street,Mission,59.15,89
+Winding Way,Crocker Amazon,59.13,89
+Richland Avenue,Holly Park,59.1,89
+Coso Avenue,Bernal Heights,59.07,89
+Denslowe Drive,Stonestown,59.05,89
+Marina Boulevard,Marina,59.05,89
+48th Avenue,Outer Sunset,59.04,89
+MacDonald Avenue,Visitacion Valley,59.03,79
+Bay Street,AQUATIC PARK / FT. MASON,58.97,89
+Yosemite Avenue,Bayview,58.97,89
+Quesada Avenue,Bayview,58.96,89
+Elsie Street,Bernal Heights,58.91,89
+Elmhurst Drive,Merced Manor,58.89,89
+Willard Street,Parnassus Heights,58.8,89
+Baltimore Way,Crocker Amazon,58.78,89
+Saint Charles Avenue,Merced Heights,58.75,89
+Britton Street,Visitacion Valley,58.72,89
+Noe Street,Eureka Valley,58.72,89
+Wool Street,Bernal Heights,58.69,89
+16th Street,Mission,58.68,89
+Eddy Street,Cathedral Hill,58.68,89
+Newman Street,Holly Park,58.66,89
+Taylor Street,Nob Hill,58.66,89
+Winfield Street,Bernal Heights,58.65,89
+Marcela Avenue,Forest Hill,58.63,89
+Ritch Street,South of Market,58.63,89
+Roselyn Terrace,Lone Mountain,58.62,89
+Rossi Avenue,Lone Mountain,58.58,89
+Van Buren Street,Glen Park,58.55,89
+Drake Street,Crocker Amazon,58.52,89
+Hospital Street,Mission Bay,58.49,89
+Willard Street North,Lone Mountain,58.47,89
+Baden Street,Sunnyside,58.42,89
+Culebra Terrace,Russian Hill,58.42,89
+Dunshee Street,Silver Terrace,58.42,89
+Illinois Street,Central Waterfront,58.38,89
+Mateo Street,Fairmount,58.37,89
+Nahua Avenue,Cayuga,58.29,89
+Parkside Avenue,Lakeshore,58.27,79
+China Basin Street,Mission Bay,58.26,89
+Maple Street,Presidio Heights,58.23,89
+Shawnee Avenue,Cayuga,58.17,89
+Upton Street,Produce Market,58.16,89
+Gilbert Street,South of Market,58.14,89
+Virginia Avenue,Bernal Heights,58.12,89
+Cutler Avenue,Parkside,58.03,89
+Kalmanovitz Street,Bayview,58.01,89
+Kelloch Avenue,Visitacion Valley,57.93,89
+Walnut Street,Presidio Heights,57.89,89
+Merrill Street,Portola,57.87,89
+Bernard Street,Russian Hill,57.85,89
+Latona Street,Silver Terrace,57.85,89
+Sweeny Street,Portola,57.79,89
+Summit Way,Parkmerced,57.73,89
+Issleib Avenue,Bayview,57.69,89
+The Feeney Way,Mission Bay,57.69,89
+Casa Way,MARINA,57.67,86
+Loehr Street,Visitacion Valley,57.65,89
+Leland Avenue,Visitacion Valley,57.57,89
+McKinnon Avenue,BAYVIEW,57.51,89
+Montezuma Street,Bernal Heights,57.51,89
+Bright Street,Merced Heights,57.48,89
+Salinas Avenue,Bret Harte,57.44,89
+Sea View Terrace,Seacliff,57.41,89
+Tompkins Avenue,Bernal Heights,57.41,89
+Brighton Avenue,Ingleside,57.4,89
+Agnon Avenue,St. Mary's Park,57.39,89
+Rhode Island Street,Potrero Hill,57.39,89
+Balboa Street,Outer Richmond,57.37,89
+Retiro Way,Marina,57.36,89
+Ord Court,Corona Heights,57.26,89
+Cervantes Boulevard,Marina,57.23,89
+Pope Street,Sunnyside,57.1,89
+Hooper Street,Showplace Square,57.02,89
+Arco Way,Mission Terrace,56.94,89
+Lyon Street,Presidio Heights,56.89,89
+Potrero Avenue,Mission,56.85,89
+Visitacion Avenue,Visitacion Valley,56.82,89
+Allston Way,Laguna Honda,56.75,89
+Bowman Court,Bayview,56.71,89
+Bradford Street,Bernal Heights,56.71,89
+Thomas Mellon Circle,Candlestick Point SRA,56.69,86
+Rossmoor Drive,Stonestown,56.67,89
+Delano Avenue,Cayuga,56.63,89
+San Bruno Avenue,Silver Terrace,56.6,89
+Glover Street,Russian Hill,56.59,89
+Acadia Street,Sunnyside,56.55,89
+Wheat Street,Bret Harte,56.53,89
+Arch Street,Merced Heights,56.52,89
+Woodland Avenue,Parnassus Heights,56.5,89
+Castillo Street,Sunnydale,56.48,89
+Montclair Terrace,Russian Hill,56.46,89
+Orizaba Avenue,Merced Heights,56.46,89
+Rutland Street,Visitacion Valley,56.43,89
+Lunado Court,Ingleside Terraces,56.39,89
+Eugenia Avenue,Bernal Heights,56.38,89
+Moneta Way,Outer Mission,56.38,89
+Patton Street,Holly Park,56.38,89
+Lee Avenue,Ingleside,56.37,89
+Wheeler Avenue,Little Hollywood,56.36,89
+Seward Street,Eureka Valley,56.3,89
+Cora Street,Visitacion Valley,56.28,89
+Crescent Avenue,Holly Park,56.23,89
+Gambier Street,University Mound,56.22,89
+Stern Grove Court,West Portal,56.22,89
+Clearfield Drive,Lakeshore,56.2,89
+Warriors Way,Mission Bay,56.16,89
+Varela Avenue,Parkmerced,56.09,89
+Gates Street,Bernal Heights,56.04,89
+Brussels Street,Portola,55.93,89
+Lundys Lane,Bernal Heights,55.92,89
+I Street,Hunters Point,55.9,89
+Heather Avenue,Laurel Heights / Jordan Park,55.86,89
+Persia Avenue,Excelsior,55.84,89
+Sickles Avenue,Outer Mission,55.81,89
+Alta Street,Telegraph Hill,55.77,89
+Genebern Way,St. Mary's Park,55.74,89
+Merced Avenue,Laguna Honda,55.72,89
+Ripley Street,Bernal Heights,55.7,89
+Gladstone Drive,Mission Terrace,55.67,89
+Jarboe Avenue,Bernal Heights,55.67,89
+Leese Street,Financial District,55.64,89
+20th Avenue,Parkside,55.62,89
+Laura Street,Outer Mission,55.57,89
+37th Avenue,Outer Sunset,55.55,89
+Silver Avenue,Portola,55.52,89
+Bowdoin Street,Portola,55.51,89
+Rico Way,Marina,55.49,89
+Ashton Avenue,Ingleside,55.48,89
+Carolina Street,Potrero Hill,55.48,89
+Naylor Street,Crocker Amazon,55.45,89
+Racine Lane,Visitacion Valley,55.43,89
+Arleta Avenue,Visitacion Valley,55.39,89
+Woodacre Drive,Merced Manor,55.38,89
+Hyde Street,Nob Hill,55.37,89
+Great Highway,Outer Sunset,55.36,89
+Underwood Avenue,Bayview,55.35,89
+Jules Avenue,Ingleside,55.34,89
+Le Conte Avenue,Bret Harte,55.32,89
+Mission Rock Street,Mission Bay,55.32,89
+Iris Avenue,Laurel Heights / Jordan Park,55.29,89
+Cameron Way,Bret Harte,55.28,89
+Horne Avenue,Hunters Point,55.25,89
+Executive Park Boulevard,Candlestick Point SRA,55.24,89
+Pioche Street,University Mound,55.24,89
+Ewing Terrace,Lone Mountain,55.2,89
+Cortland Avenue,Bernal Heights,55.12,89
+Louisburg Street,Oceanview,55.12,89
+Carmel Street,Ashbury Heights,55.09,89
+Morningside Drive,Lakeshore,54.99,89
+Colin P. Kelly Junior Street,South Beach,54.98,89
+Paramount Terrace,Lone Mountain,54.97,89
+Deming Street,Eureka Valley,54.96,89
+Ellsworth Street,Bernal Heights,54.96,89
+Grand View Avenue,Upper Market,54.92,89
+Michigan Street,Central Waterfront,54.92,89
+Wabash Terrace,Visitacion Valley,54.87,89
+Hill Point Avenue,Parnassus Heights,54.84,89
+Locksley Avenue,Inner Sunset,54.84,89
+Kittredge Terrace,Lone Mountain,54.81,89
+Presidio Terrace,Presidio Terrace,54.8,89
+Lenox Way,West Portal,54.79,89
+Cardenas Avenue,Parkmerced,54.75,89
+Fortuna Avenue,Anza Vista,54.73,89
+Raymond Avenue,Visitacion Valley,54.67,89
+Highland Avenue,Holly Park,54.66,89
+Saturn Street,Buena Vista,54.65,89
+San Jose Avenue,Mission Terrace,54.63,89
+Neptune Street,Silver Terrace,54.62,89
+Westmoorland Drive,Lakeshore,54.62,89
+Havelock Street,Mission Terrace,54.6,89
+Halleck Street,Presidio National Park,54.58,89
+Uranus Terrace,Eureka Valley,54.57,89
+Havenside Drive,Lakeshore,54.55,89
+Gennessee Street,Sunnyside,54.48,89
+Fairfax Avenue,Bayview,54.43,89
+South Hill Boulevard,Crocker Amazon,54.4,89
+San Rafael Way,St. Francis Wood,54.32,89
+Marne Avenue,SHERWOOD FOREST,54.31,89
+Galvez Avenue,Bayview,54.3,89
+Oneida Avenue,Cayuga,54.28,89
+Thornton Avenue,Silver Terrace,54.28,89
+Granville Way,Laguna Honda,54.27,89
+Meade Avenue,Bret Harte,54.25,89
+Putnam Street,Bernal Heights,54.24,89
+Hillway Avenue,Parnassus Heights,54.21,89
+Douglass Street,Noe Valley,54.05,89
+Dewey Boulevard,Forest Hill,53.99,89
+Wayland Street,Portola,53.97,89
+Newburg Street,Noe Valley,53.94,89
+Powhattan Avenue,BERNAL HEIGHTS,53.91,89
+Turk Boulevard,Lone Mountain,53.79,89
+Stonecrest Drive,Stonestown,53.77,89
+Sylvan Drive,Merced Manor,53.77,89
+Delta Street,Visitacion Valley,53.74,89
+Joost Avenue,Sunnyside,53.73,89
+Revere Avenue,Bayview,53.73,89
+7th Avenue,Golden Gate Park,53.7,89
+Boylston Street,Portola,53.7,89
+Sears Street,Outer Mission,53.7,89
+Verna Street,Miraloma Park,53.69,89
+Utah Street,Mission,53.62,89
+Leavenworth Street,Nob Hill,53.61,89
+Louisiana Street,Central Waterfront,53.58,89
+Bridgeview Way,Mission Bay,53.53,87
+Marston Avenue,Sunnyside,53.52,89
+Teddy Avenue,Visitacion Valley,53.45,89
+Mirabel Avenue,Bernal Heights,53.37,89
+Lagunitas Drive,Merced Manor,53.36,89
+El Plazuela Way,Ingleside Terraces,53.3,89
+Blythdale Avenue,Sunnydale,53.29,89
+Park Street,Financial District,53.29,89
+Vienna Street,Excelsior,53.25,89
+Crespi Drive,Parkmerced,53.18,89
+Jones Street,Nob Hill,53.18,89
+Harney Way,Candlestick Point SRA,53.16,45
+Stratford Drive,Stonestown,53.08,89
+Nevada Street,Bernal Heights,53.05,89
+Foote Avenue,Outer Mission,53.02,89
+West Clay Street,LAKE STREET,53.01,89
+Lane Street,Bayview,52.9,89
+Ervine Street,Visitacion Valley,52.83,89
+Chapman Street,Bernal Heights,52.76,89
+Beatty Road,Candlestick Point SRA,52.7,89
+Rosemary Court,Parkside,52.7,89
+Napoleon Street,Produce Market,52.67,89
+Howth Street,Oceanview,52.65,89
+Cowles Street,Presidio National Park,52.6,89
+19th Avenue,Parkside,52.54,89
+Ulloa Street,Parkside,52.54,89
+Chicago Way,Crocker Amazon,52.51,89
+Jerrold Avenue,Bayview,52.46,89
+Rankin Street,PRODUCE MARKET,52.46,89
+Lurline Street,Golden Gate Heights,52.41,89
+Staples Avenue,Sunnyside,52.39,89
+Madrid Street,Excelsior,52.35,89
+Niagara Avenue,Cayuga,52.32,89
+Tucker Avenue,Visitacion Valley,52.31,89
+Edinburgh Street,Excelsior,52.29,89
+32nd Avenue,Golden Gate Park,52.19,89
+O'Reilly Avenue,Presidio National Park,52.16,89
+Grafton Avenue,Ingleside,52.15,89
+Estero Avenue,Ingleside Terraces,52.08,89
+Burrows,Portola,52.07,89
+Beachmont Drive,Merced Manor,52.0,89
+Lois Lane,Little Hollywood,51.94,89
+San Miguel Street,Oceanview,51.94,89
+Manzanita Avenue,Laurel Heights / Jordan Park,51.9,89
+Federal Street,South Beach,51.87,89
+Junipero Serra Boulevard,Ingleside Terraces,51.86,89
+3rd Avenue,Inner Richmond,51.79,89
+Lunado Way,Ingleside Terraces,51.77,89
+Meadowbrook Drive,Merced Manor,51.76,89
+Fairmount Street,Fairmount,51.74,89
+Melba Avenue,Merced Manor,51.68,89
+Jamestown Avenue,Bret Harte,51.66,89
+Toland Street,Produce Market,51.66,89
+Manchester Street,Bernal Heights,51.61,89
+Apollo Street,Silver Terrace,51.6,89
+29th Avenue,Golden Gate Park,51.57,89
+Felix Avenue,Merced Heights,51.54,89
+46th Avenue,Outer Sunset,51.48,89
+Belle Avenue,Merced Heights,51.4,89
+Buena Vista Terrace,Buena Vista,51.39,89
+Stoneman Street,Bernal Heights,51.38,89
+Noriega Street,Outer Sunset,51.37,89
+Broadmoor Drive,Stonestown,51.36,89
+Lisbon Street,Excelsior,51.34,89
+Chabot Terrace,Lone Mountain,51.31,89
+Paul Avenue,Bayview,51.27,89
+Paloma Avenue,Ingleside Terraces,51.25,89
+Morrell Street,Hunters Point,51.19,89
+McLaren Avenue,Seacliff,51.18,89
+Dr. Maya Angelou Paseo,Mission Bay,51.12,75
+Moraga Street,Outer Sunset,51.12,89
+Victoria Street,Ingleside,51.12,89
+Nordhoff Street,Sunnyside,51.09,89
+Sunset Boulevard,Parkside,51.08,89
+Bay View Street,Silver Terrace,51.07,89
+Linares Avenue,Forest Hill,51.06,89
+Miramar Avenue,Westwood Park,51.0,89
+Balceta Avenue,Laguna Honda,50.96,89
+47th Avenue,Outer Sunset,50.85,89
+Jennings Court,Bret Harte,50.84,89
+Lower Terrace,Buena Vista,50.81,89
+Riverton Drive,Merced Manor,50.77,89
+Cassandra Court,Crocker Amazon,50.76,89
+Cedro Avenue,Ingleside Terraces,50.75,89
+Escondido Avenue,Parkside,50.74,89
+Rhine Street,Outer Mission,50.7,89
+Delmar Street,Buena Vista,50.67,89
+Whitney Street,Fairmount,50.62,89
+Fountain Street,Upper Market,50.6,89
+Chester Avenue,Merced Heights,50.58,89
+Dr. Maya Angelou Way,MISSION BAY,50.53,89
+Waithman Way,LAGUNA HONDA,50.51,89
+El Portal Way,Lakeshore,50.5,89
+Toni Stone Crossing,Mission Bay,50.48,86
+Avon Way,West Portal,50.47,89
+Ventura Avenue,Forest Hill,50.45,89
+Beverly Street,Ingleside,50.43,89
+Ledyard Street,Silver Terrace,50.41,89
+Tulane Street,University Mound,50.38,89
+Rice Street,Outer Mission,50.36,89
+Sandpiper Cove Way,Candlestick Point SRA,50.36,89
+Appleton Avenue,Holly Park,50.35,89
+Santiago Street,Parkside,50.3,89
+Ottilia Street,Sunnydale,50.25,61
+Sussex Street,Glen Park,50.21,89
+Mississippi Street,Potrero Hill,50.2,89
+Whipple Avenue,Outer Mission,50.2,89
+Shafter Avenue,Bayview,50.18,89
+Sloat Boulevard,Parkside,50.15,89
+Terry A. Francois Boulevard,Mission Bay,50.06,80
+Stanford Street,South Beach,50.05,89
+Sunnyside Terrace,Sunnyside,50.04,89
+Cranleigh Drive,Merced Manor,50.01,89
+Rebecca Lane,Bayview,50.01,89
+Wellington Avenue,Outer Mission,49.99,70
+Constanso Way,Parkside,49.98,89
+Selby Street,Produce Market,49.98,89
+Springfield Drive,Merced Manor,49.97,89
+Milton I Ross Lane,Produce Market,49.96,89
+Ridgewood Avenue,SUNNYSIDE,49.93,89
+Southern Heights Avenue,Potrero Hill,49.92,89
+Everglade Drive,Merced Manor,49.82,89
+Graystone Terrace,Clarendon Heights,49.81,89
+Martin Luther King Junior Drive,Golden Gate Park,49.8,89
+Montcalm Street,Peralta Heights,49.79,89
+Mullen Avenue,Peralta Heights,49.79,89
+Crane Street,Bret Harte,49.74,89
+36th Avenue,OUTER SUNSET,49.7,89
+Ingalls Street,Hunters Point,49.68,89
+Vicente Street,Parkside,49.67,89
+Pomona Street,Silver Terrace,49.61,89
+Northridge Road,Hunters Point,49.57,89
+Forest View Drive,Merced Manor,49.44,89
+35th Avenue,Outer Sunset,49.3,89
+Curtis Street,Crocker Amazon,49.3,89
+Naglee Avenue,Outer Mission,49.28,89
+Cerritos Avenue,Ingleside Terraces,49.27,89
+Holloway Avenue,Ingleside,49.27,89
+Madera Street,Potrero Hill,49.27,89
+2nd Street,South Beach,49.26,89
+Charter Oak Avenue,Silver Terrace,49.25,89
+Colby Street,University Mound,49.25,89
+France Avenue,Excelsior,49.19,89
+Venus Street,Silver Terrace,49.17,89
+Parnassus Avenue,Parnassus Heights,49.11,89
+Harkness Avenue,Visitacion Valley,49.1,89
+Banbury Drive,Stonestown,49.02,89
+Hernandez Avenue,Laguna Honda,49.01,89
+Temescal Terrace,Lone Mountain,48.96,89
+Rockwood Court,Laguna Honda,48.95,89
+Corbett Avenue,Clarendon Heights,48.94,89
+Excelsior Avenue,Excelsior,48.94,89
+Cleary Court,Cathedral Hill,48.86,89
+Grand View Terrace,Eureka Valley,48.85,89
+Duncan Street,Noe Valley,48.76,89
+Knockash Hill,Laguna Honda,48.75,89
+San Lorenzo Way,St. Francis Wood,48.75,89
+Short Street,Eureka Valley,48.75,89
+Fuente Avenue,Parkmerced,48.7,89
+Juanita Way,Miraloma Park,48.67,89
+Rincon Street,South Beach,48.65,89
+Stanton Street,Eureka Valley,48.64,89
+Mercedes Way,Ingleside Terraces,48.57,89
+Villa Terrace,Eureka Valley,48.53,89
+Diana Street,Silver Terrace,48.52,89
+Monticello Street,INGLESIDE,48.52,89
+4th Street,South Beach,48.5,89
+Moscow Street,Excelsior,48.5,89
+Arkansas Street,Potrero Hill,48.38,89
+Java Street,Buena Vista,48.3,89
+Terrace Drive,St. Francis Wood,48.3,89
+Alana Way,Candlestick Point SRA,48.27,86
+Exeter Street,Bret Harte,48.25,89
+Romain Street,Eureka Valley,48.2,89
+Clarendon Avenue,Forest Knolls,48.09,89
+9th Avenue,Inner Sunset,48.05,89
+Diaz Avenue,Parkmerced,48.03,89
+Dartmouth Street,Portola,48.02,89
+Euclid Avenue,Laurel Heights / Jordan Park,48.0,89
+Bache Street,Holly Park,47.99,89
+Cecilia Avenue,Golden Gate Heights,47.88,89
+Williams Avenue,Silver Terrace,47.87,89
+H Street,Hunters Point,47.86,89
+Tara Street,Oceanview,47.83,89
+Quartz Way,Diamond Heights,47.73,89
+Crisp Road,Hunters Point,47.66,89
+Pinehurst Way,Mt. Davidson Manor,47.64,89
+Brazil Avenue,Excelsior,47.61,89
+D Street,Hunters Point,47.56,89
+Crescent Way,Candlestick Point SRA,47.54,89
+Corwin Street,Eureka Valley,47.53,89
+Cargo Way,India Basin,47.51,89
+Wildflower Court,Crocker Amazon,47.51,89
+Acevedo Avenue,Parkmerced,47.49,89
+Flournoy Street,Outer Mission,47.46,89
+Canyon Drive,Crocker Amazon,47.44,89
+Glendale Street,Clarendon Heights,47.43,89
+Lupine Court,Crocker Amazon,47.4,89
+Magellan Avenue,Forest Hill,47.37,89
+41st Avenue,Outer Sunset,47.29,89
+Allan Street,Visitacion Valley,47.28,89
+Rockaway Avenue,Laguna Honda,47.27,89
+Reddy Street,Silver Terrace,47.15,89
+Dukes Court,Bayview,47.14,89
+Niantic Avenue,Merced Heights,47.14,89
+Bruce Avenue,Ingleside,47.12,89
+Crocker Avenue,Outer Mission,47.07,86
+Hester Avenue,Little Hollywood,47.07,89
+Megan Drive,Little Hollywood,47.07,89
+Broad Street,Oceanview,47.01,89
+Amethyst Way,DIAMOND HEIGHTS,46.98,89
+Quint Street,Bayview,46.96,89
+Reuel Court,Bayview,46.95,89
+Bliss Road,Presidio National Park,46.87,89
+Samoset Street,Peralta Heights,46.82,89
+Wilde Avenue,Visitacion Valley,46.8,89
+Lessing Street,Outer Mission,46.79,89
+San Ramon Way,Westwood Park,46.7,89
+Bernal Heights Boulevard,Bernal Heights,46.67,89
+Wildwood Way,Westwood Park,46.65,89
+Ralston Street,Merced Heights,46.63,89
+42nd Avenue,Outer Sunset,46.59,89
+Mary Teresa Street,Little Hollywood,46.58,89
+Wilson Street,Outer Mission,46.55,89
+Sheridan Avenue,Presidio National Park,46.53,89
+Middlefield Drive,Lakeshore,46.52,89
+Crown Terrace,Clarendon Heights,46.49,89
+Robinson Drive,Crocker Amazon,46.48,89
+State Drive,Parkmerced,46.41,89
+Cambon Drive,Parkmerced,46.4,89
+Craig Lane,Dogpatch,46.3,89
+Castelo Avenue,Parkmerced,46.29,89
+Alta Mar Way,Sutro Heights,46.24,89
+Bronte Street,Bernal Heights,46.06,89
+Bridgeview Paseo,Mission Bay,46.03,71
+Madison Street,University Mound,46.02,89
+Tioga Avenue,Visitacion Valley,45.92,89
+El Mirasol Place,Parkside,45.86,89
+Rivas Avenue,Parkmerced,45.86,89
+Diamond Heights Boulevard,Diamond Heights,45.85,89
+Irvington Street,Outer Mission,45.82,89
+Evergreen Avenue,Outer Mission,45.81,89
+Sunview Drive,Midtown Terrace,45.67,89
+Clipper Street,Noe Valley,45.62,89
+Morse Street,Crocker Amazon,45.61,89
+Farallones Street,Oceanview,45.55,89
+Mission Circle,Outer Mission,45.52,89
+De Boom Street,South Beach,45.39,89
+Esmeralda Avenue,Bernal Heights,45.36,89
+Liebig Street,Outer Mission,45.29,89
+Emerald Cove Terrace,Candlestick Point SRA,45.21,89
+Woodhaven Court,Forest Knolls,45.17,89
+Saddleback Drive,Crocker Amazon,45.16,89
+Scenic Way,Seacliff,45.14,89
+Valletta Court,Miraloma Park,45.14,89
+Bucareli Drive,Parkmerced,45.13,89
+Mayflower Street,Bernal Heights,45.11,89
+33rd Avenue,Outer Sunset,45.08,89
+Malta Drive,Miraloma Park,45.06,89
+Caine Avenue,Oceanview,45.03,89
+Johnstone Drive,Parnassus Heights,45.01,89
+Fort Mason 12,Marina,44.99,89
+39th Avenue,Outer Sunset,44.95,89
+Ordway Street,Portola,44.9,89
+Coral Road,Potrero Hill,44.87,89
+Goethe Street,Outer Mission,44.87,89
+Westlawn Avenue,Lakeshore,44.83,70
+Carver Street,Bernal Heights,44.82,89
+Encanto Avenue,Anza Vista,44.8,89
+Waterville Street,Silver Terrace,44.79,89
+Brookdale Avenue,Sunnydale,44.73,89
+Forest Knolls Drive,Forest Knolls,44.73,89
+Museum Way,Corona Heights,44.57,89
+Kansas Street,Potrero Hill,44.46,89
+Yorba Street,Parkside,44.45,89
+Woodside Avenue,Laguna Honda,44.43,89
+Chenery Street,Glen Park,44.41,89
+Stanford Heights Avenue,Miraloma Park,44.39,89
+Holladay Avenue,Peralta Heights,44.35,89
+Arballo Drive,Parkmerced,44.33,89
+Country Club Drive,Lakeshore,44.3,89
+Huntington Drive,Lakeshore,44.3,89
+Inverness Drive,Merced Manor,44.22,89
+Taylor Road,Presidio National Park,44.19,89
+Lobos Street,Oceanview,44.18,89
+Hudson Avenue,Bayview,44.16,89
+Riley Avenue,Presidio National Park,44.15,89
+Shafter Court,Marina,44.12,89
+Kirkwood Avenue,Bayview,44.1,89
+Rae Avenue,Outer Mission,44.09,89
+Garces Drive,Parkmerced,44.03,89
+Gellert Drive,Lakeshore,44.03,89
+Fisher Loop,Presidio National Park,44.0,89
+Montalvo Avenue,Forest Hill,44.0,89
+Rivera Street,Parkside,43.98,89
+Bertha Lane,Bayview,43.96,89
+Friedell Street,Hunters Point,43.87,89
+Harbor Road,Bayview,43.84,89
+Josepha Avenue,Parkmerced,43.84,89
+Fort Mason 15,Aquatic Park / Ft. Mason,43.77,89
+Cherry Street,Presidio Heights,43.75,89
+Birchwood Court,Crocker Amazon,43.73,89
+Anzavista Avenue,Anza Vista,43.72,89
+Lakeshore Drive,Lakeshore,43.71,89
+Lupine Avenue,Laurel Heights / Jordan Park,43.7,89
+Candlestick Cove Way,CANDLESTICK POINT SRA,43.68,89
+16th Avenue,Golden Gate Heights,43.66,89
+Porter Street,Holly Park,43.66,89
+Palos Place,Parkside,43.63,89
+Connecticut Street,Potrero Hill,43.58,89
+Crescent Court,Candlestick Point SRA,43.53,89
+Escolta Way,Parkside,43.52,89
+Westbrook Court,Bayview,43.51,89
+Alpha Street,Visitacion Valley,43.38,89
+Fieldcrest Drive,Lakeshore,43.34,79
+Ardenwood Way,West Portal,43.33,89
+Clayton Street,Ashbury Heights,43.31,89
+Dwight Street,Portola,43.29,89
+Franconia Street,Peralta Heights,43.24,89
+Downey Street,Ashbury Heights,43.21,89
+Vidal Drive,Parkmerced,43.21,89
+Upper Terrace,Buena Vista,43.07,89
+Hopkins Avenue,Upper Market,43.03,89
+Allison Street,Crocker Amazon,43.02,89
+Conrad Street,Glen Park,43.0,89
+Del Sur Avenue,Miraloma Park,42.99,89
+Peralta Avenue,Peralta Heights,42.99,89
+Vista Verde Court,Miraloma Park,42.98,89
+Stillings Avenue,Miraloma Park,42.93,89
+Homewood Court,Westwood Park,42.91,89
+Pine Court,Crocker Amazon,42.89,89
+Byron Court,Crocker Amazon,42.88,89
+Westwood Drive,Westwood Park,42.83,89
+Rosie Lee Lane,Bayview,42.79,89
+Monterey Boulevard,Westwood Highlands,42.77,89
+Alton Avenue,Forest Hill,42.74,89
+Cuesta Court,Upper Market,42.74,89
+Moraga Avenue,Presidio National Park,42.7,89
+Fort Mason 10,Aquatic Park / Ft. Mason,42.61,89
+Augusta Street,Silver Terrace,42.6,89
+Ortega Street,Outer Sunset,42.57,89
+Higuera Avenue,Parkmerced,42.54,89
+Hudson Court,Bayview,42.53,89
+Roosevelt Way,Corona Heights,42.49,89
+Vasquez Avenue,Laguna Honda,42.49,89
+Dellbrook Avenue,Midtown Terrace,42.48,89
+Idora Avenue,Laguna Honda,42.42,89
+43rd Avenue,Outer Sunset,42.38,89
+Ward Street,Portola,42.32,89
+English Street,Hunters Point,42.26,89
+Miraloma Drive,Sherwood Forest,42.26,89
+Levant Street,Corona Heights,42.2,89
+Burnett Avenue,Upper Market,42.19,89
+McCann Street,Hunters Point,42.13,89
+Elmira Street,Silver Terrace,42.11,89
+Juan Bautista Circle,Parkmerced,41.82,89
+San Fernando Way,Balboa Terrace,41.82,89
+Clipper Terrace,Upper Market,41.73,89
+High Street,Upper Market,41.73,89
+40th Avenue,Outer Sunset,41.72,89
+Manseau Street,Hunters Point,41.66,89
+Holly Park Circle,Holly Park,41.65,89
+Marist Street,India Basin,41.63,89
+Aptos Avenue,Balboa Terrace,41.59,89
+Miguel Street,Fairmount,41.51,89
+Dormitory Road,Hunters Point,41.47,89
+Lowell Street,Crocker Amazon,41.46,89
+Brewster Street,Peralta Heights,41.45,89
+Park Hill Avenue,Buena Vista,41.44,89
+Seal Rock Drive,Sutro Heights,41.4,89
+Innes Avenue,Bayview,41.3,89
+Muir Loop,Cow Hollow,41.28,89
+44th Avenue,Outer Sunset,41.23,89
+Conkling Street,Silver Terrace,41.23,89
+Crown Court,Clarendon Heights,41.22,89
+Guttenberg Street,Crocker Amazon,41.21,89
+Piedmont Street,Buena Vista,41.21,89
+Laidley Street,FAIRMOUNT,41.16,89
+Cliffside Drive,Lakeshore,41.14,86
+Williar Avenue,Ingleside,41.11,89
+Keith Street,Bayview,41.07,89
+Cortes Avenue,Forest Hill,40.94,89
+Clifford Terrace,Buena Vista,40.93,89
+Perego Terrace,Upper Market,40.86,89
+Ashbury Terrace,Buena Vista,40.79,89
+Hazelwood Avenue,Westwood Highlands,40.77,89
+Evelyn Way,Miraloma Park,40.7,89
+Buena Vista Avenue West,Buena Vista,40.66,89
+Sotelo Avenue,Forest Hill,40.59,89
+Barcelona Avenue,Anza Vista,40.55,89
+Galewood Circle,Forest Knolls,40.55,89
+Lillian Street,Bayview,40.55,89
+Point Lobos Avenue,Sutro Heights,40.53,89
+San Diego Avenue,Outer Mission,40.52,89
+J Street,Hunters Point,40.44,88
+Avenue H,Treasure Island,40.41,89
+Bella Vista Way,Miraloma Park,40.39,89
+Beacon Street,Fairmount,40.29,89
+Kezar Drive,GOLDEN GATE PARK,40.25,89
+Westdale Avenue,Lakeshore,40.25,86
+Teresita Boulevard,Miraloma Park,40.24,89
+Espanola Street,Hunters Point,40.21,89
+Byxbee Street,Ingleside,40.18,89
+Valdez Avenue,Westwood Highlands,40.11,89
+States Street,Corona Heights,40.05,89
+Dorantes Avenue,Forest Hill,40.02,89
+Edgar Avenue,Ingleside,40.01,89
+Gladeview Way,Midtown Terrace,39.91,89
+Watt Avenue,Crocker Amazon,39.91,89
+Gardenside Drive,Upper Market,39.86,89
+Gonzalez Drive,Parkmerced,39.79,89
+Diamond Street,Diamond Heights,39.76,89
+Lake Forest Drive,Lakeshore,39.72,61
+Majestic Avenue,Oceanview,39.69,89
+Concord Street,Crocker Amazon,39.65,89
+Seawell Lane,Presidio National Park,39.63,89
+Grijalva Drive,Parkmerced,39.62,89
+Aquavista Way,Midtown Terrace,39.6,89
+Turner Terrace,Potrero Hill,39.59,89
+Moreland Street,Glen Park,39.55,89
+Sheffield Drive,Merced Heights,39.55,70
+14th Avenue,GOLDEN GATE HEIGHTS,39.53,89
+Portola Drive,Laguna Honda,39.5,89
+Sea Cliff Avenue,Seacliff,39.49,88
+Turquoise Way,Diamond Heights,39.49,89
+Ruckman Avenue,Presidio National Park,39.48,89
+Bemis Street,Fairmount,39.45,89
+Santa Monica Way,St. Francis Wood,39.36,89
+Panorama Drive,Midtown Terrace,39.33,89
+Starview Way,Midtown Terrace,39.33,89
+Ardath Court,Bayview,39.32,89
+Upton Avenue,PRESIDIO NATIONAL PARK,39.32,89
+Brunswick Street,Crocker Amazon,39.29,89
+Raccoon Drive,Clarendon Heights,39.25,89
+Peru Avenue,Excelsior,39.22,89
+Vale Avenue,Parkside,39.19,89
+Merchant Road,Presidio National Park,39.15,89
+Arnold Avenue,Holly Park,39.12,89
+Georgia Lane,Central Waterfront,39.1,89
+Wisconsin Street,Potrero Hill,39.07,89
+Anza Avenue,Presidio National Park,39.05,89
+Pershing Drive,Seacliff,39.05,89
+Coleman Street,Hunters Point,38.98,89
+Bepler Street,Outer Mission,38.96,89
+Northwood Drive,Westwood Park,38.95,89
+Dedman Court,Bayview,38.91,89
+North Mayfair Avenue,Merced Heights,38.91,50
+Belgrave Avenue,Ashbury Heights,38.9,89
+Arroyo Way,Miraloma Park,38.87,89
+Colon Avenue,Westwood Highlands,38.86,89
+Oak Court,Crocker Amazon,38.86,89
+Brown Street,Presidio Terrace,38.82,89
+Hays Street,Presidio National Park,38.82,89
+Wyman Avenue,Presidio Terrace,38.82,89
+Castenada Avenue,Forest Hill,38.76,89
+Graham Street,Presidio National Park,38.75,89
+McNair Court,Presidio National Park,38.75,89
+Murray Lane,Presidio National Park,38.75,89
+John Daly Boulevard,Merced Heights,38.68,50
+Upland Drive,Mt. Davidson Manor,38.65,89
+Carnelian Way,Diamond Heights,38.62,89
+Christopher Drive,Forest Knolls,38.58,89
+Belles Street,Presidio National Park,38.55,89
+Stilwell Road,Seacliff,38.46,89
+Wright Court,Seacliff,38.46,89
+Margaret Avenue,Oceanview,38.45,89
+Gaviota Way,Miraloma Park,38.42,89
+Ankeny Street,Visitacion Valley,38.41,89
+45th Avenue,Outer Sunset,38.35,89
+Arbor Street,Glen Park,38.34,89
+Lopez Avenue,Forest Hill,38.33,89
+Martin Avenue,Peralta Heights,38.32,89
+Pizarro Way,Westwood Park,38.28,89
+Gilroy Street,Bret Harte,38.24,89
+Goleta Avenue,Parkside,38.24,89
+Lincoln Boulevard,Presidio National Park,38.21,89
+Collins Street,Laurel Heights / Jordan Park,38.15,89
+Van Keuran Avenue,Hunters Point,38.15,89
+Pier 45,Fisherman's Wharf,38.14,30
+El Camino del Mar,LINCOLN PARK / FT. MILEY,38.08,89
+Santa Barbara Avenue,Outer Mission,38.08,89
+Manor Drive,Mt. Davidson Manor,38.07,89
+Knollview Way,Midtown Terrace,38.06,89
+Lapham Way,Crocker Amazon,38.06,89
+Kenwood Way,Mt. Davidson Manor,38.02,89
+Ruger Street,Presidio National Park,38.0,89
+38th Avenue,Outer Sunset,37.96,89
+Baldwin Court,Hunters Point,37.93,89
+Bowling Green Drive,Golden Gate Park,37.92,89
+Olympia Way,Midtown Terrace,37.9,89
+Keyes Avenue,Presidio National Park,37.85,89
+Brentwood Avenue,Westwood Highlands,37.83,89
+Hillcrest Drive,Outer Mission,37.8,89
+Harold Avenue,Ingleside,37.76,89
+Rosewood Drive,Monterey Heights,37.74,89
+Seven Seas Avenue,Treasure Island,37.71,89
+Santa Rita Avenue,Forest Hill,37.7,89
+Greely Court,Lake Street,37.69,89
+Merriam Lane,Presidio National Park,37.67,89
+Minerva Street,Oceanview,37.65,89
+Rio Court,Miraloma Park,37.61,89
+Roemer Way,Crocker Amazon,37.61,89
+Parkridge Drive,Upper Market,37.6,89
+Amber Drive,Diamond Heights,37.56,89
+Cameo Way,Diamond Heights,37.56,89
+Los Olivos Avenue,Outer Mission,37.52,79
+Bruton Street,TREASURE ISLAND,37.47,84
+Ramsell Street,Merced Heights,37.46,89
+Gabilan Way,Parkside,37.43,89
+Glenview Drive,MIDTOWN TERRACE,37.43,89
+Belmont Drive,Lakeshore,37.39,61
+Johnson Street,TREASURE ISLAND,37.39,86
+Crestline Drive,Upper Market,37.38,89
+Yerba Buena Avenue,Monterey Heights,37.34,89
+Cravath Street,TREASURE ISLAND,37.32,89
+Westgate Drive,Balboa Terrace,37.29,89
+Maryland Street,Central Waterfront,37.27,89
+Cashmere Street,Bayview,37.17,89
+El Sereno Court,Miraloma Park,36.96,89
+Hillsdale Avenue,Merced Heights,36.96,61
+Carter Street,Crocker Amazon,36.94,89
+Mabrey Court,Bayview,36.94,89
+Wilshire Avenue,MERCED HEIGHTS,36.94,89
+Bristol Court,Yerba Buena Island,36.92,89
+Meadow Drive,Yerba Buena Island,36.92,89
+Walker Court,Seacliff,36.91,89
+San Marcos Avenue,Forest Hill,36.86,89
+Red Leaf Court,Crocker Amazon,36.84,89
+Gateview Court,Golden Gate Heights,36.83,89
+Pope Court,Seacliff,36.82,89
+Beatrice Lane,Bayview,36.81,89
+Soule Lane,Seacliff,36.8,89
+Garcia Avenue,Laguna Honda,36.75,89
+Darien Way,Balboa Terrace,36.72,89
+Kennedy Place,Hunters Point,36.72,89
+Encline Court,Miraloma Park,36.71,89
+Kiska Road,Hunters Point,36.68,89
+Paraiso Place,Parkside,36.67,89
+Hawkins Lane,Bayview,36.65,89
+Loma Vista Terrace,Buena Vista,36.63,89
+Clairview Court,Midtown Terrace,36.61,89
+Somerset Street,Portola,36.61,89
+San Andreas Way,Monterey Heights,36.57,89
+Dawnview Way,Midtown Terrace,36.55,89
+Marietta Drive,Miraloma Park,36.55,89
+San Aleso Avenue,Balboa Terrace,36.54,89
+El Verano Way,Monterey Heights,36.51,89
+Olmstead Street,Portola,36.51,89
+Fratessa Court,PORTOLA,36.47,89
+Judson Avenue,Sunnyside,36.47,89
+Northgate Drive,Mt. Davidson Manor,36.44,89
+Muir Court,Presidio National Park,36.41,89
+Bliss Court,Seacliff,36.37,89
+Bowley Court,Seacliff,36.37,89
+Diamond Cove Terrace,CANDLESTICK POINT SRA,36.37,89
+San Leandro Way,Balboa Terrace,36.33,89
+Santa Ana Avenue,Balboa Terrace,36.31,89
+Acacia Avenue,India Basin,36.28,89
+Hiliritas Avenue,Glen Park,36.27,89
+Burnett North Avenue,Clarendon Heights,36.23,89
+Moncada Way,Ingleside Terraces,36.22,89
+Ralston Avenue,PRESIDIO NATIONAL PARK,36.2,89
+Hanover Street,Crocker Amazon,36.19,89
+Alviso Street,Ingleside Terraces,36.16,89
+Jakey Court,Bayview,36.15,89
+Molimo Drive,Miraloma Park,36.12,89
+Huron Avenue,Outer Mission,36.1,89
+Moffitt Street,Glen Park,36.1,89
+Maddux Avenue,Silver Terrace,35.97,89
+Miles Court,Presidio National Park,35.96,89
+Richards Circle,Bayview,35.96,89
+North State Drive,Lakeshore,35.94,89
+Wawona Street,Parkside,35.88,89
+Fort Mason 16,Aquatic Park / Ft. Mason,35.8,89
+Avenue I,Treasure Island,35.79,61
+Topeka Avenue,Silver Terrace,35.73,89
+Mendosa Avenue,Golden Gate Heights,35.72,89
+Weston Court,Seacliff,35.72,89
+Caire Terrace,Potrero Hill,35.67,89
+Los Banos Avenue,Outer Mission,35.67,61
+Aloha Avenue,Golden Gate Heights,35.52,89
+Templeton Avenue,Outer Mission,35.51,89
+Avenue D,Treasure Island,35.44,89
+Ignacio Avenue,Bret Harte,35.39,89
+San Felipe Avenue,Monterey Heights,35.38,89
+Hardie Avenue,Presidio National Park,35.36,89
+Griffith Street,Hunters Point,35.34,89
+Mountain Spring Avenue,Clarendon Heights,35.32,89
+Stone Street,Presidio National Park,35.18,89
+Menoher Lane,Presidio National Park,35.1,89
+Edgewood Avenue,Parnassus Heights,34.95,89
+Lomita Avenue,Golden Gate Heights,34.95,89
+South Hughes Lane,Presidio National Park,34.93,89
+Greenwood Avenue,Westwood Park,34.89,89
+Catalina Street,India Basin,34.87,89
+Ironwood Way,India Basin,34.87,89
+Middle Point Road,India Basin,34.87,89
+Mesa Street,Presidio National Park,34.84,89
+San Jacinto Way,Monterey Heights,34.84,89
+Patton Court,Presidio National Park,34.81,89
+Sydney Way,Laguna Honda,34.81,89
+Dublin Street,Excelsior,34.76,89
+Cragmont Avenue,Golden Gate Heights,34.75,89
+Fisher Avenue,Hunters Point,34.74,89
+Healy Avenue,Yerba Buena Island,34.59,74
+Vermont Street,Potrero Hill,34.5,89
+Appleton Street,Presidio National Park,34.47,89
+Garfield Street,Ingleside,34.45,89
+15th Avenue,Golden Gate Heights,34.44,89
+Las Villas Court,Bayview,34.32,89
+Eastwood Drive,Westwood Park,34.23,89
+Santa Clara Avenue,St. Francis Wood,34.2,89
+Crestlake Drive,Parkside,34.14,89
+Saint Elmo Way,Westwood Park,34.08,89
+Whitney Young Circle,Bayview,34.07,89
+Quintara Street,Outer Sunset,34.0,89
+Bonview Street,Bernal Heights,33.98,89
+Sequoia Way,Miraloma Park,33.93,89
+Congo Street,Sunnyside,33.84,89
+Head Street,Ingleside,33.83,89
+Montecito Avenue,Westwood Park,33.79,89
+Ravenwood Drive,Monterey Heights,33.78,89
+Los Palmos Drive,Miraloma Park,33.76,89
+Frida Kahlo Way,Sunnyside,33.7,89
+Eucalyptus Drive,Merced Manor,33.68,89
+Park Presidio Bypass Drive,Golden Gate Park,33.68,89
+Howard Court,Presidio National Park,33.6,89
+Robinson Street,Hunters Point,33.59,89
+Pacheco Street,Golden Gate Heights,33.55,89
+Avalon Avenue,Excelsior,33.5,89
+Clearview Court,Silver Terrace,33.49,89
+Farnum Street,Glen Park,33.46,89
+Fanning Way,Golden Gate Heights,33.45,89
+Fowler Avenue,Miraloma Park,33.42,89
+Sal Street,Presidio National Park,33.41,89
+Santa Paula Avenue,St. Francis Wood,33.3,89
+Shore View Avenue,Outer Richmond,33.26,89
+San Gabriel Circle,Crocker Amazon,33.24,79
+Blandy Street,Hunters Point,33.18,89
+Skyview Way,Midtown Terrace,33.16,89
+Reardon Road,Hunters Point,33.08,89
+Red Rock Way,Diamond Heights,33.07,89
+George Court,Bayview,33.05,89
+Hillview Court,Bayview,33.04,89
+Schofield,Seacliff,32.99,89
+Hussey Street,Hunters Point,32.98,89
+Littlefield Terrace,Potrero Hill,32.97,89
+Berkshire Way,Lakeshore,32.94,89
+De Long Street,Outer Mission,32.93,89
+Lindsay Circle,Bayview,32.87,89
+Zoo Road,Lakeshore,32.86,89
+25th Avenue North,Seacliff,32.83,84
+Innes Court,Hunters Point,32.81,89
+Mira Vista Court,Crocker Amazon,32.72,89
+Progress Street,Bayview,32.65,89
+La Grande Avenue,Excelsior,32.64,89
+Reposa Way,Miraloma Park,32.61,89
+Memory Lane,Bayview,32.59,89
+Vista View Court,Silver Terrace,32.57,89
+McDowell Avenue,Presidio National Park,32.48,89
+Bass Court,Bayview,32.45,89
+La Salle Avenue,Bayview,32.45,89
+Lincoln Court,Crocker Amazon,32.43,89
+Schofield Road,Presidio National Park,32.4,89
+Chaves Avenue,Miraloma Park,32.35,89
+Kensington Way,Laguna Honda,32.32,89
+Santa Cruz Avenue,Outer Mission,32.32,89
+Whitecliff Way,Silver Terrace,32.25,89
+8th Avenue,Golden Gate Park,32.23,89
+Garnett Terrace,Bayview,32.23,89
+Omar Way,Miraloma Park,32.18,89
+San Benito Way,Balboa Terrace,32.16,89
+Blair Terrace,Potrero Hill,32.12,89
+Hitchcock Lane,Seacliff,32.12,89
+Whittier Street,Crocker Amazon,32.12,89
+Coventry Court,Miraloma Park,31.97,89
+Isola Way,Miraloma Park,31.97,89
+Marlin Court,Hunters Point,31.97,89
+Berkeley Way,Diamond Heights,31.86,89
+Storey Avenue,PRESIDIO NATIONAL PARK,31.8,89
+Lockwood Street,Hunters Point,31.78,89
+Infantry Terrace,Presidio National Park,31.74,89
+Mission Hills Drive,Crocker Amazon,31.71,86
+San Luis Circle,Crocker Amazon,31.71,86
+Gold Mine Drive,Diamond Heights,31.6,89
+Ora Way,Diamond Heights,31.59,89
+San Buenaventura Way,St. Francis Wood,31.57,89
+Shakespeare Street,Outer Mission,31.55,89
+Carpenter Court,Bayview,31.53,89
+Bayview Circle,Silver Terrace,31.5,89
+Commer Court,Bayview,31.43,89
+North Van Horn Lane,Seacliff,31.27,89
+Quarry Road,Presidio National Park,31.27,89
+Thomas Court,Seacliff,31.27,89
+Wallen Street,Presidio National Park,31.27,89
+Willie B Kennedy Drive,Bayview,31.24,89
+Osceola Lane,Bayview,31.15,89
+Addison Street,Fairmount,31.14,89
+Ravilla Court,Crocker Amazon,31.14,89
+Topaz Way,Diamond Heights,31.0,89
+Agua Way,Miraloma Park,30.66,89
+Everson Street,Fairmount,30.6,89
+Medical Center Way,Parnassus Heights,30.6,89
+Marview Way,Clarendon Heights,30.56,89
+Donahue Street,Hunters Point,30.36,89
+Behr Avenue,Clarendon Heights,30.35,89
+Wedemeyer Street,Presidio National Park,30.23,89
+San Antonio Circle,Crocker Amazon,30.19,89
+San Pablo Avenue,St. Francis Wood,30.19,89
+Beach Street,Aquatic Park / Ft. Mason,30.13,89
+Trade Winds Avenue,Treasure Island,30.08,77
+Bellevue Avenue,Crocker Amazon,29.94,89
+Chinook Court,Treasure Island,29.89,79
+Croaker Court,Treasure Island,29.89,79
+Oliver Street,Crocker Amazon,29.84,89
+Vernon Street,Merced Heights,29.78,89
+Josiah Avenue,Oceanview,29.75,89
+Armory Drive,Lakeshore,29.6,89
+Campbell Avenue,Visitacion Valley,29.47,89
+Hillcrest Court,Sherwood Forest,29.47,89
+Summit Street,Oceanview,29.38,89
+Fernwood Drive,Monterey Heights,29.36,89
+Bridgeview Drive,Silver Terrace,29.32,89
+Silverview Drive,Silver Terrace,29.32,89
+Hunters Point Boulevard,India Basin,29.31,89
+Avenue B,Treasure Island,29.2,78
+Sheldon Terrace,Golden Gate Heights,29.18,89
+Oakridge Drive,Crocker Amazon,29.06,89
+Capitol Avenue,Oceanview,28.98,89
+28th Avenue,Golden Gate Park,28.93,89
+Thrift Street,Oceanview,28.84,89
+Signal Road,Yerba Buena Island,28.82,89
+Del Vale Avenue,Miraloma Park,28.79,89
+Robinhood Drive,Sherwood Forest,28.76,89
+Avenue of the Palms,TREASURE ISLAND,28.69,74
+Garlington Court,Bayview,28.6,89
+Farview Court,Clarendon Heights,28.59,89
+Mountview Court,Midtown Terrace,28.47,89
+Cresta Vista Drive,Sherwood Forest,28.45,89
+Southridge Way,Crocker Amazon,28.4,86
+Digby Street,Fairmount,28.31,89
+Burlwood Drive,SHERWOOD FOREST,28.28,89
+Crags Court,Diamond Heights,28.26,89
+Lansdale Avenue,Sherwood Forest,28.23,89
+Ina Court,Excelsior,28.16,89
+Glenbrook Avenue,Clarendon Heights,28.08,89
+Saint Germain Avenue,Clarendon Heights,28.08,89
+Halibut Court,Treasure Island,28.04,50
+Fernandez Street,Presidio National Park,27.95,89
+General Kennedy Avenue,Presidio National Park,27.92,89
+Mar Vista Drive,Crocker Amazon,27.52,89
+Lakeview Avenue,Oceanview,27.43,89
+Scotia Avenue,Silver Terrace,27.37,89
+Valmar Terrace,Excelsior,27.37,89
+Midcrest Way,Midtown Terrace,27.35,89
+San Anselmo Avenue,St. Francis Wood,27.35,89
+Battery Wagner Road,PRESIDIO NATIONAL PARK,27.19,89
+Bolero Way,Crocker Amazon,27.19,79
+Lendrum Court,Presidio National Park,27.17,89
+O'Shaughnessy Boulevard,Miraloma Park,27.12,89
+Dalewood Way,Sherwood Forest,27.09,89
+Sherwood Court,Sherwood Forest,27.09,89
+Mahan Street,Hunters Point,27.08,88
+Rockdale Drive,Miraloma Park,27.07,89
+Roosevelt Avenue,Outer Mission,26.96,70
+Montana Street,Oceanview,26.62,89
+Myra Way,Miraloma Park,26.51,89
+27th Avenue,Golden Gate Park,26.47,89
+Letterman Drive,Presidio National Park,26.42,89
+Maywood Drive,Monterey Heights,26.3,89
+Torney Avenue,Presidio National Park,26.29,89
+Portal Drive,Presidio National Park,26.22,89
+Hawes Street,Hunters Point,26.12,89
+Radio Terrace,Golden Gate Heights,26.11,89
+La Avanzada Street,Clarendon Heights,25.95,89
+Casitas Avenue,Sherwood Forest,25.82,89
+Ardendale Drive,Crocker Amazon,25.8,70
+Barnard Avenue,Presidio National Park,25.73,89
+Treasure Island Road,Yerba Buena Island,25.63,89
+La Playa Street,Golden Gate Park,25.62,89
+Risel Avenue,Crocker Amazon,25.61,86
+Winchester Street,Outer Mission,25.51,89
+Caroline Way,Crocker Amazon,25.41,50
+Edgehill Way,Laguna Honda,25.36,89
+Jefferson Street,Aquatic Park / Ft. Mason,25.35,87
+25th Avenue,Golden Gate Park,25.33,89
+Lake Forest Court,Forest Knolls,25.23,89
+Lake Merced Hill Street,Lakeshore,25.2,89
+Longview Court,Midtown Terrace,25.2,89
+Oak Park Drive,Forest Knolls,25.18,89
+Mansfield Street,Excelsior,25.12,89
+Acton Street,Crocker Amazon,24.85,89
+Sargent Street,Merced Heights,24.83,89
+Crossover Drive,Golden Gate Park,24.62,89
+Cityview Way,Midtown Terrace,24.51,89
+Kinzey Street,PRESIDIO NATIONAL PARK,24.28,89
+Warren Drive,Forest Knolls,24.24,89
+Hoffman Street,Presidio National Park,24.16,89
+Northgate Road,Yerba Buena Island,24.16,80
+Devonshire Way,Forest Knolls,24.04,89
+Clipper Cove Way,Treasure Island,23.99,63
+Navy Road,Hunters Point,23.89,89
+Garden Way,Yerba Buena Island,23.88,72
+Earl Street,Hunters Point,23.85,89
+C Street,Hunters Point,23.7,70
+Palo Alto Avenue,Clarendon Heights,23.7,89
+Macalla Road,Yerba Buena Island,23.6,70
+Rockridge Drive,Golden Gate Heights,23.55,89
+Whiting Way,Yerba Buena Island,23.27,68
+Gateview Avenue,Treasure Island,22.74,54
+Battery Caulfield Road,Presidio National Park,22.49,89
+Saint Francis Boulevard,St. Francis Wood,22.48,89
+Transverse Drive,Golden Gate Park,22.32,89
+Lake Merced Hill Street South,Lakeshore,22.21,89
+Yerba Buena Road,Yerba Buena Island,22.19,89
+Mansell Street,McLaren Park,22.18,89
+Avenue N,Treasure Island,22.15,50
+John Muir Drive,Lakeshore,22.15,89
+Sumner Avenue,Presidio National Park,21.97,89
+Todd Street,PRESIDIO NATIONAL PARK,21.95,89
+11th Avenue,Golden Gate Park,21.94,89
+Kobbe Avenue,PRESIDIO NATIONAL PARK,21.78,89
+Park Boulevard,Presidio National Park,21.78,89
+Hunters Point Expressway,Candlestick Point SRA,21.63,89
+Frankfort Street,Crocker Amazon,21.34,79
+Dakota Street,Potrero Hill,21.08,89
+Alta Vista Way,Crocker Amazon,20.92,50
+Shields Street,Ingleside,20.52,89
+Nancy Pelosi Drive,Golden Gate Park,20.49,89
+Buena Vista Avenue East,Buena Vista,19.38,89
+Avenue M,Treasure Island,18.83,89
+Polaris Way,Crocker Amazon,18.49,89
+Steve Courter Way,Crocker Amazon,18.29,61
+John F Kennedy Drive,Golden Gate Park,18.09,89
+Bowley Street,Seacliff,17.99,89
+Twin Peaks Boulevard,Midtown Terrace,17.99,89
+10th Avenue,Golden Gate Park,17.89,89
+Forest Road,Yerba Buena Island,17.86,89
+Marine Drive,Presidio National Park,17.74,77
+Middle Drive West,GOLDEN GATE PARK,16.75,89
+Lake Merced Hill Street North,Lakeshore,16.41,89
+Greenough Avenue,PRESIDIO NATIONAL PARK,15.88,89
+Wright Loop,PRESIDIO NATIONAL PARK,15.73,89
+Brooks Street,Seacliff,15.55,89
+Wool Court,PRESIDIO NATIONAL PARK,15.15,89
+Christmas Tree Point Road,Clarendon Heights,14.86,89
+Crestmont Drive,Forest Knolls,14.8,89
+Watchman Way,Potrero Hill,14.61,89
+Portola Street,Presidio National Park,14.28,89
+Chain of Lakes Drive East,GOLDEN GATE PARK,14.03,89
+Sherman Road,Presidio National Park,13.99,89
+Compton Road,Presidio National Park,13.37,89
+Amatury Loop,Presidio National Park,13.28,89
+Morton Street,Presidio National Park,12.97,89
+Fort Funston Road,Lakeshore,12.95,89
+Funston Road,Aquatic Park / Ft. Mason,12.4,81
+Presidio Boulevard,Presidio National Park,12.24,89
+Second Drive,Presidio National Park,11.79,89
+Tunnel Avenue,Little Hollywood,11.78,89
+Sanches Street,Presidio National Park,11.68,89
+Old Macalla Road,Yerba Buena Island,11.5,78
+Liggett Avenue,Presidio National Park,10.98,89
+Sibley Road,Presidio Heights,10.8,89
+Clarke Street,Pacific Heights,10.78,89
+Hillcrest Road,Yerba Buena Island,10.74,89
+Skyline Boulevard,Lakeshore,10.39,89
+Rodriguez Street,Presidio National Park,10.24,89
+John F Shelley Drive,McLaren Park,9.82,89
+6th Avenue,Golden Gate Park,9.5,89
+Pope Road,Aquatic Park / Ft. Mason,8.98,89
+Hitchcock Street,Presidio National Park,8.74,89
+Simonds Loop,Presidio National Park,8.74,89
+Harding Road,Lakeshore,8.14,89
+Arelious Walker Drive,Hunters Point,7.97,47
+Great Highway Extension,Lakeshore,7.77,89
+Amador Street,Central Waterfront,6.69,89
+Washington Boulevard,Presidio National Park,6.22,89
+First Drive West,Presidio National Park,5.85,89
+Deems Road,Presidio National Park,5.72,89
+Piper Loop,Presidio National Park,5.62,89
+Main Drive,Presidio National Park,5.55,89
+Harrison Boulevard,PRESIDIO NATIONAL PARK,5.49,89
+Dudley Road,Presidio National Park,5.31,89
+Nauman Road,Presidio National Park,4.92,89
+Legion of Honor Drive,Outer Richmond,4.0,89
+South Drive,Presidio National Park,3.31,89
+First Drive East,Presidio National Park,3.07,89
+Lake Merced Boulevard,Parkmerced,0.94,89

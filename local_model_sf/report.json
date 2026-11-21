@@ -1,0 +1,239 @@
+{
+  "city": "San Francisco",
+  "hazard": "street flooding (SF 311 rain-linked reports)",
+  "status": "experimental; uncalibrated scores; 311 reports reflect who reports, not all flooding",
+  "selection": "random search, 5-fold spatial CV on split=train (before 2022-10-01) only; tests scored once after",
+  "search_minutes": 62.0,
+  "configs_tried": 1303,
+  "best_cfg": {
+    "feature_set": "terrain+storm+geography+elev_road",
+    "n_trees": 300,
+    "eta": 0.03,
+    "max_depth": 5,
+    "min_leaf": 200,
+    "lam": 3.0,
+    "subsample": 0.6,
+    "colsample": 0.7,
+    "max_bins": 64,
+    "pos_weight": 1.0
+  },
+  "best_cv": {
+    "auc": 0.8908536012473341,
+    "where": 0.8208870738477341,
+    "when": 0.96082718559149
+  },
+  "baseline_cfg": {
+    "feature_set": "terrain+storm+geography",
+    "n_trees": 120,
+    "eta": 0.08,
+    "max_depth": 4,
+    "min_leaf": 20,
+    "lam": 1.0,
+    "subsample": 0.8,
+    "colsample": 0.8,
+    "max_bins": 64,
+    "pos_weight": 1.0
+  },
+  "baseline_cv": {
+    "auc": 0.8612347345832669,
+    "where": 0.767609407992302,
+    "when": 0.9549852988778182
+  },
+  "best_cv_auc_by_feature_set": {
+    "terrain+storm": 0.8464342797007923,
+    "terrain+storm+geography": 0.8625071513232172,
+    "terrain+storm+geography+elev_road": 0.8908536012473341
+  },
+  "tests_tuned": {
+    "test_winter2023": {
+      "auc": 0.8868436827143218,
+      "where": 0.808667180740266,
+      "when": 0.9651689034619491,
+      "rows": 7894
+    },
+    "test_nov2026_storm": {
+      "auc": 0.9120580467280628,
+      "where": 0.857630452211064,
+      "when": 0.96651322745617,
+      "rows": 4934
+    },
+    "later_2023_2026": {
+      "auc": 0.9132283572647093,
+      "where": 0.8614664248816774,
+      "when": 0.965029109156053,
+      "rows": 16675
+    }
+  },
+  "tests_baseline": {
+    "test_winter2023": {
+      "auc": 0.8611760383796506,
+      "where": 0.7616469716391604,
+      "when": 0.9608944438647328,
+      "rows": 7894
+    },
+    "test_nov2026_storm": {
+      "auc": 0.8937297099434786,
+      "where": 0.8274167521241181,
+      "when": 0.960076277979676,
+      "rows": 4934
+    },
+    "later_2023_2026": {
+      "auc": 0.8902178242412442,
+      "where": 0.8189523021870273,
+      "when": 0.9615367927646783,
+      "rows": 16675
+    }
+  },
+  "feature_importance": [
+    [
+      "rain_72h_mm",
+      0.3482
+    ],
+    [
+      "dist_road_m",
+      0.2584
+    ],
+    [
+      "trigger_T",
+      0.0686
+    ],
+    [
+      "ndvi_2023",
+      0.0554
+    ],
+    [
+      "built_frac_70m",
+      0.0458
+    ],
+    [
+      "buildings_count",
+      0.0279
+    ],
+    [
+      "dist_open_water_m",
+      0.0197
+    ],
+    [
+      "plan_curv",
+      0.0194
+    ],
+    [
+      "api_mm",
+      0.0191
+    ],
+    [
+      "elev_m",
+      0.0163
+    ],
+    [
+      "ndvi_change",
+      0.0159
+    ],
+    [
+      "dist_stream_m",
+      0.0147
+    ],
+    [
+      "low_vs_150m_m",
+      0.0123
+    ],
+    [
+      "eastness",
+      0.0119
+    ],
+    [
+      "prof_curv",
+      0.0112
+    ],
+    [
+      "elev_above_min_300m_m",
+      0.0104
+    ],
+    [
+      "slope_deg",
+      0.0087
+    ],
+    [
+      "low_vs_450m_m",
+      0.0082
+    ],
+    [
+      "relief_150m",
+      0.0064
+    ],
+    [
+      "northness",
+      0.0064
+    ],
+    [
+      "twi",
+      0.0057
+    ],
+    [
+      "slope_max_90m",
+      0.0053
+    ],
+    [
+      "log10_drain_area_m2",
+      0.0037
+    ],
+    [
+      "sink_depth_m",
+      0.0004
+    ]
+  ],
+  "geography_map": {
+    "storm_morning": "2026-11-16",
+    "rain_72h_mm": 81.28,
+    "api_mm": 49.9,
+    "land_cells": 146665,
+    "reported_cells": 937,
+    "map_auc_reported_vs_not": 0.8616425832615047,
+    "top_neighbourhoods_top10pct_mean_score": [
+      [
+        "PANHANDLE",
+        80.1377765548831
+      ],
+      [
+        "LOWER HAIGHT",
+        80.02462621155496
+      ],
+      [
+        "Panhandle",
+        79.25302378771437
+      ],
+      [
+        "LOWER PACIFIC HEIGHTS",
+        78.37039830412222
+      ],
+      [
+        "Castro",
+        77.96723982894113
+      ],
+      [
+        "WESTERN ADDITION",
+        77.71842145164405
+      ],
+      [
+        "Lower Pacific Heights",
+        77.71521138614517
+      ],
+      [
+        "Duboce Triangle",
+        77.68073374578483
+      ],
+      [
+        "MISSION",
+        76.95444255812842
+      ],
+      [
+        "NOE VALLEY",
+        76.71660918626364
+      ]
+    ]
+  },
+  "excluded": [
+    "flood_reports_train (leaks training positives)",
+    "neighborhood_id (memorisation)"
+  ]
+}
