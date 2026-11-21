@@ -1,7 +1,7 @@
-<title>GroundTruth Lamorinda</title>
+<title>scree · Lamorinda</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* GroundTruth dashboard.
+/* scree dashboard.
    Components: the team's glass UI tokens (font, capsule controls, 31px panels, dark and light themes), drawn flat with no gradients.
    Layout: a slim icon rail, a row of stat chips with search, a title row, a map control row, and one large map panel.
    Short views float over the map as a card; long views sit beside it in a second panel.
@@ -475,13 +475,104 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 @media (forced-colors:active){
   .glass,.view,.stage,dialog,.btn,.seg-track,.field,.pick,.chip,.rail{background:Canvas;border:1px solid CanvasText;box-shadow:none;backdrop-filter:none}
 }
+/* ================= depth =================
+   Layered surfaces with no gradients: a dark floor, raised panels lit from above (a one pixel top highlight),
+   wells pressed into them, and soft stacked shadows. Old map system: the map and the view always sit side by side,
+   with the layer toolbar, the data key and the hint floating on the map. */
+:root,.stage{
+  --hi:rgb(255 255 255 / 0.07); --hi-2:rgb(255 255 255 / 0.11); --lo:rgb(0 0 0 / 0.38);
+  --lift-1:0 0 0 .5px var(--border-2), inset 0 1px 0 var(--hi), 0 1px 1px rgb(var(--shadow-rgb) / calc(.25 * var(--shadow-strength))), 0 4px 10px -3px rgb(var(--shadow-rgb) / calc(.35 * var(--shadow-strength)));
+  --lift-2:0 0 0 .5px var(--border-2), inset 0 1px 0 var(--hi), 0 2px 3px rgb(var(--shadow-rgb) / calc(.22 * var(--shadow-strength))), 0 14px 32px -10px rgb(var(--shadow-rgb) / calc(.55 * var(--shadow-strength))), 0 40px 80px -40px rgb(var(--shadow-rgb) / calc(.6 * var(--shadow-strength)));
+  --lift-3:0 0 0 .5px var(--border-2), inset 0 1px 0 var(--hi-2), 0 4px 8px rgb(var(--shadow-rgb) / calc(.25 * var(--shadow-strength))), 0 24px 56px -12px rgb(var(--shadow-rgb) / calc(.7 * var(--shadow-strength)));
+  --well:inset 0 1px 3px var(--lo), inset 0 0 0 .5px var(--border-1), 0 1px 0 var(--hi);
+}
+:root:not([data-theme="light"]){--bg-base:#0c0c0d;--surface-1:#1b1b1d;--surface-2:#222225;--surface-3:#2a2a2e;--hi:rgb(255 255 255 / 0.085)}
+:root[data-theme="light"]{--bg-base:#e4e8ee;--surface-1:#f7f9fb;--surface-2:#ffffff;--hi:rgb(255 255 255 / 0.9);--hi-2:#fff;--lo:rgb(22 30 48 / 0.16)}
+:root[data-theme="light"] .stage{--hi:rgb(255 255 255 / 0.07);--hi-2:rgb(255 255 255 / 0.11);--lo:rgb(0 0 0 / 0.38)}
+
+.app{grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"rail top" "rail head" "rail main";gap:14px 18px}
+.app[data-mode] .main{grid-template-columns:minmax(0,1.42fr) minmax(380px,1fr);gap:18px}
+.app[data-mode] .view{position:relative;left:auto;top:auto;width:auto;max-height:none;display:block;border-radius:var(--r-panel);background:var(--surface-1);backdrop-filter:none;-webkit-backdrop-filter:none}
+
+.rail{background:var(--surface-1);box-shadow:var(--lift-2)}
+.rail a.nav{background:transparent;box-shadow:none}
+@media (hover:hover){.rail a.nav:hover{background:var(--surface-3);box-shadow:var(--lift-1)}}
+.rail a.nav[aria-current="page"]{box-shadow:var(--lift-1),0 6px 16px -6px rgb(var(--shadow-rgb) / calc(.6 * var(--shadow-strength)))}
+.view{box-shadow:var(--lift-2)}
+.stage{box-shadow:var(--lift-2);grid-template-rows:minmax(0,1fr)}
+.stage-map::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgb(255 255 255 / 0.05),inset 0 0 70px 6px rgb(0 0 0 / 0.55);z-index:1}
+.chip{background:var(--surface-2);box-shadow:var(--lift-1)}
+@media (hover:hover){a.chip:hover{transform:translateY(-1px);box-shadow:var(--lift-2)}}
+a.chip{transition:transform var(--d-fast) var(--e-out),box-shadow var(--d-fast) var(--e-out),background-color var(--d-fast) var(--e-out)}
+.find .field,.field,.pick,.ol-in input{background:var(--track);box-shadow:var(--well)}
+.field:focus,.pick:focus{box-shadow:var(--well),0 0 0 2px var(--focus)}
+.seg-track{box-shadow:var(--well)}
+.seg-track>.thumb,.seg-track.multi>button[aria-pressed="true"]{box-shadow:var(--lift-1)}
+.btn{box-shadow:var(--lift-1)}
+.btn:active{transform:translateY(1px) scale(.985);box-shadow:var(--well)}
+.btn.ghost{box-shadow:none}
+.btn.solid,.btn.accent{box-shadow:inset 0 1px 0 rgb(255 255 255 / 0.25),0 1px 2px rgb(var(--shadow-rgb) / .3),0 6px 14px -6px rgb(var(--shadow-rgb) / calc(.7 * var(--shadow-strength)))}
+.tile,.stat,.src-list li,.streets button:not(.x),.bt-list button,.brief-text{background:var(--surface-2);box-shadow:var(--lift-1)}
+:root:not([data-theme="light"]) .tile,:root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .src-list li,:root:not([data-theme="light"]) .streets button:not(.x),:root:not([data-theme="light"]) .bt-list button{background:var(--surface-3)}
+#inspector .tile,#inspector .kv{background:var(--surface-3)}
+@media (hover:hover){.streets button:not(.x):hover,.bt-list button:hover{transform:translateY(-1px);box-shadow:var(--lift-2)}}
+.streets button:not(.x),.bt-list button{transition:transform var(--d-fast) var(--e-out),box-shadow var(--d-fast) var(--e-out),background-color var(--d-fast) var(--e-out)}
+.notice{box-shadow:inset 0 0 0 .5px rgb(224 165 58 / 0.3),0 1px 0 var(--hi)}
+.msg{box-shadow:var(--lift-1)}
+.glass.float{box-shadow:var(--lift-3)}
+#inspector{box-shadow:var(--lift-3)}
+dialog{box-shadow:var(--lift-3)}
+.switch input{box-shadow:var(--well)}
+input[type=range]::-webkit-slider-runnable-track{box-shadow:inset var(--tw,0px) 0 0 var(--accent),inset 0 1px 2px var(--lo)}
+input[type=range]::-webkit-slider-thumb{box-shadow:inset 0 1px 0 rgb(255 255 255 / .5),0 0 0 .5px var(--border-2),0 2px 6px -1px rgb(0 0 0 / .55)}
+
+/* the old map furniture: data key top left, hint top right, layer toolbar along the bottom */
+.mapkey{position:absolute;z-index:3;left:14px;top:14px;display:grid;gap:5px;padding:10px 14px;width:max-content;border-radius:var(--r-tip);font-size:11px;color:var(--text-3);max-width:min(330px,calc(100% - 28px));transition:opacity var(--d-base) var(--e-out)}
+.mapkey .simflag{font-weight:var(--w-med);font-size:12px;margin-bottom:2px}
+.mapkey .mk{display:block;line-height:1.35}
+.mapkey .mk b{display:inline-flex;align-items:center;gap:5px;color:var(--text-1);font-weight:var(--w-med);margin-right:4px}
+.mapkey svg.ck{width:12px;height:12px;color:var(--text-1)}
+.mapkey i.sq{width:9px;height:9px;border-radius:2px;border:1.5px solid var(--warning);transform:rotate(45deg)}
+.mapkey i.ln{width:10px;height:0;border-top:2px dashed var(--text-3)}
+.stage-hint{position:absolute;z-index:3;right:14px;top:14px;height:28px;display:inline-flex;align-items:center;padding:0 12px;border-radius:999px;font-size:12px;color:var(--text-2);pointer-events:none;white-space:nowrap;transition:opacity var(--d-base) var(--e-out)}
+.stage:has(#inspector.on) .stage-hint{opacity:0}
+.maptools{position:absolute;z-index:3;left:14px;bottom:14px;display:flex;align-items:center;gap:6px;padding:5px;border-radius:999px;max-width:calc(100% - 28px);overflow-x:auto;scrollbar-width:none;transition:right var(--d-base) var(--e-out)}
+.maptools::-webkit-scrollbar{display:none}
+.maptools .seg-track{background:transparent;box-shadow:none;padding:0;flex:none;max-width:none;overflow:visible}
+.maptools .sep{width:1px;height:20px;background:var(--border-2);flex:none}
+.maptools .btn{flex:none}
+.maptools .ex-rain{position:static;transform:none;display:none;padding:0 6px 0 4px;height:auto;box-shadow:none;background:none;flex:none}
+body.exploring .maptools .ex-rain{display:flex}
+.maptools .ex-rain input{width:110px}
+.stage:has(#inspector.on) .maptools{max-width:calc(100% - min(340px,100% - 24px) - 44px)}
+.stage:has(#inspector.on) .mapkey{opacity:0;pointer-events:none}
+
+.hero{display:grid;gap:12px;justify-items:start}
+.hero-h{font-size:clamp(26px,2.6vw,34px);line-height:1.06;letter-spacing:-0.02em}
+.wordmark{display:block;font:var(--w-semi) 30px/1 var(--f-ui);letter-spacing:-0.03em;color:var(--text-1);margin-bottom:10px;text-align:center}
+.head h2{letter-spacing:-0.02em}
+.find{width:clamp(170px,16vw,250px)}
+@media (max-width:1400px){.stats .chip:last-child{display:none}}
+
+@media (max-width:1240px){.app[data-mode] .main{grid-template-columns:minmax(0,1.1fr) minmax(340px,1fr)}}
+@media (max-width:900px){
+  .app[data-mode] .main{display:flex;flex-direction:column}
+  .app[data-mode] .view{overflow:visible}
+  .stats .chip:last-child{display:inline-flex}
+  .stage{grid-template-rows:minmax(0,1fr)}
+  .stage-map{height:100%}
+  .stage-hint{display:none}
+  .mapkey{left:10px;top:10px;padding:7px 10px}.mapkey .mk{display:none}
+  .maptools{left:8px;right:8px;bottom:8px;max-width:none}
+}
+@media (prefers-reduced-transparency:reduce){.mapkey,.maptools,.stage-hint{background:var(--surface-2);backdrop-filter:none;-webkit-backdrop-filter:none}}
 </style>
 
-<div id="loading"><div><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
+<div id="loading"><div><b class="wordmark">scree</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
 
-<div class="app" data-mode="overlay">
+<div class="app" data-mode="split">
 <nav class="rail" aria-label="Views">
-  <a class="brand" href="#top" data-go="top" aria-label="GroundTruth, back to the overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 1.5 20.5h21L12 2.5zm0 6.6 5.1 8.4H6.9L12 9.1z"/></svg></a>
+  <a class="brand" href="#top" data-go="top" aria-label="scree, back to the overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 1.5 20.5h21L12 2.5zm0 6.6 5.1 8.4H6.9L12 9.1z"/></svg></a>
   <hr>
   <a class="nav" href="#top" data-go="top" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span>Overview</span></a>
   <a class="nav" href="#motion" data-go="motion" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span>Ground motion</span></a>
@@ -495,13 +586,13 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 </nav>
 
 <header class="topbar">
-  <h1 class="vh" data-t="h1">GroundTruth, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
+  <h1 class="vh" data-t="h1">scree, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
   <div class="stats" role="group" aria-label="Exposure for the storm that is set">
     <a class="chip" href="#storm" data-go="storm" title="Change the storm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c3 3.8 5.5 6.6 5.5 10a5.5 5.5 0 0 1-11 0c0-3.4 2.5-6.2 5.5-10z"/></svg>Storm <b><span id="kpR72">92</span> mm</b> on soil <b><span id="kpApi">156</span> mm</b></a>
     <span class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7.5 4.300v8.400L12 20.5l-7.5-4.300V7.800z"/></svg>High tier <b><span id="stHigh">0</span> km²</b></span>
     <span class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4L5 20M16 4l3 16M12 5v3M12 11v3M12 17v3"/></svg>Streets flagged <b id="stStreets">0</b></span>
     <span class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V8.5l7-4 7 4V20"/><path d="M10 20v-5h4v5"/></svg>Buildings flagged <b id="stBld">0</b></span>
-    <span class="chip opt" title="Share of the worldwide 72 hour rain threshold"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 16a7.5 7.5 0 1 1 15 0"/><path d="M12 16l3.5-5"/></svg>Rain threshold <b id="stThr">0%</b></span>
+    <span class="chip" title="Share of the worldwide 72 hour rain threshold"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 16a7.5 7.5 0 1 1 15 0"/><path d="M12 16l3.5-5"/></svg>Rain threshold <b id="stThr">0%</b></span>
   </div>
   <div class="top-r">
     <form class="find" id="exFindF" role="search"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.6-4.6"/></svg><label class="vh" for="exFind">Find a street</label><input class="field" id="exFind" list="exStreets" placeholder="Find a street on the map" autocomplete="off" spellcheck="false"><button class="vh" type="submit" tabindex="-1">Go</button><output id="exFindOut" for="exFind" aria-live="polite"></output></form><datalist id="exStreets"></datalist>
@@ -511,7 +602,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 </header>
 
 <div class="head" role="region" aria-label="View title and alert sensitivity">
-  <div><h2 id="viewTitle">GroundTruth</h2><p id="viewSub">Landslide watch for Lafayette, Orinda and Moraga</p></div>
+  <div><h2 id="viewTitle">scree</h2><p id="viewSub">Landslide watch for Lafayette, Orinda and Moraga</p></div>
   <div class="head-r">
     <label class="seg-l" for="regionPick">Area</label>
     <select id="regionPick" class="pick" title="Switch between Lamorinda and San Francisco"><option>Lamorinda, Contra Costa County</option></select>
@@ -520,26 +611,25 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
   </div>
 </div>
 
-<div class="filt" role="region" aria-label="Map layers and data">
-  <div class="seg-track multi" role="toolbar" aria-label="Map layers" id="exploreBar">
-    <button id="exRisk" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Risk</button><button id="exMotion" aria-pressed="true" data-only="lamorinda"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Motion</button><button id="exRoads" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Streets</button><button id="exBld" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Buildings</button><button id="exSat" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daylight</button>
-  </div>
-  <input type="checkbox" id="realOnly" checked hidden><button id="exReal" aria-pressed="true" hidden></button>
-</div>
-
 <div class="main">
   <div class="stage" role="region" aria-label="Map">
     <div class="stage-map">
       <canvas id="gl" role="img" aria-label="3D terrain of Lafayette, Orinda and Moraga with landslide risk drawn as light"></canvas>
       <div id="labels" aria-hidden="true"></div>
-      <div class="compass" aria-hidden="true"><div class="dial" id="dial"><span>N</span><span>E</span><span>S</span><span>W</span></div><div class="hub" id="hub">N</div></div>
-      <div class="mapctl" role="toolbar" aria-label="Map controls">
-        <button class="btn round zoom" id="zoomIn" aria-label="Zoom in" title="Zoom in"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
-        <button class="btn round zoom" id="zoomOut" aria-label="Zoom out" title="Zoom out"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12h13"/></svg></button>
-        <button class="btn round" id="resetBtn" aria-label="Back to this view's camera" title="Back to this view's camera"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"/><path d="M6.5 9.5V19h11V9.5"/></svg></button>
-        <button class="btn round" id="exploreBtn" aria-pressed="false" aria-label="Free look" title="Free look"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9.5 5.5L12 3l2.5 2.5M9.5 18.5L12 21l2.5-2.5M5.5 9.5L3 12l2.5 2.5M18.5 9.5L21 12l-2.5 2.5"/></svg></button>
+      <div class="mapkey glass float" id="mapKey" role="note" aria-label="What on this map is real">
+        <span class="simflag real" id="simflag">Score from real terrain and gauge rain</span>
+        <span class="mk"><b><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real</b> terrain, imagery, rain, streets, buildings, slides</span>
+        <span class="mk" data-only="lamorinda"><b><i class="sq" aria-hidden="true"></i>Sample</b> ground motion, map only</span>
+        <span class="mk"><b><i class="ln" aria-hidden="true"></i>Placeholder</b> risk formula until the model is trained</span>
       </div>
-      <label class="ex-rain glass float" for="exR72">Rain, 72 h<input type="range" id="exR72" min="0" max="300" value="92" step="2"><b><span id="exR72v">92</span> mm</b></label>
+      <span class="stage-hint glass float">Click a slope to inspect it. Drag to orbit, scroll to zoom.</span>
+      <div class="maptools glass float" id="mapTools">
+        <div class="seg-track multi" role="toolbar" aria-label="Map layers" id="exploreBar"><button id="exRisk" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Risk</button><button id="exMotion" aria-pressed="true" data-only="lamorinda"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Motion</button><button id="exRoads" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Streets</button><button id="exBld" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Buildings</button><button id="exSat" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daylight</button></div>
+        <i class="sep" aria-hidden="true"></i>
+        <button class="btn sm" id="exploreBtn" aria-pressed="false">Free look</button>
+        <label class="ex-rain" for="exR72">Rain, 72 h<input type="range" id="exR72" min="0" max="300" value="92" step="2"><b><span id="exR72v">92</span> mm</b></label>
+      </div>
+      <input type="checkbox" id="realOnly" checked hidden><button id="exReal" aria-pressed="true" hidden></button>
       <div id="tour" class="glass float" hidden><span id="tourTxt" aria-live="polite"></span><button class="btn sm" id="tourStop">Stop the tour</button></div>
       <aside class="glass float" id="inspector" aria-label="Selected slope"><div class="in">
       <button class="x-close" id="inClose" aria-label="Close the slope panel">Close</button>
@@ -556,18 +646,18 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
       <div><div class="chart-cap" style="margin-bottom:4px"><span id="tsCap">Motion record</span></div><canvas id="tsChart" role="img" aria-label="Ground displacement over time for the selected point"></canvas></div>
     </div></aside>
     </div>
-    <div class="stage-foot"><span class="hint">Click a slope to inspect it · Drag to orbit · Scroll to zoom</span><span class="simflag real" id="simflag">Score from real terrain and gauge rain</span></div>
   </div>
 
   <main class="view"><div class="view-scroll" id="viewScroll">
   <section id="top" class="on">
-    <div class="card-h"><h3 data-t="topH">The hills are moving.</h3><span class="badge warn" data-t="topBadge">Sample data</span></div>
-    <p class="lede" data-t="lede">GroundTruth pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
+    <div class="hero"><span class="badge warn" data-t="topBadge">Sample data</span><h3 class="hero-h" data-t="topH">The hills are moving.</h3></div>
+    <p class="lede" data-t="lede">scree pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
     <div class="row">
       <a class="btn solid" href="#ask" data-go="ask">Check your street</a>
       <a class="btn" href="#replay" data-go="replay">Replay winter 2023</a>
     </div>
     <div class="tile"><h3 style="font-size:12px;color:var(--text-3);font-weight:var(--w-med);margin-bottom:4px">Latest gauge reading</h3><p class="body" id="nowLine"></p></div>
+    <div class="group"><h3>What this dashboard does</h3><p class="body">Set a storm and the map, the numbers above it and the street ranking all update. Replay the winter of 2023 from real gauge rain, check the score against the slides that were reported, open any slope, or ask about a street by name.</p></div>
     <div class="row"><a class="btn sm" href="#storm" data-go="storm">Set a storm</a><a class="btn sm" href="#backtest" data-go="backtest">See the backtest</a><a class="btn sm ghost" href="#method" data-go="method">What is real here</a></div>
     <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span data-t="topNotice"><b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. The ground motion view is a simulated sample and does not feed the score.</span></div>
     <p class="foot"><span data-t="topFoot">A hackathon prototype. It shows relative risk on sample data. For safety decisions, follow the National Weather Service and your city.</span></p>

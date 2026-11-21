@@ -1,4 +1,4 @@
-/* GroundTruth dashboard logic: view switching, storm controls, 2023 replay, slope inspector, street agent. */
+/* scree dashboard logic: view switching, storm controls, 2023 replay, slope inspector, street agent. */
 (async function () {
   const G = window.GT, Mo = window.GTModel, Sc = window.GTScene;
   const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
@@ -176,12 +176,12 @@
     method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
   };
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
-  const NAMES = { top: 'GroundTruth', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
+  const NAMES = { top: 'scree', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
   const SUBS = { top: 'Landslide watch for ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
-  const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
+  const SPLIT = { top: 1, motion: 1, storm: 1, replay: 1, backtest: 1, inspect: 1, ask: 1, method: 1 };   // every view sits beside the map (old map system)
   const shiftO = { v: 0 };
   function updShift(now) {
-    const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
+    const on = !SPLIT[active] && $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
     gsap.to(shiftO, { v: px, duration: reduce || now ? 0 : 0.7, ease: 'power3.inOut', overwrite: true, onUpdate: () => Sc.setShift(shiftO.v) });
   }
   let active = 'top', exploring = false, replayDay = D0;
@@ -199,7 +199,7 @@
     active = id; applyLook(id);
     $$('.rail a.nav').forEach(a => a.dataset.go === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     ORDER.forEach(k => $('#' + k).classList.toggle('on', k === id)); $('#viewTitle').textContent = NAMES[id]; $('#viewSub').textContent = SUBS[id];
-    $('.app').dataset.mode = SPLIT[id] ? 'split' : 'overlay'; Sc.resize(); updShift();
+    $('.app').dataset.mode = SPLIT[id] === 0 ? 'overlay' : 'split'; Sc.resize(); updShift();
     if (id === 'top') pushScenario({ r72: 140, api: 230, era: 0, amt: 0 });
     else if (id === 'motion' || id === 'method') pushScenario({ r72: 0, api: 60, era: 0, amt: 0 });
     else if (id === 'replay') setReplay(replayDay, true);
@@ -492,7 +492,7 @@
     if (!lastRank) return; const sc = stormSc(), q = v => '"' + String(v).replace(/"/g, '""') + '"';
     const lines = ['rank,street,town,score,tier,buildings_along_street,buildings_on_elevated_or_high_ground,rain_72h_mm,soil_wetness_mm,ground_motion,alert_sensitivity'];
     lastRank.all.forEach((s, n) => lines.push([n + 1, q(s.name), q(s.town), s.score.toFixed(1), Mo.tier(s.score), ...(b => [b.total, b.flagged])(Mo.streetBuildings(s.k, sc)), sc.r72, sc.api, Mo.opts.motion ? 'simulated' : 'excluded', q(SENS[Mo.opts.bias])].join(',')));
-    saveFile(`groundtruth_streets_${sc.r72}mm.csv`, lines.join('\n') + '\n', 'text/csv');
+    saveFile(`scree_streets_${sc.r72}mm.csv`, lines.join('\n') + '\n', 'text/csv');
   });
   function briefingText() {
     const sc = stormSc(), rk = lastRank, a = lastArea, towns = TOWN_NAMES;
@@ -534,12 +534,12 @@
   $('#briefClose').addEventListener('click', () => brief.close ? brief.close() : brief.removeAttribute('open'));
   brief.addEventListener('click', e => { if (e.target === brief && brief.close) brief.close(); });
   $('#briefCopy').addEventListener('click', async e => { const b = e.currentTarget; try { await navigator.clipboard.writeText($('#briefText').textContent); b.textContent = 'Copied'; } catch (err) { const r = document.createRange(); r.selectNodeContents($('#briefText')); const g = getSelection(); g.removeAllRanges(); g.addRange(r); b.textContent = 'Selected, press copy'; } setTimeout(() => b.textContent = 'Copy text', 1800); });
-  $('#briefSave').addEventListener('click', () => saveFile(`groundtruth_briefing_${S.r72}mm.txt`, $('#briefText').textContent + '\n', 'text/plain'));
+  $('#briefSave').addEventListener('click', () => saveFile(`scree_briefing_${S.r72}mm.txt`, $('#briefText').textContent + '\n', 'text/plain'));
 
   /* ------------------------------------------------ explore mode */
   const exBtn = $('#exploreBtn');
   function setExplore(on) {
-    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.title = on ? 'Leave free look' : 'Free look'; exBtn.setAttribute('aria-label', exBtn.title); requestAnimationFrame(refill);
+    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.textContent = on ? 'Back to view' : 'Free look'; requestAnimationFrame(refill);
     if (on) {
       const c = Sc.cam, dx = c.px - c.tx, dz = c.pz - c.tz; Object.assign(Sc.orbit, { tx: c.tx, tz: c.tz, dist: Math.hypot(dx, c.py, dz), az: Math.atan2(dx, dz), el: Math.atan2(c.py, Math.hypot(dx, dz)), on: true });
       pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }); syncExplore(); showEvents(false); samplePts.forEach(p => p.ring.show(true));
@@ -554,15 +554,6 @@
   exBtn.addEventListener('click', () => setExplore(!exploring));
   ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
   window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
-  /* round map controls and the compass */
-  const zoom = k => { if (!exploring) setExplore(true); gsap.to(Sc.orbit, { dist: Math.max(3, Math.min(28, Sc.orbit.dist * k)), duration: reduce ? 0 : 0.35, ease: 'power3.out', overwrite: 'auto' }); };
-  $('#zoomIn').addEventListener('click', () => zoom(0.78)); $('#zoomOut').addEventListener('click', () => zoom(1.28));
-  $('#resetBtn').addEventListener('click', () => go(active, true));
-  { const dial = $('#dial'), hub = $('#hub'), DIR = ['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE']; let lastAz = 9;
-    const spin = () => { const c = Sc.cam, az = exploring ? Sc.orbit.az : Math.atan2(c.px - c.tx, c.pz - c.tz);
-      if (Math.abs(az - lastAz) > 0.002) { lastAz = az; const deg = az * 180 / Math.PI; dial.style.transform = `rotate(${deg.toFixed(1)}deg)`; hub.textContent = DIR[((Math.round(deg / 45) % 8) + 8) % 8]; }
-      requestAnimationFrame(spin); };
-    spin(); }
 
   /* ------------------------------------------------ street agent */
   const norm = s => s.toLowerCase().replace(/[.,?!']/g, '').replace(/\bst\b/g, 'street').replace(/\brd\b/g, 'road').replace(/\bdr\b/g, 'drive').replace(/\bblvd\b/g, 'boulevard').replace(/\bave\b/g, 'avenue').replace(/\bln\b/g, 'lane').replace(/\bct\b/g, 'court').replace(/\bsaint\b/g, 'st').replace(/\s+/g, ' ').trim();
@@ -635,7 +626,7 @@
       execute: () => { const mo = Mo.opts.motion, bias = Mo.opts.bias, out = {}; for (const b of Object.keys(SENS).map(Number)) { const k = mo + '|' + b; if (!btCache[k]) { Mo.opts.bias = b; btCache[k] = backtest(); btCache[k].alerts = alertDays(); Mo.opts.bias = bias; } const r = btCache[k]; out[SENS[b]] = { slides_caught_of_10: r.hits, percent_of_map_flagged: +(r.area * 100).toFixed(1), median_slide_site_rank_top_percent: +(r.top * 100).toFixed(1), random_street_spot_rank_top_percent: +(r.nullTop * 100).toFixed(1), times_in_10_a_slide_site_outscores_a_random_street_spot: +(r.auc * 10).toFixed(1), alert_days_per_winter_over_the_gauge_record: r.alerts ? +r.alerts.perYear.toFixed(1) : undefined, alert_days_in_winter_2023: r.alerts ? r.alerts.wy23 : undefined }; }
         return { setting_in_use: SENS[bias], by_setting: out, spot_check_other_winters_at_setting_in_use: OTHER.map(e => { let peak = 0; for (let d = e.day - 3; d < e.day; d++) peak = Math.max(peak, Mo.maxNear(e.q[0], e.q[1], hsc(d), RAD)); return { slide: e.where, reported: e.date, score_beforehand: Math.round(peak), tier: Mo.tier(peak) }; }), caveats: events.length + ' events, street-level positions, gauge rain used as a perfect forecast, placeholder score' }; } }
   ];
-  const AGENT_RULES = `You are the GroundTruth street risk assistant for ${REG.places}, California. Answer the resident's question by calling the tools. Every number, street name and fact in your answer must come from a tool result in this conversation. Do not add anything from memory. If a tool fails or returns nothing, say what you could not find.
+  const AGENT_RULES = `You are the scree street risk assistant for ${REG.places}, California. Answer the resident's question by calling the tools. Every number, street name and fact in your answer must come from a tool result in this conversation. Do not add anything from memory. If a tool fails or returns nothing, say what you could not find.
 Write plain sentences. No markdown, no lists, no dashes, no headings. Under 150 words. Lead with the direct answer. Give scores as a number out of 100 with the tier. Say which storm the numbers assume. Never say a street, home or slope is safe.
 End with one sentence saying what the tool results say about the ground motion input (simulated sample data, or left out) and that the score is a placeholder, so this is a demonstration and real concerns go to city engineering staff or a licensed geotechnical engineer.`;
   async function agentAnswer(q, s) {
@@ -652,7 +643,7 @@ End with one sentence saying what the tool results say about the ground motion i
   }
   const GUIDE = ['WARNING SIGNS TO WATCH FOR (U.S. Geological Survey landslide guidance)\n- New cracks or bulges in the ground, pavement or sidewalks\n- Soil pulling away from foundations; decks, patios or stairs tilting or separating from the house\n- Doors and windows that start to stick, new cracks in walls or floors\n- Leaning trees, fences, retaining walls or utility poles; offset fence lines\n- Springs, seeps or soggy ground where it is normally dry; broken water lines\n- A creek that rises fast and turns muddy, or drops suddenly while it is still raining\n- A faint rumble that grows louder, trees cracking, boulders knocking together',
     'WHAT TO DO\n- In immediate danger, leave if it is safe and call 911\n- During intense rain stay awake and alert; many debris flow deaths happen while people sleep\n- Listen for unusual sounds and watch the creek below you\n- Report new cracks or moving ground to your city public works or fire department, and tell the neighbors downhill\n- Before the wet season, keep drains, gutters and culverts clear and send roof water away from the slope\n- Follow National Weather Service flood and debris flow warnings and the Contra Costa County Community Warning System',
-    'LIMITS\nGroundTruth is a student project. The ground motion input is simulated sample data and the score is a placeholder formula, not a trained or validated model. It cannot tell you a slope is safe.'];
+    'LIMITS\nscree is a student project. The ground motion input is simulated sample data and the score is a placeholder formula, not a trained or validated model. It cannot tell you a slope is safe.'];
   function reportButton(d, street, lines) { const b = document.createElement('button'); b.className = 'btn sm act'; b.style.marginLeft = '8px'; b.textContent = 'Download report'; b.addEventListener('click', () => saveFile('groundtruth_' + street.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.txt', 'GROUNDTRUTH STREET REPORT\n\n' + [].concat(lines, GUIDE).join('\n\n') + '\n', 'text/plain')); d.appendChild(b); const m = $('#msgs'); if (d.offsetHeight > m.clientHeight) m.scrollTop = d.offsetTop - m.offsetTop; else m.scrollTop = m.scrollHeight; }
   function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
 
@@ -832,6 +823,6 @@ End with one sentence saying what the tool results say about the ground motion i
   pollBackend(); setInterval(pollBackend, 5000);
   if (!reduce) {
     gsap.from(Sc.cam, { py: '+=4', pz: '+=6', duration: 2.2, ease: 'power3.out' });
-    gsap.from('.rail, .top, .head, .filt, .stage, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });
+    gsap.from('.rail, .topbar, .head, .stage, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });
   }
 })();

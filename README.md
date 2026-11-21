@@ -1,6 +1,6 @@
-# GroundTruth
+# scree
 
-Satellite landslide early warning for Lafayette, Orinda and Moraga, California.
+scree (the project folder and repo keep the old name, GroundTruth) is satellite landslide early warning for Lafayette, Orinda and Moraga, California.
 
 ## Local experimental model and simulation
 
@@ -42,7 +42,7 @@ Checks: `node tests/local_model_test.cjs` and
 
 | Folder | What it is |
 |---|---|
-| `site/` | The dashboard: a slim icon rail, a row of stat chips, a title row, a map layer row and one large 3D map panel. Short views float over the map as a card and long views sit beside it. Dark and light themes. Open `site/index.html`, or run `python3 -m http.server` inside `site/` and open http://localhost:8000. No build step. |
+| `site/` | The dashboard: a slim icon rail, a row of stat chips, a title row, then the 3D map with each view in a panel beside it. A data key, a hint and the layer toolbar float on the map. Surfaces are layered with shadows, no gradients. Dark and light themes. Open `site/index.html`, or run `python3 -m http.server` inside `site/` and open http://localhost:8000. No build step. |
 | `dataset/` | The sample data the site runs on, as CSV, PNG and one NumPy archive. See `dataset/README.md`. |
 | `model/real_label_experiment.py` | First run on real labels: leave-one-slide-out on the ten reported 2023 slides with real static features. Result in `model/real_label_experiment.json`: AUC 0.51 for the GBM, 0.59 for slope alone. Ten weak labels are not enough to train on. |
 | `MODEL_HANDOFF.md` | **Start here if you are training the model.** Inputs, labels, the output file the site reads, how to check it and how to send it back. |
