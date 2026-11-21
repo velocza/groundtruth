@@ -58,9 +58,9 @@ The four browser downloads are kept as `sf311_flooding.csv`, `gt_bundle_weather.
 
 ## Things to know before training
 
-- San Francisco has almost no landslide labels (7 dated, none before October 2022). It cannot train a landslide model on
-  its own. Use it to test one trained elsewhere. The six USGS points in the Lamorinda box and 158 more around the bay are
-  in the same USGS file.
+- San Francisco has few landslide labels: 16 dated records, 7 of them before October 2022 (see the landslide section
+  below). That is thin for training on its own, so also use it to test a model trained elsewhere. The six USGS points in
+  the Lamorinda box and 158 more around the bay are in the same USGS file.
 - Flooding is the hazard with labels here: 16,658 rain-day report cells. It is a different process from landsliding
   (low, flat, paved ground), so it wants its own model. `training_rows_flood` in the workbook is ready for that.
 - 311 reports come from where people are and from people who choose to report. Absence of a report is not absence of water.
