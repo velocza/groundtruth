@@ -29,22 +29,24 @@ OPERA DISP-S1 is served from NASA Earthdata, which needs a login and was not rea
 
 ## Backtest result on this sample (placeholder score)
 
-Ten reported slides, best score within 300 m in the three days before each report, gauge rain as a perfect forecast:
+Ten reported slides, best score within 300 m in the three days before each report, gauge rain as a perfect forecast but only rain logged up to the report date (each gauge value covers the 24 hours up to that morning, so a plain 72 hour window from the morning before a report would count rain that fell after it). With the simulated motion on, as the site opens:
 
 | Alert sensitivity | Slides caught | Map flagged | Buildings flagged at the January peak | Alert days in 12 winters | Of those, winter 2023 |
 |---|---|---|---|---|---|
-| Fewer alerts | 2 of 10 | 2.6% | 191 | 3 | 3 |
-| Balanced | 3 of 10 | 7.6% | 880 | 26 | 20 |
-| More alerts | 9 of 10 | 17% | 2,707 | 75 | 25 |
+| Fewer alerts | 2 of 10 | 2.4% | 191 | 3 | 3 |
+| Balanced | 3 of 10 | 7.0% | 880 | 26 | 20 |
+| More alerts | 8 of 10 | 15% | 2,707 | 75 | 25 |
+
+Real inputs only: the same 2, 3 and 8 of 10, at 1.6%, 5.2% and 13% of the map flagged. Before the rain window was capped at the report date, More alerts showed 9 of 10; the Pleasant Hill Road slide (December 31) had been credited with 79 mm of rain logged after its report.
 
 An alert day is a day in the gauge record (October 2015 on) with 100 or more buildings on Elevated or High ground. Slides from winters other than 2023 were not collected, so alert days outside 2023 cannot be checked.
 
 First trial on real labels (`model/real_label_experiment.py`): the hand-built GBM, trained on nine of the ten slides with real static features and tested on the tenth, beats 51% of random street spots. Slope alone beats 59%, the placeholder 66%. Ten weak labels are not enough to train on.
 
-Spot check outside the test winter (`landslide_events_other_winters.csv`, four dated slides from 2016, 2017 and 2019 found in local news after the formula was fixed, positions taken from the named street): 0 of 4 near Elevated or High ground at Fewer alerts, 1 of 4 at Balanced, 2 of 4 at More alerts. Scores at the default: Augusta Drive 5, Van Tassel Lane 27, Canyon Road bridge 13 (April 2017, 12 mm of rain that week) and 47 (February 2019).
+Spot check outside the test winter (`landslide_events_other_winters.csv`, four dated slides from 2016, 2017 and 2019 found in local news after the formula was fixed, positions taken from the named street): 0 of 4 near Elevated or High ground at Fewer alerts, 0 of 4 at Balanced, 2 of 4 at More alerts. Scores at the default: Augusta Drive 4, Van Tassel Lane 24, Canyon Road bridge 13 (April 2017, 12 mm of rain that week) and 24 (February 2019). The `lon` and `lat` columns are the points the site picks from the named streets.
 
-Three of those four were reported within five days of one of the eight wettest storms in the gauge record, so the rain trigger gets the timing right more often than the map score gets the place.
+Three of those four were reported within five days after one of the eight wettest storms in the gauge record, so the rain trigger gets the timing right more often than the map score gets the place.
 
-Timing across all 14 dated slides: 12 were reported within three days after a day in the wettest 5% of the gauge record (trigger T at or above 0.28). Only 6% of all days are that close to one. The misses are the April 2017 Canyon bridge slide and 57 Tarry Lane (reported February 7, 2023).
+Timing across all 14 dated slides: 12 were reported within three days after a day in the wettest 5% of the gauge record (trigger T at or above 0.28). Only 5% of all days are that close to one. The misses are the April 2017 Canyon bridge slide and 57 Tarry Lane (reported February 7, 2023).
 
-A slide site outscores a random street point 6.5 times in 10. Ten events cannot validate a model. These are the numbers the trained model has to beat.
+A slide site outscores a random street point 6.4 times in 10 (6.6 on real inputs only). Ten events cannot validate a model. These are the numbers the trained model has to beat.

@@ -29,6 +29,10 @@
   const wetCum = []; { let c = 0; for (let d = 0; d < R23.mm.length; d++) { c += Math.max(0, R23.api[d] - 60); wetCum.push(c); } }
   const seasonCum = []; { let c = 0; for (const v of R23.mm) { c += v || 0; seasonCum.push(c); } }
   const replaySc = d => ({ r72: next72(R23, d), api: R23.api[d], era: 1, amt: Math.min(1, wetCum[d] / wetCum[D1]) });
+  /* Scoring a reported slide: each gauge value covers the 24 h up to that morning, so the plain 72 h window from the morning
+     before a report would count up to two days of rain that fell after the report. Only rain logged up to the report date counts. */
+  const upTo = (rec, d, rep) => { let s = 0; for (let j = d + 1; j <= Math.min(d + 3, rep); j++) s += rec.mm[j] || 0; return s; };
+  const replayBefore = (d, rep) => ({ ...replaySc(d), r72: upTo(R23, d, rep) });
   let peakDay = D0; { let best = -1; for (let d = D0; d <= D1; d++) { const sc = replaySc(d), T = 0.55 * Math.min(1.5, sc.r72 / 200) + 0.45 * Math.min(1.3, sc.api / 200); if (T > best) { best = T; peakDay = d; } } }
   const lastNow = RNOW.mm.length - 1;
   const PRESETS = {
@@ -43,6 +47,7 @@
   const RL = window.GT_RAIN, HN = RL.mm.length;
   const hsc = d => ({ r72: (RL.mm[d + 1] || 0) + (RL.mm[d + 2] || 0) + (RL.mm[d + 3] || 0), api: RL.api[d], era: 0, amt: 0 });
   const hT = Float32Array.from({ length: HN }, (_, d) => Mo.Tof(hsc(d)));
+  const hscBefore = (d, rep) => ({ ...hsc(d), r72: upTo(RL, d, rep) }), hTBefore = (d, rep) => Mo.Tof(hscBefore(d, rep));
   const hWY = Int16Array.from({ length: HN }, (_, d) => { const t = addDays(RL.start, d); return t.getUTCFullYear() + (t.getUTCMonth() >= 9 ? 1 : 0); });
   /* season rain to date against the same date in the other water years of the gauge record */
   function seasonStats(d) {
@@ -376,13 +381,13 @@
   const nullPts = (() => { let seed = 7; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296, out = []; while (out.length < 240) { const st = G.streets[Math.floor(rnd() * G.streets.length)], q = st.p[Math.floor(rnd() * st.p.length)]; if (Mo.cellOf(q[0], q[1]) >= 0) out.push(q); } return out; })();
   const RAD = 10;                                                   // 10 cells, about 300 m: reports name a street, not a spot
   function backtest() {
-    const fields = new Map(), field = d => { if (!fields.has(d)) fields.set(d, Mo.sortedField(replaySc(d))); return fields.get(d); };
-    const nulls = new Map(), nullOf = d => { if (!nulls.has(d)) { const sc = replaySc(d); nulls.set(d, Float32Array.from(nullPts, q => Mo.maxNear(q[0], q[1], sc, RAD)).sort()); } return nulls.get(d); };
+    const fields = new Map(), field = (d, rep) => { const k = d + '|' + rep; if (!fields.has(k)) fields.set(k, Mo.sortedField(replayBefore(d, rep))); return fields.get(k); };
+    const nulls = new Map(), nullOf = (d, rep) => { const k = d + '|' + rep; if (!nulls.has(k)) { const sc = replayBefore(d, rep); nulls.set(k, Float32Array.from(nullPts, q => Mo.maxNear(q[0], q[1], sc, RAD)).sort()); } return nulls.get(k); };
     const rows = events.map(e => {
       let peak = 0, pd = e.day - 1;
-      for (let d = e.day - 3; d < e.day; d++) { const v = Mo.maxNear(e.lonlat[0], e.lonlat[1], replaySc(d), RAD); if (v > peak) { peak = v; pd = d; } }
-      const nu = nullOf(pd);
-      return { e, peak, pd, area: Mo.shareAbove(field(pd), 50), top: Mo.shareAbove(field(pd), peak), beats: 1 - Mo.shareAbove(nu, peak), nullTop: Mo.shareAbove(field(pd), nu[nu.length >> 1]) };
+      for (let d = e.day - 3; d < e.day; d++) { const v = Mo.maxNear(e.lonlat[0], e.lonlat[1], replayBefore(d, e.day), RAD); if (v > peak) { peak = v; pd = d; } }
+      const nu = nullOf(pd, e.day), fd = field(pd, e.day);
+      return { e, peak, pd, area: Mo.shareAbove(fd, 50), top: Mo.shareAbove(fd, peak), beats: 1 - Mo.shareAbove(nu, peak), nullTop: Mo.shareAbove(fd, nu[nu.length >> 1]) };
     });
     const med = xs => { const v = xs.slice().sort((a, b) => a - b); return (v[(v.length - 1) >> 1] + v[v.length >> 1]) / 2; };
     return { rows, area: rows.reduce((a, r) => a + r.area, 0) / rows.length, bld: (b => b.el + b.hi)(Mo.buildingsAt(replaySc(peakDay))), hits: rows.filter(r => r.peak >= 50).length, top: med(rows.map(r => r.top)), nullTop: med(rows.map(r => r.nullTop)), auc: rows.reduce((a, r) => a + r.beats, 0) / rows.length };
@@ -413,27 +418,27 @@
     for (let d = 0; d < n; d++) { const t = addDays(RL.start, d); if (t.getUTCMonth() === 0 && t.getUTCDate() === 1) { x.fillStyle = css('--ink-3'); x.fillText("'" + String(t.getUTCFullYear()).slice(2), X(d), h - 4); x.fillStyle = css('--line'); x.fillRect(Math.round(X(d)), T, 1, ph); } }
     x.fillStyle = css('--ink-3'); x.globalAlpha = 0.55; for (let px = 0; px < pw; px++) { const d0 = Math.floor(px / pw * n), d1 = Math.max(d0 + 1, Math.floor((px + 1) / pw * n)); let m = 0; for (let d = d0; d < d1 && d < n; d++) if (hT[d] > m) m = hT[d]; if (m >= p95) { x.globalAlpha = 1; x.fillStyle = css('--accent'); } else { x.globalAlpha = 0.55; x.fillStyle = css('--ink-3'); } x.fillRect(L + px, Y(m), 1, T + ph - Y(m)); }
     x.globalAlpha = 1; x.strokeStyle = css('--accent'); x.setLineDash([3, 3]); x.beginPath(); x.moveTo(L, Y(p95) + .5); x.lineTo(L + pw, Y(p95) + .5); x.stroke(); x.setLineDash([]);
-    let hit = 0; for (const e of all) { let m = 0; for (let d = e.day - 3; d < e.day; d++) if (d >= 0 && d < n && hT[d] > m) m = hT[d]; if (m >= p95) hit++; x.beginPath(); x.arc(X(e.day), 11, 3.5, 0, 6.3); if (e.test) { x.fillStyle = css('--t-elevated'); x.fill(); } else { x.strokeStyle = css('--ink'); x.lineWidth = 1.5; x.stroke(); x.lineWidth = 1; } }
-    let base = 0; for (let d = 3; d < n; d++) if (hT[d - 1] >= p95 || hT[d - 2] >= p95 || hT[d - 3] >= p95) base++; base = base / (n - 3) * 100;
+    let hit = 0; for (const e of all) { let m = 0; for (let d = e.day - 3; d < e.day; d++) if (d >= 0 && d < n) m = Math.max(m, hTBefore(d, e.day)); if (m >= p95) hit++; x.beginPath(); x.arc(X(e.day), 11, 3.5, 0, 6.3); if (e.test) { x.fillStyle = css('--t-elevated'); x.fill(); } else { x.strokeStyle = css('--ink'); x.lineWidth = 1.5; x.stroke(); x.lineWidth = 1; } }
+    let base = 0; for (let d = 3; d < n; d++) if (hTBefore(d - 1, d) >= p95 || hTBefore(d - 2, d) >= p95 || hTBefore(d - 3, d) >= p95) base++; base = base / (n - 3) * 100;
     $('#tlCap').textContent = `Each bar is one day of the rain trigger, from real gauge rain. Bright bars are the wettest 5% of days, above the dashed line. Dots mark every dated slide in this project: filled for winter 2023, open for the four from other winters. ${hit} of ${all.length} were reported within three days after a top 5% day. Only ${fmt(base)}% of all days are that close to one. The trigger is the same at every alert setting.`;
   }
   window.addEventListener('resize', () => { clearTimeout(drawTimeline.t); drawTimeline.t = setTimeout(drawTimeline, 200); });
   function renderOther() {
     if (!timing) { const n = HN - 3, off = Math.round((new Date(R23.start + 'T12:00:00Z') - new Date(RL.start + 'T12:00:00Z')) / 864e5), p95 = Float32Array.from(hT.subarray(0, n)).sort()[Math.floor(n * 0.95)], days = events.map(e => e.day + off).concat(OTHER.map(e => e.day));
-      timing = { p95, n: days.length, hit: days.filter(dd => { for (let d = dd - 3; d < dd; d++) if (d >= 0 && d < n && hT[d] >= p95) return true; return false; }).length }; stormStats(); }
+      timing = { p95, n: days.length, hit: days.filter(dd => { for (let d = dd - 3; d < dd; d++) if (d >= 0 && d < n && hTBefore(d, dd) >= p95) return true; return false; }).length }; stormStats(); }
     drawTimeline();
     const ol = $('#btOther'); if (!ol) return; ol.textContent = ''; let hits = 0;
     for (const e of OTHER) {
-      let peak = 0, pd = e.day - 1; for (let d = e.day - 3; d < e.day; d++) { if (d < 0 || d >= HN - 3) continue; const v = Mo.maxNear(e.q[0], e.q[1], hsc(d), RAD); if (v > peak) { peak = v; pd = d; } }
+      let peak = 0, pd = e.day - 1; for (let d = e.day - 3; d < e.day; d++) { if (d < 0 || d >= HN - 3) continue; const v = Mo.maxNear(e.q[0], e.q[1], hscBefore(d, e.day), RAD); if (v > peak) { peak = v; pd = d; } }
       if (peak >= 50) hits++;
-      const li = document.createElement('li'), b = document.createElement('button'), ed = addDays(RL.start, e.day), sc = hsc(pd);
+      const li = document.createElement('li'), b = document.createElement('button'), ed = addDays(RL.start, e.day), sc = hscBefore(pd, e.day);
       b.innerHTML = `<span class="d">${MONTHS[ed.getUTCMonth()]} ${String(ed.getUTCFullYear()).slice(2)}</span><span class="w"></span><span class="tier ${Mo.tier(peak)}">${Math.floor(peak)} ${Mo.tier(peak)}</span><span class="l">${fmt(sc.r72)} mm rain</span>`;
       b.querySelector('.w').textContent = e.where;
       b.setAttribute('aria-label', `${e.where}, reported ${dstr(ed)}. Highest score within 300 metres in the three days before: ${fmt(peak)}, ${Mo.tier(peak)}, with ${fmt(sc.r72)} millimetres of rain in 72 hours. Show on map.`);
       b.addEventListener('click', () => { Sc.highlight(e.q[0], e.q[1], true); U.uHiR.value = 0.021; pushScenario(sc); flyTo(e.q[0], e.q[1], 5.4); });
       li.appendChild(b); ol.appendChild(li);
     }
-    $('#btOtherNote').textContent = `${hits} of ${OTHER.length} sat near Elevated or High ground at this setting. These were found in local news after the formula was fixed, so nothing was tuned to them, but four slides picked by a search are a spot check and not a test set. ${(e => { if (!e) return ''; const se = seasonStats(e.day); return `The April 2017 bridge slide moved with almost no rain that week, late in a season that had reached ${fmt(se.pct)}% of average rain. A three day rain trigger is not built to see that.`; })(OTHER.find(e => e.date === '2017-04-18'))} ${OTHER.filter(e => stormPicks.some(d => Math.abs(d - e.day) <= 5)).length} of the ${OTHER.length} were reported within five days of one of the eight wettest storms in the gauge record, so the rain trigger gets the timing even where the map score is too low. Sources are in the dataset notes.`;
+    $('#btOtherNote').textContent = `${hits} of ${OTHER.length} sat near Elevated or High ground at this setting. These were found in local news after the formula was fixed, so nothing was tuned to them, but four slides picked by a search are a spot check and not a test set. ${(e => { if (!e) return ''; const se = seasonStats(e.day); return `The April 2017 bridge slide moved with almost no rain that week, late in a season that had reached ${fmt(se.pct)}% of average rain. A three day rain trigger is not built to see that.`; })(OTHER.find(e => e.date === '2017-04-18'))} ${OTHER.filter(e => stormPicks.some(d => d < e.day && e.day - d <= 5)).length} of the ${OTHER.length} were reported within five days after one of the eight wettest storms in the gauge record, so the rain trigger gets the timing even where the map score is too low. Sources are in the dataset notes.`;
   }
   let btCache = {};
   function renderBacktest() {
@@ -454,7 +459,7 @@
       b.innerHTML = `<span class="d">${MONTHS[ed.getUTCMonth()]} ${ed.getUTCDate()}</span><span class="w"></span><span class="tier ${Mo.tier(r.peak)}">${Math.floor(r.peak)} ${Mo.tier(r.peak)}</span><span class="l">top ${pc(r.top)} of map</span>`;
       b.querySelector('.w').textContent = r.e.where;
       b.setAttribute('aria-label', `${r.e.where}, reported ${dstr(ed)}. Highest score within 300 metres in the three days before: ${fmt(r.peak)}, ${Mo.tier(r.peak)}, which ranks in the top ${pc(r.top)} of the map. Show on map.`);
-      b.addEventListener('click', () => { Sc.highlight(r.e.lonlat[0], r.e.lonlat[1], true); U.uHiR.value = 0.021; pushScenario(replaySc(r.pd)); flyTo(r.e.lonlat[0], r.e.lonlat[1], 5.4); });
+      b.addEventListener('click', () => { Sc.highlight(r.e.lonlat[0], r.e.lonlat[1], true); U.uHiR.value = 0.021; pushScenario(replayBefore(r.pd, r.e.day)); flyTo(r.e.lonlat[0], r.e.lonlat[1], 5.4); });
       li.appendChild(b); ol.appendChild(li);
     }
     renderOther();
@@ -603,7 +608,7 @@
     { name: 'backtest_summary', description: 'How the score did against the ten slides reported in winter 2022 to 2023, at each alert sensitivity: slides caught, share of the map flagged, median rank, and how often a slide site outscores a random street spot.',
       inputSchema: { type: 'object', properties: {} },
       execute: () => { const mo = Mo.opts.motion, bias = Mo.opts.bias, out = {}; for (const b of Object.keys(SENS).map(Number)) { const k = mo + '|' + b; if (!btCache[k]) { Mo.opts.bias = b; btCache[k] = backtest(); btCache[k].alerts = alertDays(); Mo.opts.bias = bias; } const r = btCache[k]; out[SENS[b]] = { slides_caught_of_10: r.hits, percent_of_map_flagged: +(r.area * 100).toFixed(1), median_slide_site_rank_top_percent: +(r.top * 100).toFixed(1), random_street_spot_rank_top_percent: +(r.nullTop * 100).toFixed(1), times_in_10_a_slide_site_outscores_a_random_street_spot: +(r.auc * 10).toFixed(1), alert_days_per_winter_over_the_gauge_record: r.alerts ? +r.alerts.perYear.toFixed(1) : undefined, alert_days_in_winter_2023: r.alerts ? r.alerts.wy23 : undefined }; }
-        return { setting_in_use: SENS[bias], by_setting: out, spot_check_other_winters_at_setting_in_use: OTHER.map(e => { let peak = 0; for (let d = e.day - 3; d < e.day; d++) peak = Math.max(peak, Mo.maxNear(e.q[0], e.q[1], hsc(d), RAD)); return { slide: e.where, reported: e.date, score_beforehand: Math.round(peak), tier: Mo.tier(peak) }; }), caveats: 'ten events, street-level positions, gauge rain used as a perfect forecast, placeholder score' }; } }
+        return { setting_in_use: SENS[bias], by_setting: out, spot_check_other_winters_at_setting_in_use: OTHER.map(e => { let peak = 0; for (let d = e.day - 3; d < e.day; d++) peak = Math.max(peak, Mo.maxNear(e.q[0], e.q[1], hscBefore(d, e.day), RAD)); return { slide: e.where, reported: e.date, score_beforehand: Math.round(peak), tier: Mo.tier(peak) }; }), caveats: 'ten events, street-level positions, gauge rain used as a perfect forecast, placeholder score' }; } }
   ];
   const AGENT_RULES = `You are the GroundTruth street risk assistant for Lafayette, Orinda and Moraga, California. Answer the resident's question by calling the tools. Every number, street name and fact in your answer must come from a tool result in this conversation. Do not add anything from memory. If a tool fails or returns nothing, say what you could not find.
 Write plain sentences. No markdown, no lists, no dashes, no headings. Under 150 words. Lead with the direct answer. Give scores as a number out of 100 with the tier. Say which storm the numbers assume. Never say a street, home or slope is safe.
