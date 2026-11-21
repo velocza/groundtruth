@@ -9,10 +9,10 @@
       title: 'escape · San Francisco',
       text: {
         h1: 'escape, a landslide risk dashboard for San Francisco',
-        topH: 'Steep streets, record rain.', topBadge: 'Real data',
-        lede: 'escape pairs real terrain with storm rain to rank San Francisco\'s slopes by landslide risk.',
-        topNotice: '<b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. San Francisco has no ground motion layer yet, and nothing is simulated in its place. Street flooding reports are in the dataset for model training and are not drawn on this map.',
-        topFoot: 'A hackathon prototype. It shows relative risk from a placeholder formula. For safety decisions, follow the National Weather Service and your city.',
+        topH: 'Is your home ready for the next storm?', topBadge: 'Real public data',
+        lede: 'Type your address. See what a big storm means for your home, in plain words, and what to do about it.',
+        topNotice: '<b>Your address check uses real public data</b>: 311 flood reports, the San Francisco flood model, the street network and real 911 response times. San Francisco has no landslide model yet, so the check says so instead of guessing. The colors on the map come from a simpler placeholder formula.',
+        topFoot: 'A student project. Rankings compare places with other places, not chances, and it cannot tell you a home is safe. In danger, leave if you can and call 911.',
         rpBody: 'Real gauge rain from San Francisco drives the map. Beacons mark slides the USGS mapped that winter.', rpGauges: 'San Francisco gauges, area mean',
         btBody: 'Six slides were mapped in the city that winter by the USGS, four of them on one hillside at Bernal Heights. Each one is checked against the ground within 300 m during the three days before.',
         btOf: 'of 6 sat near Elevated or High ground beforehand', btListH: 'The six mapped slides',
@@ -28,7 +28,7 @@
         evNote: 'Bright lines on the map are blocked road segments. Markers labelled USGS mapped are the six slides the U.S. Geological Survey recorded in the city in winter 2023.',
         srcSlides: '6 mapped by the USGS in winter 2023. The dataset also holds 31,478 city flood reports and 382 NWS storm reports'
       },
-      attrs: { '[data-t=topBadge]': ['class', 'badge quiet'], '#gl': ['aria-label', '3D terrain of San Francisco with landslide risk drawn as light'], '#askIn': ['placeholder', 'Ulloa Street, Twin Peaks Boulevard, Folsom Street'] },
+      attrs: { '[data-t=topBadge]': ['class', 'badge quiet'], '#gl': ['aria-label', '3D terrain of San Francisco with landslide risk drawn as light'], '#askIn': ['placeholder', 'Ulloa Street, Twin Peaks Boulevard, Folsom Street'], '#addrIn': ['placeholder', '1 Dr Carlton B Goodlett Pl'] },
       chips: [['Which streets flood worst?', 'Streets that flood worst'], ['Is Twin Peaks Boulevard at risk this weekend?', 'Twin Peaks Boulevard this weekend?'], ['What would 150 mm of rain do to Ulloa Street?', 'Ulloa Street with 150 mm'], ['Which streets are worst right now?', 'Worst streets right now'], ['Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', 'Debris path from Twin Peaks Boulevard']]
     }
   };

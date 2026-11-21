@@ -1,0 +1,53 @@
+{
+ "help": {
+  "what": "Minutes from call received to first fire or EMS unit on scene, emergency calls (final priority 3), real calls within 500 m, 2025-09-01 to 2026-08-31",
+  "source": "DataSF Fire Department and Emergency Medical Services Dispatched Calls for Service (nuek-vuh3)",
+  "cell_m": 250.0,
+  "radius_m": 500.0,
+  "min_calls": 40,
+  "nx": 57,
+  "ny": 54,
+  "city": {
+   "n": 99474,
+   "med": 6.27,
+   "p90": 9.87
+  },
+  "check": {
+   "label": "October 2026 (held out)",
+   "n": 9027,
+   "covered": 0.999,
+   "within_typical": 0.512,
+   "within_slow": 0.899,
+   "median_abs_err_min": 1.33,
+   "median_signed_err_min": 0.05
+  },
+  "check_storm": {
+   "label": "November 18 storm window, Nov 18 00:00 to Nov 19 12:00",
+   "n": 515,
+   "covered": 0.998,
+   "within_typical": 0.462,
+   "within_slow": 0.843,
+   "median_abs_err_min": 1.28,
+   "median_signed_err_min": -0.28
+  }
+ },
+ "flood": {
+  "what": "SF 311 Sewer / Flooding reports within 150 m on rain days (5 mm or more that day or the day before), 2008-11-01 to 2026-11-20",
+  "source": "SF 311 (vw6y-z8j6) via dataset_sf/flood_reports_311_san_francisco.csv; rain: dataset_sf/rainfall_daily_san_francisco.csv area mean",
+  "cell_m": 100.0,
+  "radius_m": 150.0,
+  "nx": 141,
+  "ny": 134,
+  "reports": 17683,
+  "first": "2008-11-01",
+  "last": "2026-11-20"
+ },
+ "mpd": [
+  88000.0,
+  111000.0
+ ],
+ "origin": [
+  -122.52,
+  37.705
+ ]
+}

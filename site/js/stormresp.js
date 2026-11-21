@@ -50,7 +50,7 @@
     a.POSES.response = { px: -0.6, py: 12.6, pz: 9.6, tx: 0.2, ty: 0, tz: 0 };
     a.LOOKS.response = { risk: 0, motion: 0, roads: 0.7, splitVis: 0, dim: 0.18, bld: 0.25 };
     a.ORDER.splice(Math.max(0, a.ORDER.indexOf('method')), 0, 'response');
-    a.NAMES.response = 'Storm response'; a.SUBS.response = 'Fire and EMS arrival times in the November 18, 2026 storm · real dispatch records'; a.SPLIT.response = 1;
+    a.NAMES.response = 'Help in a storm'; a.SUBS.response = 'How long fire and EMS take to reach you when a storm hits · real dispatch records'; a.SPLIT.response = 1;
     start();
   };
 
@@ -158,6 +158,8 @@
         + (top.length ? `The ${top.length} with the most flood reports (${top.map(t => `${t[0]} ${t[1]}`).join(', ')}) changed by ${top.map(t => sgn(t[2])).join(', ')} minutes at the median. ` : '')
         + `${o.n_neighborhoods} neighborhoods is a small sample, and flood reports follow where people are and choose to report, so this cannot show whether flooding slowed units down.`;
       const ci = C.city.d_med_ci || [NaN, NaN], verdict = ci[0] > 0 ? 'On this record, the median wait was longer during the storm.' : ci[1] < 0 ? 'On this record, the median wait was shorter during the storm.' : 'On this record, the median wait did not measurably change during the storm: the interval includes zero.';
+      { const d = C.city.d_med, lo = ci[0], hi = ci[1], same = lo <= 0 && hi >= 0;
+        const sh = $('#srShort'); if (sh) sh.textContent = `The short answer: ${same ? 'in that storm, help reached people about as fast as on a dry day' : d > 0 ? 'in that storm, help was slower than on a dry day' : 'in that storm, help was a little faster than on a dry day'}. The typical call across the city was reached in ${f1(C.city.storm_med)} minutes, against ${f1(C.city.dry_med)} on comparable dry days. 1 in 10 calls took more than ${f1(C.city.storm_p90)} minutes (${f1(C.city.dry_p90)} on dry days). These times count every call, so they run longer than the emergency-only times in your address check.`; }
       $('#srCityLine').textContent = `Across the city, ${fi(C.city.storm_matched)} storm calls had a median of ${f1(C.city.storm_med)} minutes from receipt to the first unit on scene, against ${f1(C.city.dry_med)} on matched dry days (change ${sgn(C.city.d_med)}, 90% interval ${sgn(ci[0])} to ${sgn(ci[1])}). The 90th percentile was ${f1(C.city.storm_p90)} against ${f1(C.city.dry_p90)} (change ${sgn(C.city.d_p90)}, interval ${sgn(C.city.d_p90_ci[0])} to ${sgn(C.city.d_p90_ci[1])}). ${verdict}`;
     }
 

@@ -128,6 +128,7 @@
   $('#exR72').addEventListener('input', e => setStorm(+e.target.value, S.api, true));
   { const dl = $('#exStreets'), seen = new Set(); for (const s of G.streets) { if (seen.has(s.n)) continue; seen.add(s.n); const o = document.createElement('option'); o.value = s.n; dl.appendChild(o); }
     $('#exFindF').addEventListener('submit', e => { e.preventDefault(); const q = $('#exFind').value.trim().toLowerCase(), out = $('#exFindOut'); if (!q) return;
+      if (window.GTAddress && GTAddress.check) { GTAddress.check($('#exFind').value.trim()); $('#exFind').value = ''; return; }   // the top search is the address check
       let k = G.streets.findIndex(s => s.n.toLowerCase() === q); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().startsWith(q)); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().includes(q));
       if (k < 0) { out.textContent = 'No street by that name on this map.'; return; }
       const r = Mo.streetScore(k, stormSc()); flyToStreet(k); if (!r) { out.textContent = G.streets[k].n + ": at the edge of the map, no score."; return; } out.textContent = `${G.streets[k].n}, ${G.streets[k].t || ''}: ${Math.round(r.score)} ${Mo.tier(r.score)}`.replace(', :', ':'); clearTimeout(out._t); out._t = setTimeout(() => out.textContent = '', 6000); }); }
@@ -171,22 +172,23 @@
     method: { px: 0, py: 14, pz: 13, tx: 0, ty: 0, tz: 0.6 }
   };
   const LOOKS = {                                                  // what the terrain shows in each chapter
-    top: { risk: 0.75, motion: 0.55, roads: 0, splitVis: 0, dim: 0, bld: 0 },
+    top: { risk: 0.75, motion: 0, roads: 0, splitVis: 0, dim: 0, bld: 0 },
     motion: { risk: 0, motion: 1, roads: 0, splitVis: 1, dim: 0, bld: 0 },
-    storm: { risk: 1, motion: 0.25, roads: 0.5, splitVis: 0, dim: 0, bld: 0.9 },
-    replay: { risk: 1, motion: 0.15, roads: 0.35, splitVis: 0, dim: 0, bld: 0.5 },
-    backtest: { risk: 1, motion: 0.1, roads: 0.45, splitVis: 0, dim: 0, bld: 0.5 },
-    inspect: { risk: 0.7, motion: 0.9, roads: 0.2, splitVis: 0, dim: 0, bld: 0.6 },
-    ask: { risk: 1, motion: 0.2, roads: 1, splitVis: 0, dim: 0, bld: 0.9 },
-    method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
+    storm: { risk: 1, motion: 0, roads: 0.5, splitVis: 0, dim: 0, bld: 0.9 },
+    replay: { risk: 1, motion: 0, roads: 0.35, splitVis: 0, dim: 0, bld: 0.5 },
+    backtest: { risk: 1, motion: 0, roads: 0.45, splitVis: 0, dim: 0, bld: 0.5 },
+    inspect: { risk: 0.7, motion: 0, roads: 0.2, splitVis: 0, dim: 0, bld: 0.6 },
+    ask: { risk: 1, motion: 0, roads: 1, splitVis: 0, dim: 0, bld: 0.9 },
+    method: { risk: 0.5, motion: 0, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
   };
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
-  const NAMES = { top: 'escape', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
-  const SUBS = { top: 'Landslide watch for ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
+  const NAMES = { top: 'escape', motion: 'Ground motion', storm: 'Storm map', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
+  const SUBS = { top: 'Storm safety for your address in ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
   if (window.GTStormResp && GTStormResp.register) GTStormResp.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Storm response view adds itself (San Francisco only)
+  if (window.GTAddress && GTAddress.register) GTAddress.register({ S, flyTo, replaySc, peakDay, go: (id, q) => go(id, q), active: () => active, select: (lo, la) => select(lo, la), setStorm: (r, a) => setStorm(r, a, true) });   // the address check on the Overview
   const shiftO = { v: 0 };
   function updShift(now) {
     const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
@@ -680,7 +682,7 @@ End with one sentence saying what the tool results say about the ground motion i
   }
   const GUIDE = ['WARNING SIGNS TO WATCH FOR (U.S. Geological Survey landslide guidance)\n- New cracks or bulges in the ground, pavement or sidewalks\n- Soil pulling away from foundations; decks, patios or stairs tilting or separating from the house\n- Doors and windows that start to stick, new cracks in walls or floors\n- Leaning trees, fences, retaining walls or utility poles; offset fence lines\n- Springs, seeps or soggy ground where it is normally dry; broken water lines\n- A creek that rises fast and turns muddy, or drops suddenly while it is still raining\n- A faint rumble that grows louder, trees cracking, boulders knocking together',
     'WHAT TO DO\n- In immediate danger, leave if it is safe and call 911\n- During intense rain stay awake and alert; many debris flow deaths happen while people sleep\n- Listen for unusual sounds and watch the creek below you\n- Report new cracks or moving ground to your city public works or fire department, and tell the neighbors downhill\n- Before the wet season, keep drains, gutters and culverts clear and send roof water away from the slope\n- Follow National Weather Service flood and debris flow warnings and the Contra Costa County Community Warning System',
-    'LIMITS\nscree is a student project. The ground motion input is simulated sample data and the score is a placeholder formula, not a trained or validated model. It cannot tell you a slope is safe.'];
+    'LIMITS\nescape is a student project. In Lamorinda the score is a trained landslide model that ranks ground; it is not a calibrated chance of a slide. San Francisco uses a placeholder formula from real terrain and rain. It cannot tell you a slope is safe.'];
   function reportButton(d, street, lines) { const b = document.createElement('button'); b.className = 'btn sm act'; b.style.marginLeft = '8px'; b.textContent = 'Download report'; b.addEventListener('click', () => saveFile('groundtruth_' + street.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.txt', 'GROUNDTRUTH STREET REPORT\n\n' + [].concat(lines, GUIDE).join('\n\n') + '\n', 'text/plain')); d.appendChild(b); const m = $('#msgs'); if (d.offsetHeight > m.clientHeight) m.scrollTop = d.offsetTop - m.offsetTop; else m.scrollTop = m.scrollHeight; }
   function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
 
@@ -747,6 +749,7 @@ End with one sentence saying what the tool results say about the ground motion i
   async function ask(q) {
     q = q.trim(); if (!q) return;
     bubble('me', q); $('#askIn').value = ''; hideSugg();
+    if (/^\s*\d+[a-z]?\s+[a-z]/i.test(q) && !/\b(mm|millimet\w*|inch\w*|in)\b/i.test(q) && window.GTAddress) { bubble('', 'That looks like an address. Your answers for it are on the Overview.'); GTAddress.check(q); return; }
     const ml = LS();
     if (REG.landslideModel && !ml) { bubble('', 'The landslide model did not load. Run model/export_landslide_site.py and reload this page.'); return; }
     const rainMatch = q.match(/(\d+(?:\.\d+)?)\s*(mm|millimet(?:ers|res)?|inches|inch|in\b|")/i);
