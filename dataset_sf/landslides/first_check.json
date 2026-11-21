@@ -1,0 +1,40 @@
+{
+ "test_slides": [
+  "SFL10",
+  "SFL11",
+  "SFL12",
+  "SFL13",
+  "SFL14",
+  "SFL15",
+  "SFL16",
+  "SFL17",
+  "SFL18"
+ ],
+ "gbm": {
+  "overall": 0.864,
+  "where": 0.758,
+  "when": 0.97
+ },
+ "slope_alone": {
+  "overall": 0.743,
+  "where": 0.772,
+  "when": 0.714
+ },
+ "trigger_alone": {
+  "overall": 0.745,
+  "where": 0.5,
+  "when": 0.99
+ },
+ "gbm_winter2023": {
+  "overall": 0.9,
+  "where": 0.817,
+  "when": 0.984
+ },
+ "usgs1997_map": {
+  "mostly_landslide_cells": 1427,
+  "share_of_land": 0.0097,
+  "auc_slope_vs_mostly_landslide": 0.938,
+  "slides_within_150m_of_mostly_landslide": 3,
+  "slides": 18
+ }
+}
