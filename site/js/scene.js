@@ -38,7 +38,7 @@
 
   /* ------------------------------------------------ shaders */
   const COMMON = `precision highp float;
-    uniform sampler2D tTerrain, tMotion, tShadow;
+    uniform sampler2D tTerrain, tMotion, tShadow, tLSA, tLSB; uniform float uLS, uLSMix, uLSOff;
     uniform float uR72, uApi, uEra, uAmt, uUseMotion, uBias, uTime, uShadowOn, uShadowTexel, uShadowRes, uFogD, uSplitVis, uRisk;
     uniform mat4 uShadowMat; uniform vec3 uSun, uBg;
     vec3 ramp(float x){
@@ -56,7 +56,9 @@
       float mm = uUseMotion * clamp(vr / 20.0, 0.0, 1.0), a = uUseMotion * clamp((vr - vpre) / 15.0, 0.0, 1.0);
       float T = 0.55 * min(1.5, uR72 / 200.0) + 0.45 * min(1.3, uApi / 200.0);
       float z = uBias + 3.0*s + 0.8*h + 1.0*mm + 1.2*a + 3.5*T + 2.0*s*T + 1.6*mm*T;
-      return 1.0 / (1.0 + exp(-z));
+      float idx = 1.0 / (1.0 + exp(-z));
+      if (uLS > 0.5) { float p = clamp(mix(texture2D(tLSA, uv).r, texture2D(tLSB, uv).r, uLSMix), 0.002, 0.998); idx = 1.0 / (1.0 + exp(-(log(p / (1.0 - p)) + uLSOff))); }   // trained landslide model (Lamorinda); ground, buildings and roads all read it
+      return idx;
     }
     float shadowAt(vec3 w, vec3 n){                        // 1 in sun, 0 in shadow; five taps soften the edge
       if (uShadowOn < 0.01) return 1.0;
@@ -194,7 +196,7 @@
       vertexShader: 'void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }', fragmentShader: 'void main(){ gl_FragColor = vec4(1.0); }' });
     uniforms = {
       tSatA: { value: tex(I.s2_2023) }, tSatB: { value: tex(I.s2_2026) }, tTerrain: { value: tex(I.terrain) }, tMotion: { value: tex(I.motion) }, tMask: { value: blank }, tNormal: { value: blank }, tPhoto: { value: blank }, uNormal: { value: 0 }, uPhoto: { value: 0 }, tShadow: { value: shadowRT.depthTexture },
-      uMask: { value: 0 }, uFoot: { value: 0.3 }, uBld: { value: 0 }, uRoads: { value: 0 }, uGrid: { value: new THREE.Vector2(Mo.NX, Mo.NY) },
+      uMask: { value: 0 }, uFoot: { value: 0.3 }, uBld: { value: 0 }, tLSA: { value: null }, tLSB: { value: null }, uLS: { value: 0 }, uLSMix: { value: 1 }, uLSOff: { value: 0 }, uRoads: { value: 0 }, uGrid: { value: new THREE.Vector2(Mo.NX, Mo.NY) },
       uSplit: { value: 0 }, uSplitVis: { value: 0 }, uR72: { value: 60 }, uApi: { value: 120 }, uEra: { value: 0 }, uAmt: { value: 0 },
       uRisk: { value: 0.6 }, uMotion: { value: 0.6 }, uTime: { value: 0 }, uDim: { value: 0 }, uHiOn: { value: 0 }, uHiR: { value: 0.012 }, uUseMotion: { value: 1 }, uBias: { value: -6.5 },
       uHi: { value: new THREE.Vector2(0.5, 0.5) }, uSun: { value: new THREE.Vector3(-0.58, 0.52, 0.36).normalize() }, uBg: { value: bg },
@@ -520,7 +522,19 @@
   };
   function setLayer(name, on) { if (layers[name] !== on) { layers[name] = on; if (name === 'buildings') { shadowDirty = true; uniforms.uFoot.value = on ? 0.3 : 0.12; } } }
 
-  window.GTScene = { build, cam, orbit, nav, layers, setLayer, lite: LITE, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
+  /* the trained model's score layer for the current storm (Uint8 per cell, rows north to south); fades from the previous one */
+  const lsTex = [];
+  function setLandslide(layer, fade) {
+    if (!uniforms || !layer) return;
+    const cv = document.createElement('canvas'); cv.width = Mo.NX; cv.height = Mo.NY; const x = cv.getContext('2d'), im = x.createImageData(Mo.NX, Mo.NY);
+    for (let i = 0; i < layer.length; i++) { const o = i * 4; im.data[o] = im.data[o + 1] = im.data[o + 2] = layer[i]; im.data[o + 3] = 255; }
+    x.putImageData(im, 0, 0); const t = tex(cv);
+    if (!lsTex.length) { uniforms.tLSA.value = uniforms.tLSB.value = t; lsTex.push(t); uniforms.uLS.value = 1; uniforms.uLSMix.value = 1; return; }
+    const prev = uniforms.tLSB.value; uniforms.tLSA.value = prev; uniforms.tLSB.value = t; uniforms.uLSMix.value = 0;
+    if (lsTex.length > 2) lsTex.shift().dispose(); lsTex.push(t);
+    if (fade && window.gsap && !reduced) gsap.to(uniforms.uLSMix, { value: 1, duration: 0.5, ease: 'power2.out', overwrite: true }); else uniforms.uLSMix.value = 1;
+  }
+  window.GTScene = { setLandslide, build, cam, orbit, nav, layers, setLayer, lite: LITE, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
     get view() { return view; }, get pending() { return queue.length; },
     setReduced(v) { reduced = v; }, resize, setShift,
     project(lon, lat, lift) { const p = worldOf(lon, lat, liftOf(lift)).project(camera); return p.z < 1 ? [(p.x + 1) / 2 * canvas.clientWidth, (1 - p.y) / 2 * canvas.clientHeight] : null; } };   // screen position of a place, for 2D overlays

@@ -37,7 +37,31 @@
       for (let i = 0, p = 0; i < N; i++, p += 4) { L.bld[i] = b[p]; if (b[p]) idx.push(i); }
       bldCells = Int32Array.from(idx); for (const i of idx) bldTotal += L.bld[i];
     }
+    if (window.GT_LS_LAYERS) await loadLandslide(window.GT_LS_LAYERS);
     indexStreets();
+  }
+  /* Trained landslide model (Lamorinda): its score for every cell, precomputed for each storm region its trees can tell apart
+     (model/export_landslide_layers.py). When it is loaded, index() reads it instead of the placeholder formula. */
+  let LS = null;
+  async function loadLandslide(m) {
+    const im = await loadImage(m.png), px = pixels(im), per = m.nx * m.ny, layers = [];
+    for (let k = 0; k < m.keys.length; k++) { const f = Math.floor(k / 3), ch = k % 3, a = new Uint8Array(per), o = f * per * 4 + ch; for (let i = 0; i < per; i++) a[i] = px[o + i * 4]; layers.push(a); }
+    const table = new Int16Array(16 * 16 * 16).fill(-1);
+    m.keys.forEach((key, n) => { const [a, b, c] = key.split(',').map(Number); table[(a * 16 + b) * 16 + c] = n; });
+    LS = { cuts: m.cuts, layers, table, lut: new Float32Array(256), lutBias: null, memo: { r: NaN, a: NaN, lay: null } };
+  }
+  const sideOf = (x, cs) => { let n = 0; for (const c of cs) if (x > c) n++; return n; };
+  function lsLayer(sc) {                                    // the precomputed layer for this storm (0..255 per cell)
+    const r = Math.max(0, Math.min(400, sc.r72)), a = Math.max(0, Math.min(280, sc.api)), m = LS.memo;
+    if (r === m.r && a === m.a) return m.lay;
+    const t = 0.55 * Math.min(1.5, r / 200) + 0.45 * Math.min(1.3, a / 200);
+    const n = LS.table[(sideOf(r, LS.cuts.r72) * 16 + sideOf(a, LS.cuts.api)) * 16 + sideOf(t, LS.cuts.T)];
+    m.r = r; m.a = a; m.lay = LS.layers[n < 0 ? 0 : n]; return m.lay;
+  }
+  /* alert sensitivity on the model: Fewer alerts is the model as trained; the other settings shift its log-odds by the same steps as the placeholder intercept */
+  function lsLut() {
+    if (LS.lutBias !== opts.bias) { const off = opts.bias + 6.5; for (let v = 0; v < 256; v++) { const p = Math.min(0.998, Math.max(0.002, v / 255)); LS.lut[v] = off ? 100 * sig(Math.log(p / (1 - p)) + off) : v / 2.55; } LS.lutBias = opts.bias; }
+    return LS.lut;
   }
   let bldCells = new Int32Array(0), bldTotal = 0;
   /* buildings standing on ground scored Elevated (50 to 74) and High (75 and up) */
@@ -61,6 +85,10 @@
     const s = clip((L.slope[i] - 8) / 22, 0, 1), h = clip(-L.planc[i] / 0.01, 0, 1);
     const vr = recentV(i, sc), m = opts.motion * clip(vr / 20, 0, 1), a = opts.motion * clip((vr - L.vpre[i]) / 15, 0, 1);
     const T = Tof(sc);
+    if (LS && window.GTLocalModel) {                       // what-if changes from the trained model, in score points
+      const ml = window.GTLocalModel; return { s, h, m, a, T, vr, model: true,
+        parts: ml.explainCell(i, Math.max(0, Math.min(400, sc.r72)), Math.max(0, Math.min(280, sc.api))).map(x => [x.name[0].toUpperCase() + x.name.slice(1), x.change]) };
+    }
     return { s, h, m, a, T, vr,
       parts: [
         ['Slope steepness', 3.0 * s], ['Hollow that collects water', 0.8 * h], ['Ground already moving', 1.0 * m],
@@ -68,6 +96,7 @@
       ] };
   }
   function index(i, sc) {                                  // same sum as terms(), without allocating
+    if (LS) return lsLut()[lsLayer(sc)[i]];
     const s = clip((L.slope[i] - 8) / 22, 0, 1), h = clip(-L.planc[i] / 0.01, 0, 1), T = Tof(sc); let m = 0, a = 0;
     if (opts.motion) { const vr = recentV(i, sc); m = clip(vr / 20, 0, 1); a = clip((vr - L.vpre[i]) / 15, 0, 1); }
     return 100 * sig(opts.bias + 3.0 * s + 0.8 * h + m + 1.2 * a + 3.5 * T + 2.0 * s * T + 1.6 * m * T);
@@ -202,5 +231,5 @@
     return mx;
   }
 
-  window.GTModel = { cellsForStreet: k => streetCells[k] || new Int32Array(0), load, L, images, NX, NY, N, bbox: M.bbox, index, terms, tier, areaStats, cellOf, lonlatOf, streetScore, rankStreets, analyseSeries, recentV, opts, Tof, buildingsAt, buildingsNear, streetBuildings, tipCell, tipStreet, runout, sortedField, shareAbove, maxNear, cellM: [CW, CH] };
+  window.GTModel = { landslide: () => !!LS, lsLayer: sc => LS ? lsLayer(sc) : null, cellsForStreet: k => streetCells[k] || new Int32Array(0), load, L, images, NX, NY, N, bbox: M.bbox, index, terms, tier, areaStats, cellOf, lonlatOf, streetScore, rankStreets, analyseSeries, recentV, opts, Tof, buildingsAt, buildingsNear, streetBuildings, tipCell, tipStreet, runout, sortedField, shareAbove, maxNear, cellM: [CW, CH] };
 })();

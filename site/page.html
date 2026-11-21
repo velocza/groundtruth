@@ -669,7 +669,7 @@ body.exploring .maptools .ex-rain{display:flex}
         <span class="simflag real" id="simflag">Score from real terrain and gauge rain</span>
         <span class="mk"><b><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real</b> terrain, imagery, rain, streets, buildings, slides</span>
         <span class="mk" data-only="lamorinda"><b><i class="sq" aria-hidden="true"></i>Sample</b> ground motion, map only</span>
-        <span class="mk"><b><i class="ln" aria-hidden="true"></i>Placeholder</b> risk formula until the model is trained</span>
+        <span class="mk" data-t="mkScore"><b><i class="ln" aria-hidden="true"></i>Trained</b> landslide model, a ranking score that is not yet calibrated</span>
       </div>
       <span class="stage-hint glass float">Drag to move · Shift-drag to turn · scroll to zoom</span>
       <div class="maptools glass float" id="mapTools">
@@ -708,7 +708,7 @@ body.exploring .maptools .ex-rain{display:flex}
     <div class="tile"><h3 style="font-size:12px;color:var(--text-3);font-weight:var(--w-med);margin-bottom:4px">Latest gauge reading</h3><p class="body" id="nowLine"></p></div>
     <div class="group"><h3>What this dashboard does</h3><p class="body">Set a storm and the map, the numbers above it and the street ranking all update. Replay the winter of 2023 from real gauge rain, check the score against the slides that were reported, open any slope, or ask about a street by name.</p></div>
     <div class="row"><a class="btn sm" href="#storm" data-go="storm">Set a storm</a><a class="btn sm" href="#backtest" data-go="backtest">See the backtest</a><a class="btn sm ghost" href="#method" data-go="method">What is real here</a></div>
-    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span data-t="topNotice"><b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. The ground motion view is a simulated sample and does not feed the score.</span></div>
+    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span data-t="topNotice"><b>The score comes from the trained landslide model</b>, learned from 1,398 slides the USGS mapped in winter 2016 to 2017, using real terrain and gauge rain only. It ranks ground and is not a calibrated chance of a slide. The ground motion view is a simulated sample and does not feed the score.</span></div>
     <p class="foot"><span data-t="topFoot">A hackathon prototype. It shows relative risk on sample data. For safety decisions, follow the National Weather Service and your city.</span></p>
   </section>
 
@@ -988,7 +988,7 @@ body.exploring .maptools .ex-rain{display:flex}
         <input class="field" id="askIn" type="text" placeholder="El Toyonal, Rheem Boulevard, Happy Valley Road" aria-describedby="askHelp">
         <button class="btn accent" type="submit">Ask</button>
       </form>
-      <p class="note" id="askHelp" data-t="askHelp">Ask uses the trained landslide model, 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017, through the Python backend when it is running and in your browser otherwise. Scores rank ground and are not calibrated chances. The map still draws the original placeholder.</p>
+      <p class="note" id="askHelp" data-t="askHelp">Ask uses the trained landslide model, 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017, through the Python backend when it is running and in your browser otherwise. The map uses the same model. Scores rank ground and are not calibrated chances.</p>
     </div>
   </section>
 
@@ -1066,7 +1066,7 @@ body.exploring .maptools .ex-rain{display:flex}
 
   <section id="method">
     <h3 style="font-size:16px">Real terrain, real rain. The model comes next.</h3>
-    <p class="body" data-t="methodBody">Everything on this map except ground motion was pulled from public data for this exact box of hills. The risk score is a hand-set placeholder that marks where the trained model will plug in.</p>
+    <p class="body" data-t="methodBody">Everything on this map except ground motion was pulled from public data for this exact box of hills. The risk score is the trained landslide model described below.</p>
     <div class="group">
       <h3>Where each layer comes from</h3>
       <ul class="src-list">
@@ -1079,14 +1079,14 @@ body.exploring .maptools .ex-rain{display:flex}
         <li><b>Reported slides</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what" data-t="srcSlides">10 from city and local news reports, street-level positions</span></li>
         <li data-only="sf"><b>Ground motion</b><span class="badge quiet">not included</span><span class="what">OPERA DISP-S1 InSAR needs a NASA Earthdata login. Nothing is simulated in its place</span></li>
         <li data-only="lamorinda"><b>Ground motion</b><span class="badge warn">simulated</span><span class="what">Stand-in for OPERA DISP-S1 InSAR. Shown on the map, not used in the score</span></li>
-        <li><b>Risk score</b><span class="badge quiet">placeholder</span><span class="what">Fixed formula until the model is trained</span></li>
+        <li><b>Risk score</b><span class="badge quiet" data-t="srcScoreBadge">trained model</span><span class="what" data-t="srcScore">Gradient-boosted trees trained on 1,398 USGS mapped slides, winter 2016 to 2017</span></li>
       </ul>
     </div>
     <div class="group">
       <h3>The model</h3>
       <p class="body">The model itself is a gradient-boosted tree ensemble the team writes by hand. It trains on mapped landslides up to 2022 and is then tested on winter 2023, using only what was known each morning.</p>
       <p class="body" data-only="sf">For San Francisco the package also holds 16,658 rain-linked street flooding cells from the city's 311 records. In a first check, the hand-built trees trained on reports before October 2022 ranked the cells that flooded in the November 2026 storm above the rest about 9 times in 10: 8.3 in 10 on where alone and 9.6 in 10 on which days. That is a flooding model, separate from the landslide score on this map. A tuned version (300 trees, chosen from 1,303 settings using only reports before October 2022) scored 9.1 in 10 on the November 2026 storm and 8.9 in 10 on winter 2023. Ask shows its street ranking for that storm when you ask about flooding.</p>
-      <p class="body" data-only="lamorinda">The trained Lamorinda landslide model now answers in Ask: 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017. In spatial cross-validation it ranked slide cells above others 8.5 times in 10. On the 11 winter 2023 slides it never saw, a slide site sat on average above 91% of the land, against 85% for slope alone, and above 65% of random street spots, about the same as slope alone. A small test: promising, not proven. The map still draws the placeholder.</p>
+      <p class="body" data-only="lamorinda">The trained Lamorinda landslide model now answers in Ask: 300 trees learned from 1,398 slides the USGS mapped in winter 2016 to 2017. In spatial cross-validation it ranked slide cells above others 8.5 times in 10. On the 11 winter 2023 slides it never saw, a slide site sat on average above 91% of the land, against 85% for slope alone, and above 65% of random street spots, about the same as slope alone. A small test: promising, not proven. The map, the stat chips, the backtest and Ask all use it.</p>
       <div class="row"><a class="btn" href="https://claude.ai/artifact/TfBUtdaM77hQaFJraNHKLW" target="_blank" rel="noopener">Read the model plan</a></div>
     </div>
     <div class="group">
@@ -1097,7 +1097,7 @@ body.exploring .maptools .ex-rain{display:flex}
         <li class="done">Write the boosting code by hand</li>
         <li class="done">Backtest tools, runout tracing, tipping points</li>
         <li class="done">First trial on ten real slides: too few labels</li>
-        <li class="done" data-only="lamorinda">Train on 1,398 USGS mapped slides and wire it into Ask</li>
+        <li class="done" data-only="lamorinda">Train on 1,398 USGS mapped slides and wire it into the map and Ask</li>
         <li>Download the real InSAR stack</li>
         <li>Build labels from USGS and state maps</li>
         <li>Train with spatial cross-validation</li>

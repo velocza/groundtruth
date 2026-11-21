@@ -17,6 +17,7 @@
         btBody: 'Six slides were mapped in the city that winter by the USGS, four of them on one hillside at Bernal Heights. Each one is checked against the ground within 300 m during the three days before.',
         btOf: 'of 6 sat near Elevated or High ground beforehand', btListH: 'The six mapped slides',
         inBody: 'Click the terrain to read one 30 m cell: its slope, its drainage, and what is pushing its score up.', jump: 'Show the most exposed slope',
+        mkScore: '<b><i class="ln" aria-hidden="true"></i>Placeholder</b> risk formula until a model is trained', srcScoreBadge: 'placeholder', srcScore: 'Fixed formula until a model is trained',
         askLabel: 'Name a street in San Francisco',
         askHelp: 'San Francisco has no trained landslide model yet, so street and area answers here use the map\'s placeholder score from real terrain and rain. Ask about flooding for the separate San Francisco flood model, trained on the city\'s 311 flood reports.',
         methodH: 'Real terrain, real rain. The model comes next.',
@@ -39,7 +40,7 @@
   window.GT_REGIONS = REGIONS; window.GT_REGION = R;
   document.documentElement.setAttribute('data-region', id);
   if (R.title) document.title = R.title;
-  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model'] : [], ['roads_graph', 'usgs_inventory', 'census_bg'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
+  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model', 'landslide_layers'] : [], ['roads_graph', 'usgs_inventory', 'census_bg'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
 
   /* switch area: remember the choice and reload with that area's data */
   window.GT_setRegion = function (next) {
