@@ -731,6 +731,12 @@ body.exploring .maptools .ex-rain{display:flex}
 .mc-rows .bar{height:5px;border-radius:3px;background:var(--hover);overflow:hidden}.mc-rows .bar i{display:block;height:100%;background:var(--lv);border-radius:3px}
 .mc-rows .v{font:var(--w-semi) 13px/1 var(--f-data);text-align:right;color:var(--lv);letter-spacing:0}
 @media (max-width:520px){.mc-v{font-size:32px}.mc-stats dd{font-size:14px}.mc-stats>div{padding:8px}}
+
+#record .rc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}
+#record .rc{background:var(--panel2,var(--panel,rgba(127,127,127,.08)));border:1px solid var(--line,rgba(127,127,127,.2));border-radius:16px;padding:16px 16px 14px}
+#record .rc b{display:block;font-size:40px;line-height:1.05;font-weight:800;letter-spacing:-.02em}
+#record .rc h4{margin:8px 0 4px;font-size:13px;font-weight:700}
+#record .rc p{margin:0;overflow-wrap:anywhere;font-size:12.5px;line-height:1.45;opacity:.78}
 </style>
 
 <div id="loading"><div><b class="wordmark">escape</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
@@ -748,6 +754,7 @@ body.exploring .maptools .ex-rain{display:flex}
   <a class="nav" href="#ask" data-go="ask"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7.5L7 20.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><span>Ask</span></a>
   <a class="nav" href="#inspect" data-go="inspect"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6-11 4 6 2.2-3L21 19z"/></svg><span>Slopes</span></a>
   <a class="nav" href="#replay" data-go="replay"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5"/><path d="M4.5 4.5v4h4"/><path d="M12 8v4l2.8 1.8"/></svg><span>2023 replay</span></a>
+  <a class="nav" href="#record" data-go="record"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Track record</span></a>
   <a class="nav" href="#backtest" data-go="backtest"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg><span>Backtest</span></a>
   <a class="nav" href="#method" data-go="method"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><span>Data and method</span></a>
 </nav>
@@ -1181,6 +1188,19 @@ body.exploring .maptools .ex-rain{display:flex}
     <div class="group">
       <h3>Limits of this view</h3>
       <ul class="lim" id="evLimits"></ul>
+    </div>
+  </section>
+
+  <section id="record">
+    <h3 style="font-size:16px">Predictions checked against what actually happened.</h3>
+    <p class="body">Every number here comes from a real event the model did not train on. Nothing is simulated.</p>
+    <div class="rc-grid">
+      <div class="rc"><b>9 of 10</b><h4>Lamorinda landslides, winter 2023</h4><p>Slides the model never trained on sat on Elevated or High ground beforehand, with only 6.6% of the map flagged. The old formula caught 3 of 10.</p></div>
+      <div class="rc"><b>6.8 in 10</b><h4>Slide site vs a random street spot</h4><p>How often a real 2023 slide site scores above a random spot on a street. 5 in 10 is a coin flip.</p></div>
+      <div class="rc"><b>0.85</b><h4>Landslide model, spatial cross-validation</h4><p>AUC when whole map areas are held out and predicted blind (local_model_landslide/report.json, 0.849).</p></div>
+      <div class="rc"><b>0.91</b><h4>San Francisco flood model, Nov 2026 storm</h4><p>AUC on 311 flood reports from the November 18, 2026 storm, held out from training (local_model_sf/report.json, 0.912).</p></div>
+      <div class="rc"><b>11 of 13</b><h4>Lamorinda flood score vs NOAA reports</h4><p>Mapped NOAA Storm Events flood reports that landed in Elevated or High flood areas.</p></div>
+      <div class="rc"><b>0.63 min</b><h4>San Francisco drive-time model</h4><p>Average error against real October 2026 911 arrivals it never saw, with a bias of -0.03 min (dataset_sf/storm_response/summary.json).</p></div>
     </div>
   </section>
 

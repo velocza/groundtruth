@@ -169,7 +169,8 @@
     backtest: { px: 1.2, py: 12.2, pz: 10.6, tx: 0.2, ty: 0, tz: 0.2 },
     inspect: { px: 5.6, py: 4.6, pz: 5.4, tx: 2.2, ty: 0.2, tz: -1.4 },
     ask: { px: 3.6, py: 7.6, pz: 10.2, tx: 0.8, ty: 0, tz: -0.2 },
-    method: { px: 0, py: 14, pz: 13, tx: 0, ty: 0, tz: 0.6 }
+    method: { px: 0, py: 14, pz: 13, tx: 0, ty: 0, tz: 0.6 },
+    record: { px: 0, py: 14, pz: 13, tx: 0, ty: 0, tz: 0.6 }
   };
   const LOOKS = {                                                  // what the terrain shows in each chapter
     top: { risk: 0.75, motion: 0, roads: 0, splitVis: 0, dim: 0, bld: 0 },
@@ -179,11 +180,12 @@
     backtest: { risk: 1, motion: 0, roads: 0.45, splitVis: 0, dim: 0, bld: 0.5 },
     inspect: { risk: 0.7, motion: 0, roads: 0.2, splitVis: 0, dim: 0, bld: 0.6 },
     ask: { risk: 1, motion: 0, roads: 1, splitVis: 0, dim: 0, bld: 0.9 },
-    method: { risk: 0.5, motion: 0, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
+    method: { risk: 0.5, motion: 0, roads: 0, splitVis: 0, dim: 0.2, bld: 0 },
+    record: { risk: 0.75, motion: 0, roads: 0, splitVis: 0, dim: 0, bld: 0 }
   };
-  const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
-  const NAMES = { top: 'escape', motion: 'Ground motion', storm: 'Storm map', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
-  const SUBS = { top: 'Storm safety for your address in ' + REG.places, storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
+  const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'record', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
+  const NAMES = { top: 'escape', motion: 'Ground motion', storm: 'Storm map', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method', record: 'Track record' };
+  const SUBS = { record: 'Our predictions next to what really happened', top: 'Storm safety for your address in ' + REG.places, storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
