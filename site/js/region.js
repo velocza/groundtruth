@@ -18,7 +18,7 @@
         btOf: 'of 6 sat near Elevated or High ground beforehand', btListH: 'The six mapped slides',
         inBody: 'Click the terrain to read one 30 m cell: its slope, its drainage, and what is pushing its score up.', jump: 'Show the most exposed slope',
         askLabel: 'Name a street in San Francisco',
-        askHelp: 'Local trained ML · no API key or cloud service. The trees were trained on four older Lamorinda reports and are read here against San Francisco terrain without retraining, so treat the scores as a demonstration. The dashboard map uses the original placeholder.',
+        askHelp: 'Ask runs in your browser for San Francisco. The trees were trained on four older Lamorinda reports and are read here against San Francisco terrain without retraining, so treat the scores as a demonstration. The dashboard map uses the original placeholder.',
         methodH: 'Real terrain, real rain. The model comes next.',
         methodBody: 'Everything on this map was pulled from public data for this exact box of the city. The risk score is a hand-set placeholder that marks where the trained model will plug in.',
         srcRain: 'NOAA GHCN-Daily and CoCoRaHS gauges with the downtown gauge, 2008 to 2026-11-20',

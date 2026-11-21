@@ -24,7 +24,7 @@ INPUTS = ['dataset/grid_480x456_all_layers.npz',
           'dataset/landslide_events_other_winters.csv',
           'dataset/rainfall_daily_lamorinda.csv', 'site/data/data.js']
 
-def provenance():
+def provenance(write=True):
     """Verify repository inputs, or the manifest in a portable copy. No downloads."""
     hashes = {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in INPUTS}
     if (ROOT/'.git').exists():
@@ -51,7 +51,7 @@ def provenance():
         result = json.loads(manifest.read_text())
         if hashes != result['sha256']:
             raise RuntimeError('Input hashes do not match the repository-only manifest.')
-    (OUT/'input_manifest.json').write_text(json.dumps(result, indent=2))
+    if write: (OUT/'input_manifest.json').write_text(json.dumps(result, indent=2))
     return result
 
 def static():
