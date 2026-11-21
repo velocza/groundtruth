@@ -2,7 +2,7 @@
    Lamorinda text is the page default. Elements marked data-only="<area>" show for that area only, and elements marked data-t="<key>" take the text below. */
 (function () {
   var REGIONS = {
-    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: true, landslideModel: true,
+    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: false, landslideModel: true,
       towns: [['Lafayette', -122.118, 37.886], ['Orinda', -122.183, 37.877], ['Moraga', -122.130, 37.835]], tourQ: 'Where would debris from Miner Road go, and how many buildings are near the path?', example: 'Miner Road with 100 mm rain' },
     sf: { id: 'sf', dir: 'data_sf', files: ['flood_model', 'storm_response'], label: 'San Francisco, San Francisco County', sub: 'City of San Francisco', short: 'San Francisco', places: 'San Francisco', placesOr: 'San Francisco', motion: false,
       tourQ: 'Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', example: 'Twin Peaks Boulevard with 100 mm rain',
@@ -57,7 +57,7 @@
     if (R.text) each('[data-t]', function (el) { var v = R.text[el.getAttribute('data-t')]; if (v != null) el.innerHTML = v; });
     if (R.attrs) Object.keys(R.attrs).forEach(function (sel) { var el = d.querySelector(sel); if (el) el.setAttribute(R.attrs[sel][0], R.attrs[sel][1]); });
     if (R.chips) { var c = d.getElementById('askChips'); if (c) { c.textContent = ''; R.chips.forEach(function (q) { var b = d.createElement('button'); b.className = 'btn sm'; b.setAttribute('data-q', q[0]); b.textContent = q[1]; c.appendChild(b); }); } }
-    if (!R.motion) { var m = d.getElementById('exMotion'); if (m) m.setAttribute('aria-pressed', 'false'); var s = d.getElementById('simFollow'); if (s) s.checked = false; }
+    if (R.id !== 'lamorinda') { var s = d.getElementById('simFollow'); if (s) s.checked = false; }
     var pick = d.getElementById('regionPick');
     if (pick) { pick.textContent = ''; Object.keys(REGIONS).forEach(function (k) { var o = d.createElement('option'); o.value = k; o.textContent = REGIONS[k].label; o.selected = k === id; pick.appendChild(o); }); pick.addEventListener('change', function () { window.GT_setRegion(pick.value); }); }
     var sub = d.getElementById('regionSub'); if (sub) sub.textContent = R.sub;

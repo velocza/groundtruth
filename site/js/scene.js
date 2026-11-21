@@ -198,7 +198,7 @@
       tSatA: { value: tex(I.s2_2023) }, tSatB: { value: tex(I.s2_2026) }, tTerrain: { value: tex(I.terrain) }, tMotion: { value: tex(I.motion) }, tMask: { value: blank }, tNormal: { value: blank }, tPhoto: { value: blank }, uNormal: { value: 0 }, uPhoto: { value: 0 }, tShadow: { value: shadowRT.depthTexture },
       uMask: { value: 0 }, uFoot: { value: 0.3 }, uBld: { value: 0 }, tLSA: { value: null }, tLSB: { value: null }, uLS: { value: 0 }, uLSMix: { value: 1 }, uLSOff: { value: 0 }, uRoads: { value: 0 }, uGrid: { value: new THREE.Vector2(Mo.NX, Mo.NY) },
       uSplit: { value: 0 }, uSplitVis: { value: 0 }, uR72: { value: 60 }, uApi: { value: 120 }, uEra: { value: 0 }, uAmt: { value: 0 },
-      uRisk: { value: 0.6 }, uMotion: { value: 0.6 }, uTime: { value: 0 }, uDim: { value: 0 }, uHiOn: { value: 0 }, uHiR: { value: 0.012 }, uUseMotion: { value: 1 }, uBias: { value: -6.5 },
+      uRisk: { value: 0.6 }, uMotion: { value: 0 }, uTime: { value: 0 }, uDim: { value: 0 }, uHiOn: { value: 0 }, uHiR: { value: 0.012 }, uUseMotion: { value: 0 }, uBias: { value: -6.5 },
       uHi: { value: new THREE.Vector2(0.5, 0.5) }, uSun: { value: new THREE.Vector3(-0.58, 0.52, 0.36).normalize() }, uBg: { value: bg },
       uShadowMat: { value: new THREE.Matrix4() }, uShadowOn: { value: 0 }, uShadowTexel: { value: 0.001 }, uShadowRes: { value: SR }, uFogD: { value: 90 }, uVis: { value: VIS }, uPxK: { value: 0.001 },
       uMinPx: { value: 0 }, uCol: { value: new THREE.Color(1, 1, 1) }, uOp: { value: 1 }

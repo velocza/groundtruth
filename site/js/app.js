@@ -183,7 +183,7 @@
   };
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'].filter(id => id !== 'motion' || REG.motion);
   const NAMES = { top: 'escape', motion: 'Ground motion', storm: 'Storm map', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
-  const SUBS = { top: 'Storm safety for your address in ' + REG.places, motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
+  const SUBS = { top: 'Storm safety for your address in ' + REG.places, storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: REG.motion ? 'What is real, what is simulated and what comes next' : 'What is real and what comes next' };
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
@@ -203,7 +203,7 @@
     gsap.to(U.uRisk, { value: k.risk, duration: d, overwrite: true }); gsap.to(U.uMotion, { value: k.motion, duration: d, overwrite: true });
     gsap.to(U.uRoads, { value: k.roads, duration: d, overwrite: true }); gsap.to(U.uSplitVis, { value: k.splitVis, duration: d, overwrite: true });
     gsap.to(U.uDim, { value: k.dim, duration: d, overwrite: true }); gsap.to(U.uBld, { value: k.bld, duration: d, overwrite: true });
-    gsap.to(U.uSplit, { value: id === 'motion' ? $('#split').value / 100 : 0, duration: d, overwrite: true });
+    gsap.to(U.uSplit, { value: id === 'motion' && $('#split') ? $('#split').value / 100 : 0, duration: d, overwrite: true });
   }
   function enter(id) {
     if (exploring) return;
@@ -237,8 +237,7 @@
   let setReplay = () => {};
 
   /* ------------------------------------------------ compare slider */
-  $('#split').addEventListener('input', e => { fill(e.target); U.uSplit.value = e.target.value / 100; });
-  fill($('#split'));
+  if ($('#split')) { $('#split').addEventListener('input', e => { fill(e.target); U.uSplit.value = e.target.value / 100; }); fill($('#split')); }
 
   /* ------------------------------------------------ replay */
   const events = G.events.map(e => {
@@ -293,7 +292,7 @@
     const px = X(replayDay) + bw / 2; x.strokeStyle = css('--ink'); x.lineWidth = 1; x.beginPath(); x.moveTo(px, T); x.lineTo(px, T + ph); x.stroke();
   }
   function drawSeries(pt) {
-    const cv = $('#tsChart'), [x, w, h] = prep(cv); if (!pt) { x.fillStyle = css('--ink-3'); x.font = '12.5px "Segoe UI", system-ui, sans-serif'; x.fillText(REG.motion ? 'No motion record at this cell in the sample.' : 'Real radar motion data comes next.', 0, 20); return; }
+    const cv = $('#tsChart'); if (!REG.motion) return null; const [x, w, h] = prep(cv); if (!pt) { x.fillStyle = css('--ink-3'); x.font = '12.5px "Segoe UI", system-ui, sans-serif'; x.fillText(REG.motion ? 'No motion record at this cell in the sample.' : 'Real radar motion data comes next.', 0, 20); return; }
     const an = Mo.analyseSeries(pt), d = pt.disp_mm, t = an.t, L = 34, R = 8, T = 8, B = 20, pw = w - L - R, ph = h - T - B;
     const lo = Math.min(...d, 0), hi = Math.max(...d, 0), pad = (hi - lo) * 0.08 + 2, X = v => L + v / t[t.length - 1] * pw, Y = v => T + (hi + pad - v) / (hi - lo + 2 * pad) * ph;
     x.font = '11px "JetBrains Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
@@ -309,7 +308,7 @@
 
   /* ------------------------------------------------ inspector */
   let sel = null;                                                  // {i, lon, lat, pt}
-  const samplePts = G.insar.points.map(p => {
+  const samplePts = (REG.motion ? G.insar.points : []).map(p => {
     const el = document.createElement('div'); el.className = 'pin-label'; el.style.cssText = 'padding:0;width:12px;height:12px;border-radius:50%;margin:-6px 0 0 -6px;background:transparent;border:1.5px solid ' + (p.kind === 'creep' ? '#ffcf7a' : '#8fb4ff'); el.hidden = true; $('#labels').appendChild(el);
     return { p, ring: Sc.addLabel(p.lonlat[0], p.lonlat[1], el, 0.06) };
   });
@@ -341,7 +340,7 @@
     const hk = Mo.opts.motion + '|' + Mo.opts.bias; if (!sel.hc || sel.hcKey !== hk) { sel.hc = hindcast(s2 => Mo.index(i, s2)); sel.hcKey = hk; }
     $('#histCap').innerHTML = sel.hc.el + sel.hc.hi ? `Against every day of real rain since October 2015, this cell would have scored Elevated on <b>${sel.hc.el}</b> ${sel.hc.el === 1 ? 'day' : 'days'} and High on <b>${sel.hc.hi}</b>. Worst: ${sel.hc.worstDate}, score ${fmt(sel.hc.worst)}.` : `Against every day of real rain since October 2015, this cell never reaches Elevated. Its worst day is ${sel.hc.worstDate}, score ${fmt(sel.hc.worst)}.`;
     drawHist(sel.hc);
-    $('#tsCap').textContent = !samplePts.length ? 'No ground motion record for this area yet. Nothing is simulated in its place.' : sel.pt ? `Simulated motion record, point ${sel.pt.id}. Long-term ${fmt(-an.long.v, 1)} mm/yr, last 5 months ${fmt(-an.recent.v, 1)} mm/yr.` : `Nearest point with a motion record is ${fmt(sel.near.dist)} m away.`;
+    if (REG.motion) $('#tsCap').textContent = !samplePts.length ? 'No ground motion record for this area yet. Nothing is simulated in its place.' : sel.pt ? `Simulated motion record, point ${sel.pt.id}. Long-term ${fmt(-an.long.v, 1)} mm/yr, last 5 months ${fmt(-an.recent.v, 1)} mm/yr.` : `Nearest point with a motion record is ${fmt(sel.near.dist)} m away.`;
   }
   function drawTip(i, sc, tE, tH) {
     const cv = $('#tipChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv), L = 26, R = 14, T = 4, B = 16, pw = w - L - R, ph = h - T - B, X = r => L + r / 300 * pw, Y = v => T + (100 - v) / 100 * ph;
@@ -519,7 +518,7 @@
     renderOther();
     const SN = LSM ? 'The landslide model' : 'The placeholder';
     const verdict = bt.auc >= 0.6 && bt.hits < 5 ? SN + ' ranks these slopes better than chance but under-warns at this setting. Raising the sensitivity catches more slides and flags more of the map, which is the trade every warning system has to pick.' : bt.auc >= 0.6 ? SN + ' ranks these slopes better than chance.' : SN + ' does little better than chance here.';
-    $('#btNote').innerHTML = `<b>${verdict}</b> ${LSM ? 'The landslide model uses real terrain and real gauge rain only; the simulated ground motion never feeds it. None of these slides were used to train it.' : !REG.motion ? 'This run uses real terrain and real gauge rain only.' : `${key ? 'This run includes the simulated ground motion. With it removed' : 'This run uses real terrain and real gauge rain only. With the simulated motion added'}: ${o.hits} of 10 flagged, median rank top ${pc(o.top)}, ${fmt(o.auc * 10, 1)} in 10 against random street spots.`} Across ${bt.alerts.n} winters of gauge rain this setting would have called an alert day, meaning ${ALERT_BLD} or more buildings on Elevated or High ground, ${fmt(bt.alerts.total)} times: ${fmt(bt.alerts.wy23)} in winter 2023 and none at all in ${bt.alerts.quiet} of the winters. Slides from other winters were not collected, so alert days outside 2023 cannot be checked either way. The rain is the gauge record, so it stands in for a perfect forecast. Report dates can lag the slide, slides get reported where there are roads, and ${events.length === 10 ? 'ten' : events.length} events cannot prove a model.`;
+    $('#btNote').innerHTML = `<b>${verdict}</b> ${LSM ? 'The landslide model uses real terrain and real gauge rain only. None of these slides were used to train it.' : !REG.motion ? 'This run uses real terrain and real gauge rain only.' : `${key ? 'This run includes the simulated ground motion. With it removed' : 'This run uses real terrain and real gauge rain only. With the simulated motion added'}: ${o.hits} of 10 flagged, median rank top ${pc(o.top)}, ${fmt(o.auc * 10, 1)} in 10 against random street spots.`} Across ${bt.alerts.n} winters of gauge rain this setting would have called an alert day, meaning ${ALERT_BLD} or more buildings on Elevated or High ground, ${fmt(bt.alerts.total)} times: ${fmt(bt.alerts.wy23)} in winter 2023 and none at all in ${bt.alerts.quiet} of the winters. Slides from other winters were not collected, so alert days outside 2023 cannot be checked either way. The rain is the gauge record, so it stands in for a perfect forecast. Report dates can lag the slide, slides get reported where there are roads, and ${events.length === 10 ? 'ten' : events.length} events cannot prove a model.`;
   }
 
   /* ------------------------------------------------ storm briefing + exports */
@@ -544,7 +543,7 @@
     if (similar != null) { const sd = addDays(R23.start, similar), near = events.filter(e => Math.abs(e.day - similar) <= 4); out.push(`Closest day in the winter 2023 record: ${dstr(sd)} (${fmt(replaySc(similar).r72)} mm in the following 72 hours, wetness ${fmt(R23.api[similar])} mm).` + (near.length ? ` Slides reported within four days of it: ${near.map(e => e.where).join('; ')}.` : ' No slides were reported within four days of it.')); }
     if (watch.length) out.push('Watched streets:\n' + rk.all.filter(s => watch.includes(s.name)).map(s => `${s.name}: ${Math.round(s.score)} (${Mo.tier(s.score)}). ${tipText(Mo.tipStreet(s.k, sc, 50), Mo.tipStreet(s.k, sc, 75))}`).join('\n'));
     { const se = seasonStats(HN - 1); if (se.pct != null) out.push(`Season so far (gauges, to ${dstr(addDays(RL.start, HN - 1))}): ${fmt(se.total)} mm since October 1, ${fmt(se.pct)}% of the average for this date.` + (se.pct >= 150 ? ' In a season this wet, slow deep slides can move between storms. This score keys on three day rain and does not capture that.' : '')); }
-    out.push(`Limits: ${Mo.opts.motion ? 'ground motion in this run is simulated sample data' : 'this run uses real terrain and rain only, with no ground motion input'}, and ${LSM ? 'the score is the trained landslide model, a ranking learned from 1,398 USGS mapped slides that is not yet calibrated or validated as a warning' : 'the score is a placeholder formula, not a trained or validated model. Use it to see how the tool works'}. For real decisions follow the National Weather Service and city engineering staff.`);
+    out.push(`Limits: this run uses real terrain and real gauge rain only, and ${LSM ? 'the score is the trained landslide model, a ranking learned from 1,398 USGS mapped slides that is not yet calibrated or validated as a warning' : 'the score is a placeholder formula, not a trained or validated model. Use it to see how the tool works'}. For real decisions follow the National Weather Service and city engineering staff.`);
     return out.join('\n\n');
   }
   /* five day outlook: carry soil wetness forward day by day (API_d = 0.92 x API_d-1 + rain_d, as in the gauge record) */
@@ -587,11 +586,11 @@
   }
   function syncExplore() {
     const on = id => $(id).getAttribute('aria-pressed') === 'true';
-    gsap.to(U.uRisk, { value: on('#exRisk') ? 1 : 0, duration: .4 }); gsap.to(U.uMotion, { value: on('#exMotion') ? 1 : 0, duration: .4 });
+    gsap.to(U.uRisk, { value: on('#exRisk') ? 1 : 0, duration: .4 }); U.uMotion.value = 0;
     gsap.to(U.uRoads, { value: on('#exRoads') ? 1 : 0, duration: .4 }); gsap.to(U.uBld, { value: on('#exBld') ? 1 : 0, duration: .4 }); Sc.setLayer('roads', on('#exRoads')); Sc.setLayer('buildings', on('#exBld')); Sc.setLayer('labels', on('#exLabels')); gsap.to(U.uSplitVis, { value: on('#exSat') ? 1 : 0, duration: .4 }); U.uSplit.value = 0; gsap.to(U.uDim, { value: 0, duration: .4 });
   }
   exBtn.addEventListener('click', () => setExplore(!exploring));
-  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exLabels', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
+  ['#exRisk', '#exRoads', '#exBld', '#exLabels', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
   window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
 
   /* ------------------------------------------------ street agent */
@@ -613,7 +612,7 @@
       storm: { rain_next_72h_mm: sc.r72, soil_wetness_index_mm: sc.api, rain_amount_came_from: r72 == null ? 'the storm set on the page' : 'the amount named in the question' },
       buildings_along_street: (b => ({ total: b.total, on_ground_scored_elevated_or_high: b.flagged }))(Mo.streetBuildings(k, sc)),
       history_from_real_rain_since_oct_2015: (h => ({ days_scored_elevated: h.el, days_scored_high: h.hi, worst_day: h.worstDate, worst_day_score: Math.round(h.worst) }))(hindcast(s2 => Mo.streetScore(k, s2).score)),
-      rain_in_72h_that_makes_it_elevated_mm: Mo.tipStreet(k, sc, 50), rain_in_72h_that_makes_it_high_mm: Mo.tipStreet(k, sc, 75), ground_motion_input: Mo.opts.motion ? 'simulated sample' : 'excluded, real terrain and rain only', steepest_risky_spot: { slope_deg: +L.slope[i].toFixed(1), simulated_ground_speed_mm_per_yr: +t.vr.toFixed(1), simulated_speed_change_mm_per_yr: +(t.vr - L.vpre[i]).toFixed(1), metres_to_stream: Math.round(L.dstream[i]) },
+      rain_in_72h_that_makes_it_elevated_mm: Mo.tipStreet(k, sc, 50), rain_in_72h_that_makes_it_high_mm: Mo.tipStreet(k, sc, 75), steepest_risky_spot: { slope_deg: +L.slope[i].toFixed(1), metres_to_stream: Math.round(L.dstream[i]) },
       top_reasons: t.parts.filter(p => p[1] > 0.15).sort((a, b) => b[1] - a[1]).slice(0, 3).map(p => p[0]), reported_slides_winter_2023_within_450m: near, _spot: [wl, wa] };
   }
   function templateAnswer(rec) {
@@ -625,7 +624,7 @@
     if (rec.buildings_along_street.total) out.push(`${rec.buildings_along_street.on_ground_scored_elevated_or_high} of the ${rec.buildings_along_street.total} buildings along it stand on ground scored Elevated or High in this storm.`);
     { const h = rec.history_from_real_rain_since_oct_2015; out.push(`Scored against every day of real rain since October 2015, it reaches Elevated on ${h.days_scored_elevated} ${h.days_scored_elevated === 1 ? 'day' : 'days'} and High on ${h.days_scored_high}. Its worst day is ${h.worst_day} at ${h.worst_day_score}.`); }
     if (rec.reported_slides_winter_2023_within_450m.length) out.push(`Reported nearby in winter 2023: ${rec.reported_slides_winter_2023_within_450m.join(' ')}`);
-    out.push((Mo.opts.motion ? 'The ground motion input is simulated sample data' : 'This run leaves ground motion out') + (LSM ? ' and the score is the trained landslide model, a ranking that is not yet calibrated. It is not an inspection of the real street.' : ' and the score is a placeholder, so this shows how the tool works. It is not a reading of the real street.') + ' For a real concern, call your city engineering staff or a licensed geotechnical engineer.');
+    out.push('This run uses real terrain and real gauge rain' + (LSM ? ', and the score is the trained landslide model, a ranking that is not yet calibrated. It is not an inspection of the real street.' : ' and the score is a placeholder, so this shows how the tool works. It is not a reading of the real street.') + ' For a real concern, call your city engineering staff or a licensed geotechnical engineer.');
     return out;
   }
   const msgs = $('#msgs');
@@ -667,7 +666,7 @@
   ];
   const AGENT_RULES = `You are the escape street risk assistant for ${REG.places}, California. Answer the resident's question by calling the tools. Every number, street name and fact in your answer must come from a tool result in this conversation. Do not add anything from memory. If a tool fails or returns nothing, say what you could not find.
 Write plain sentences. No markdown, no lists, no dashes, no headings. Under 150 words. Lead with the direct answer. Give scores as a number out of 100 with the tier. Say which storm the numbers assume. Never say a street, home or slope is safe.
-End with one sentence saying what the tool results say about the ground motion input (simulated sample data, or left out) and that the score is a placeholder, so this is a demonstration and real concerns go to city engineering staff or a licensed geotechnical engineer.`;
+End with one sentence saying that the score is a ranking, not a calibrated probability, so this is a demonstration and real concerns go to city engineering staff or a licensed geotechnical engineer.`;
   async function agentAnswer(q, s) {
     const wait = bubble('wait', 'Working on it...'); agentShown = null;
     try {

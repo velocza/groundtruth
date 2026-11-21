@@ -78,7 +78,7 @@
 
   /* scenario: {r72: mm forecast in 72 h, api: antecedent index mm, era: 0 = today, 1 = winter 2023, amt: 0..1 share of the 2023 speed-up reached}
      opts.motion = 0 drops the simulated ground motion terms, so the score rests on real terrain and real rain only. */
-  const opts = { motion: 1, bias: -6.5 };              // bias is the alert sensitivity: a higher intercept flags more ground
+  const opts = { motion: 0, bias: -6.5 };              // bias is the alert sensitivity: a higher intercept flags more ground
   function recentV(i, sc) { return sc.era ? L.vpre[i] + (L.v23[i] - L.vpre[i]) * sc.amt : L.vnow[i]; }
   const Tof = sc => 0.55 * Math.min(1.5, sc.r72 / 200) + 0.45 * Math.min(1.3, sc.api / 200);
   function terms(i, sc) {
