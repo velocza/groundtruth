@@ -441,6 +441,7 @@
       if (t.road) t.road.visible = layers.roads;
     }
     updateShadow();
+    updateFleet();
     for (const mk of markers) if (mk.mesh.visible) { mk.mesh.material.opacity = 0.55 + 0.35 * Math.sin(clock * 3 + mk.ph); }
     renderer.render(scene, camera);
     if (labels.length) { const w = canvas.clientWidth, h = canvas.clientHeight; for (const lb of labels) {
@@ -482,6 +483,78 @@
     const e = pts[pts.length - 1], g = new THREE.RingGeometry(0.05, 0.075, 28); g.rotateX(-Math.PI / 2);
     pathEnd = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0x7fe3ff, transparent: true, opacity: 0.95, depthTest: false, side: THREE.DoubleSide }));
     pathEnd.position.copy(worldOf(e[0], e[1], 0.012)); pathEnd.renderOrder = 6; scene.add(pathEnd);
+  }
+
+  /* help on the way: emergency vehicles driving street routes to a place, each leaving a lit trail. list: [{ pts: [[lon,lat],...], t0, t1 (seconds), label: element }]
+     Time runs on the scene clock, so reduced motion shows every vehicle already arrived. Returns { time(), done(), stop() }. */
+  const TVERT = `attribute vec4 aS; attribute float aT; uniform float uPxK, uMinPx; varying float vT;
+    void main(){ vec4 mv = viewMatrix * vec4(position, 1.0); float dpx = -mv.z * uPxK, hw = max(aS.z, 0.5 * uMinPx * dpx);
+      vec3 p = position + vec3(aS.x, 0.0, aS.y) * hw; p.y += 0.0014 + dpx * 0.9; vT = aT; gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`;
+  const TFRAG = `precision highp float; varying float vT; uniform float uProg, uLen; uniform vec3 uCol;
+    void main(){ if (vT > uProg) discard; float head = smoothstep(uProg - 0.35 / max(uLen, 0.2), uProg, vT); gl_FragColor = vec4(mix(uCol * 0.55, vec3(1.0, 0.93, 0.86), head * 0.55), 0.5 + 0.5 * head); }`;
+  let fleet = null;
+  function sampleRoute(pts) {                             // world points every ~12 m along the route, with distance so far (km)
+    const X = [], Z = [], D = []; let d = 0;
+    for (let k = 0; k < pts.length; k++) { const w = worldOf(pts[k][0], pts[k][1], 0);
+      if (k) { const px = X[X.length - 1], pz = Z[Z.length - 1], l = Math.hypot(w.x - px, w.z - pz), n = Math.max(1, Math.ceil(l / 0.012));
+        for (let s = 1; s <= n; s++) { X.push(px + (w.x - px) * s / n); Z.push(pz + (w.z - pz) * s / n); d += l / n; D.push(d); } }
+      else { X.push(w.x); Z.push(w.z); D.push(0); } }
+    return { X, Z, D, len: d };
+  }
+  function trailGeo(r, hw) {
+    const P = [], S = [], T = [], idx = [], m = r.X.length;
+    for (let i = 0; i < m; i++) { const a = Math.max(0, i - 1), b = Math.min(m - 1, i + 1); let tx = r.X[b] - r.X[a], tz = r.Z[b] - r.Z[a]; const l = Math.hypot(tx, tz) || 1; tx /= l; tz /= l;
+      const y = groundXZ(r.X[i], r.Z[i]), t = r.len ? r.D[i] / r.len : 1; P.push(r.X[i], y, r.Z[i], r.X[i], y, r.Z[i]); S.push(-tz, tx, hw, 0, tz, -tx, hw, 0); T.push(t, t);
+      if (i) idx.push(2 * i - 2, 2 * i - 1, 2 * i, 2 * i, 2 * i - 1, 2 * i + 1); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3)); g.setAttribute('aS', new THREE.BufferAttribute(new Float32Array(S), 4));
+    g.setAttribute('aT', new THREE.BufferAttribute(new Float32Array(T), 1)); g.setIndex(idx); g.computeBoundingSphere(); g.boundingSphere.radius += 0.1; return g;
+  }
+  function vehicleMesh() {                                // a fire engine: red body, white cab roof, a light bar that flashes red and blue
+    const grp = new THREE.Group(), M = c => new THREE.MeshBasicMaterial({ color: c, depthTest: true });
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.009, 0.0055, 0.022), M(0xd8352f)); body.position.y = 0.0028; grp.add(body);
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(0.0092, 0.0012, 0.006), M(0xf2f2f2)); cab.position.set(0, 0.0062, 0.007); grp.add(cab);
+    const l1 = new THREE.Mesh(new THREE.BoxGeometry(0.0038, 0.0016, 0.0022), M(0xff3b30)), l2 = new THREE.Mesh(new THREE.BoxGeometry(0.0038, 0.0016, 0.0022), M(0x2f7bff));
+    l1.position.set(-0.0022, 0.0076, 0.007); l2.position.set(0.0022, 0.0076, 0.007); grp.add(l1, l2);
+    const glow = new THREE.Mesh(new THREE.RingGeometry(0.008, 0.016, 24).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xff5a4f, transparent: true, opacity: 0.5, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }));
+    glow.position.y = 0.0006; grp.add(glow);
+    grp.renderOrder = 7; return { grp, l1, l2, glow };
+  }
+  function clearFleet() {
+    if (!fleet) return; for (const v of fleet.vs) { scene.remove(v.trail); v.trail.geometry.dispose(); v.trail.material.dispose(); scene.remove(v.m.grp); if (v.lb) { const i = labels.indexOf(v.lb); if (i >= 0) labels.splice(i, 1); v.lb.el.hidden = true; } }
+    if (fleet.goal) { scene.remove(fleet.goal); fleet.goal.geometry.dispose(); } fleet = null;
+  }
+  function showFleet(list) {
+    clearFleet(); if (!list || !list.length) return null;
+    const vs = [];
+    for (const it of list) {
+      const r = sampleRoute(it.pts); if (r.X.length < 2) continue;
+      const trail = new THREE.Mesh(trailGeo(r, 0.0035), new THREE.ShaderMaterial({ uniforms: { uPxK: uniforms.uPxK, uMinPx: { value: it.first ? 4.2 : 3.2 }, uProg: { value: 0 }, uLen: { value: r.len }, uCol: { value: new THREE.Color(it.first ? 0xff6a5c : 0xe0a53a) } },
+        vertexShader: TVERT, fragmentShader: TFRAG, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide }));
+      trail.renderOrder = 6; trail.frustumCulled = false; scene.add(trail);
+      const m = vehicleMesh(); scene.add(m.grp);
+      const lb = it.label ? { el: it.label, pos: new THREE.Vector3(), on: true } : null; if (lb) labels.push(lb);
+      vs.push({ r, trail, m, lb, t0: it.t0 || 0, t1: Math.max((it.t0 || 0) + 0.3, it.t1), i: 0 });
+    }
+    const e = list[0].pts[list[0].pts.length - 1], g = new THREE.RingGeometry(0.03, 0.045, 32); g.rotateX(-Math.PI / 2);
+    const goal = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, depthTest: false, side: THREE.DoubleSide })); goal.position.copy(worldOf(e[0], e[1], 0.012)); goal.renderOrder = 6; scene.add(goal);
+    fleet = { vs, goal, start: clock, end: Math.max(...vs.map(v => v.t1)) };
+    if (reduced) fleet.start = clock - fleet.end - 1;
+    return { time: () => fleet ? clock - fleet.start : 0, get end() { return fleet ? fleet.end : 0; }, stop: clearFleet, replay() { if (fleet) fleet.start = reduced ? clock - fleet.end - 1 : clock; } };
+  }
+  function updateFleet() {
+    if (!fleet) return; const t = clock - fleet.start, s = Math.max(1, view.dist / 2.4);
+    fleet.goal.scale.setScalar(Math.max(0.6, view.dist / 6) * (1 + 0.12 * Math.sin(clock * 4)));
+    for (const v of fleet.vs) {
+      const f = Math.max(0, Math.min(1, (t - v.t0) / (v.t1 - v.t0))), e = f < 1 ? f : 1, d = e * v.r.len, R = v.r;
+      while (v.i < R.D.length - 2 && R.D[v.i + 1] < d) v.i++; while (v.i > 0 && R.D[v.i] > d) v.i--;
+      const a = v.i, b = Math.min(R.D.length - 1, a + 1), k = R.D[b] > R.D[a] ? (d - R.D[a]) / (R.D[b] - R.D[a]) : 0, x = R.X[a] + (R.X[b] - R.X[a]) * k, z = R.Z[a] + (R.Z[b] - R.Z[a]) * k;
+      v.m.grp.position.set(x, groundXZ(x, z) + 0.0008, z); v.m.grp.scale.setScalar(s);
+      const hx = R.X[b] - R.X[a], hz = R.Z[b] - R.Z[a]; if (hx || hz) v.m.grp.rotation.y = Math.atan2(hx, hz);
+      v.trail.material.uniforms.uProg.value = e; v.m.grp.visible = t >= v.t0 - 0.05;
+      const on = Math.floor(clock * 6) % 2 === 0; v.m.l1.material.color.setHex(on ? 0xff3b30 : 0x3a1010); v.m.l2.material.color.setHex(on ? 0x14203a : 0x2f7bff);
+      v.m.glow.material.opacity = f < 1 ? 0.35 + 0.25 * Math.sin(clock * 9) : 0.2;
+      if (v.lb) v.lb.pos.set(x, groundXZ(x, z) + 0.004 * s, z);
+    }
   }
   function highlight(lon, lat, on) {
     const [W, S, E, N] = Mo.bbox; uniforms.uHi.value.set((lon - W) / (E - W), (lat - S) / (N - S)); uniforms.uHiOn.value = on === false ? 0 : 1;
@@ -534,7 +607,7 @@
     if (lsTex.length > 2) lsTex.shift().dispose(); lsTex.push(t);
     if (fade && window.gsap && !reduced) gsap.to(uniforms.uLSMix, { value: 1, duration: 0.5, ease: 'power2.out', overwrite: true }); else uniforms.uLSMix.value = 1;
   }
-  window.GTScene = { setLandslide, build, cam, orbit, nav, layers, setLayer, lite: LITE, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
+  window.GTScene = { setLandslide, build, cam, orbit, nav, layers, setLayer, lite: LITE, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, showFleet, clearFleet, highlight, pick, focusPose, worldOf,
     get view() { return view; }, get pending() { return queue.length; },
     setReduced(v) { reduced = v; }, resize, setShift,
     project(lon, lat, lift) { const p = worldOf(lon, lat, liftOf(lift)).project(camera); return p.z < 1 ? [(p.x + 1) / 2 * canvas.clientWidth, (1 - p.y) / 2 * canvas.clientHeight] : null; } };   // screen position of a place, for 2D overlays

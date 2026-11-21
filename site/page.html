@@ -621,6 +621,86 @@ body.exploring .maptools .ex-rain{display:flex}
 .addr-do{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13px;color:var(--text-1)}
 .addr-do li{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start}.addr-do .ck{opacity:1;width:13px;height:13px;margin:3px 0 0;color:var(--text-2)}
 .addr-more summary{cursor:pointer;font-size:12px;color:var(--text-2);width:max-content}.addr-more[open]{display:grid;gap:6px}.addr-more[open] summary{margin-bottom:2px}
+/* answer cards (site/js/cards.js): one bold card per measurement; level colour carries the meaning, no gradients */
+.mc{--lv:var(--text-1);display:grid;gap:12px;padding:16px 16px 14px;border-radius:var(--r-card);background:var(--surface-2);box-shadow:var(--lift-1);scroll-margin-top:12px;position:relative}
+:root:not([data-theme="light"]) .mc{background:var(--surface-3)}
+.mc[data-level="Low"]{--lv:var(--text-1)}.mc[data-level="Guarded"]{--lv:var(--t-guarded)}.mc[data-level="Elevated"]{--lv:var(--t-elevated)}.mc[data-level="High"]{--lv:var(--t-high)}
+.mc[data-tone="ok"]{--lv:var(--success)}.mc[data-tone="none"]{--lv:var(--text-2)}
+.mc.flash{animation:mcflash .9s var(--e-out)}
+@keyframes mcflash{0%{box-shadow:var(--lift-1),0 0 0 2px var(--focus)}100%{box-shadow:var(--lift-1),0 0 0 0 transparent}}
+.mc-h{display:flex;align-items:center;gap:8px;color:var(--text-2)}
+.mc-h h3{font:var(--w-semi) 11px/1.2 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--text-2);flex:1}
+.mc-h .ic{width:16px;height:16px;color:var(--lv);opacity:1}
+.mc-badge{font:var(--w-med) 10.5px/1 var(--f-ui);letter-spacing:.04em;text-transform:uppercase;color:var(--warning);padding:5px 8px;border-radius:999px;background:var(--warning-soft)}
+.mc-hero{display:grid;gap:6px}
+.mc-k{font-size:12px;color:var(--text-3)}
+.mc-big{display:flex;align-items:baseline;gap:8px;color:var(--lv);margin:0}
+.mc-v{font:var(--w-semi) 38px/1 var(--f-ui);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.mc[data-tone="none"] .mc-v{font-size:26px;letter-spacing:-.02em}
+.mc-u{font:var(--w-med) 15px/1 var(--f-ui);color:var(--text-2);letter-spacing:-.01em}
+.mc-big .mc-ok{width:28px;height:28px;align-self:center;stroke-width:2.6;opacity:1}
+.mc-meter{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;height:6px;margin-top:4px}
+.mc-meter .b{border-radius:3px;background:var(--hover);box-shadow:inset 0 0 0 .5px var(--border-1)}
+.mc-meter .b.Low{background:color-mix(in srgb,var(--text-3) 30%,transparent)}.mc-meter .b.Guarded{background:color-mix(in srgb,var(--t-guarded) 35%,transparent)}
+.mc-meter .b.Elevated{background:color-mix(in srgb,var(--t-elevated) 35%,transparent)}.mc-meter .b.High{background:color-mix(in srgb,var(--t-high) 35%,transparent)}
+.mc-meter .mk{position:absolute;top:-4px;width:4px;height:14px;margin-left:-2px;border-radius:2px;background:var(--text-1);box-shadow:0 0 0 2px var(--surface-2),0 2px 6px rgb(var(--shadow-rgb) / .5)}
+:root:not([data-theme="light"]) .mc-meter .mk{box-shadow:0 0 0 2px var(--surface-3),0 2px 6px rgb(0 0 0 / .5)}
+.mc-line{font-size:14px;line-height:1.45;color:var(--text-1);text-wrap:pretty;margin:0}
+.mc-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;border-radius:var(--r-in);overflow:hidden;box-shadow:var(--well);background:var(--border-1)}
+.mc-stats>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:3px;padding:9px 10px;background:var(--surface-1);min-width:0}
+.mc-stats dd{margin:0;font:var(--w-semi) 15px/1.15 var(--f-data);letter-spacing:-.01em;color:var(--text-1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-stats dt{font-size:11px;line-height:1.3;color:var(--text-3)}
+.mc-sh{display:flex;justify-content:space-between;align-items:baseline;font:var(--w-semi) 10.5px/1.2 var(--f-ui);letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin:0 0 6px}
+.mc-do ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13px;color:var(--text-1)}
+.mc-do li{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;line-height:1.4}
+.mc-do .ck{width:13px;height:13px;margin-top:3px;color:var(--lv);opacity:1;stroke-width:2.4}
+.mc[data-level="Low"] .mc-do .ck,.mc[data-tone="none"] .mc-do .ck{color:var(--text-2)}
+.mc-more{margin-top:6px}.mc-more summary,.mc-how summary{cursor:pointer;font-size:12px;color:var(--text-2);width:max-content;list-style:none}
+.mc-more summary::-webkit-details-marker,.mc-how summary::-webkit-details-marker{display:none}
+.mc-more summary::after,.mc-how summary::after{content:"";display:inline-block;width:5px;height:5px;margin:0 0 2px 7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.mc-more[open] summary::after,.mc-how[open] summary::after{transform:rotate(-135deg);margin-bottom:-1px}
+.mc-more ul{margin-top:6px}
+.mc-f{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-top:2px}
+.mc-how{flex-basis:100%}.mc-how[open]{display:grid;gap:6px}.mc-how[open] summary{margin-bottom:2px}
+.mc-f .mc-how:first-child:last-child,.mc-f .btn+.mc-how{flex-basis:auto}.mc-f .mc-how[open]{flex-basis:100%}
+.mc-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.mc-chip{--lv:var(--text-1);display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:7px;row-gap:2px;align-items:center;text-align:left;padding:9px 11px;border:0;border-radius:var(--r-in);background:var(--surface-2);box-shadow:var(--lift-1);cursor:pointer;color:var(--text-1);font:inherit}
+:root:not([data-theme="light"]) .mc-chip{background:var(--surface-3)}
+.mc-chip[data-level="Guarded"]{--lv:var(--t-guarded)}.mc-chip[data-level="Elevated"]{--lv:var(--t-elevated)}.mc-chip[data-level="High"]{--lv:var(--t-high)}.mc-chip[data-tone="ok"]{--lv:var(--success)}.mc-chip[data-tone="none"]{--lv:var(--text-3)}
+.mc-chip .ic{grid-row:1/3;width:15px;height:15px;color:var(--lv);opacity:1}
+.mc-chip .k{font-size:10.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-chip b{font:var(--w-semi) 14px/1.1 var(--f-ui);color:var(--lv);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (hover:hover){.mc-chip:hover{background:var(--thumb)}}
+.mc-chip:active{transform:translateY(1px)}
+/* help on the way (site/js/rescue.js) */
+.hw{display:grid;gap:8px;padding:12px;border-radius:var(--r-in);background:var(--surface-1);box-shadow:var(--well)}
+.hw .mc-sh{margin:0}.hw-clk{font:var(--w-semi) 13px/1 var(--f-data);letter-spacing:0;color:var(--text-1);text-transform:none}
+.hw-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.hw-list li{display:grid;grid-template-columns:16px minmax(0,1.1fr) minmax(40px,1fr) auto;gap:8px;align-items:center;font-size:12.5px}
+.hw-list .dot{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--text-3);display:grid;place-items:center}
+.hw-list li:first-child .dot{box-shadow:inset 0 0 0 1.5px #ff6a5c}
+.hw-list li.in .dot{box-shadow:none;background:var(--text-1);color:var(--surface-1)}
+.hw-list li.in:first-child .dot{background:#ff6a5c;color:#fff}
+.hw-list .dot .ic{width:10px;height:10px;stroke-width:3;opacity:1}
+.hw-list .n{display:flex;flex-direction:column;min-width:0}.hw-list .n b{font-weight:var(--w-med);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hw-list .n small{font-size:10.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hw-list .bar{height:4px;border-radius:2px;background:var(--hover);overflow:hidden}.hw-list .bar i{display:block;height:100%;width:0;background:#e0a53a;border-radius:2px}
+.hw-list li:first-child .bar i{background:#ff6a5c}
+.hw-list .v{font:var(--w-semi) 12.5px/1 var(--f-data);color:var(--text-1);letter-spacing:0;white-space:nowrap}
+.hw .btn{justify-self:start}
+.pin-label.veh-lb{font-size:10.5px;padding:3px 7px;margin:-24px 0 0 7px;box-shadow:0 0 0 1px #e0a53a}
+.pin-label.veh-lb.first{box-shadow:0 0 0 1.5px #ff6a5c;font-weight:var(--w-semi)}
+/* Ask answers drawn with the same card parts */
+.msg.card{max-width:100%;padding:0;background:none;box-shadow:none}
+.msg.card .mc{padding:14px;gap:10px}.msg.card .mc-v{font-size:32px}
+.mc-rows{list-style:none;margin:0;padding:0;display:grid;gap:4px;counter-reset:r}
+.mc-rows li{--lv:var(--text-2);counter-increment:r;display:grid;grid-template-columns:18px minmax(0,1.4fr) minmax(36px,1fr) 34px;gap:8px;align-items:center;padding:6px 8px;border-radius:12px;font-size:12.5px;cursor:default}
+.mc-rows li[tabindex]{cursor:pointer}@media (hover:hover){.mc-rows li[tabindex]:hover{background:var(--hover)}}
+.mc-rows li::before{content:counter(r);font:var(--w-semi) 11px/1 var(--f-data);color:var(--text-3)}
+.mc-rows li[data-level="Guarded"]{--lv:var(--t-guarded)}.mc-rows li[data-level="Elevated"]{--lv:var(--t-elevated)}.mc-rows li[data-level="High"]{--lv:var(--t-high)}
+.mc-rows .n{display:flex;flex-direction:column;min-width:0}.mc-rows .n b{font-weight:var(--w-med);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mc-rows .n small{font-size:10.5px;color:var(--text-3)}
+.mc-rows .bar{height:5px;border-radius:3px;background:var(--hover);overflow:hidden}.mc-rows .bar i{display:block;height:100%;background:var(--lv);border-radius:3px}
+.mc-rows .v{font:var(--w-semi) 13px/1 var(--f-data);text-align:right;color:var(--lv);letter-spacing:0}
+@media (max-width:520px){.mc-v{font-size:32px}.mc-stats dd{font-size:14px}.mc-stats>div{padding:8px}}
 </style>
 
 <div id="loading"><div><b class="wordmark">escape</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
@@ -1009,6 +1089,7 @@ body.exploring .maptools .ex-rain{display:flex}
       .pin-label.evac-mk.local::before{border-radius:50%;transform:none}
     </style>
     <div class="card-h"><h3>Getting out.</h3><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real streets and buildings</span></div>
+    <p class="body"><b>Your way out if landslides block roads in this storm.</b> Bright highlighted roads could be cut by landslides. The blue line is your safest route out.</p>
     <p class="body">For the storm you set, which buildings still have a road out of the map, the safest route, and the stretches of road that would cut off the most homes if they failed. A screening view, not an evacuation order.</p>
     <label class="ctl" for="evR72"><span class="top"><span>Rain forecast, next 72 hours</span><b><span id="evR72v">92</span> mm</b></span><input type="range" id="evR72" min="0" max="300" value="92" step="2"></label>
     <div class="chips" role="group" aria-label="Load a real day from the rain gauges">
@@ -1149,5 +1230,7 @@ body.exploring .maptools .ex-rain{display:flex}
 <script src="js/evac.js"></script>
 <script src="js/rides.js"></script>
 <script src="js/stormresp.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/rescue.js"></script>
 <script src="js/address.js"></script>
 <script src="js/app.js"></script>

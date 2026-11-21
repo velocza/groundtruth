@@ -221,6 +221,7 @@
     samplePts.forEach(p => p.ring.show(id === 'inspect'));
     if (id !== 'ask' && id !== 'storm') { Sc.showStreet(null); streetOn = -1; if (id !== 'inspect' && id !== 'backtest') Sc.highlight(0, 0, false); }
     if (id !== 'inspect') Sc.showPath(null);
+    if (id !== 'top' && id !== 'response' && window.GTRescue) GTRescue.stop();
     if (reduce) Object.assign(Sc.cam, POSES[id]);
     requestAnimationFrame(() => { refill(); if (id === 'replay') drawRain(); if (id === 'backtest') drawTimeline(); });
   }

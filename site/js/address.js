@@ -3,7 +3,8 @@
    to arrive (San Francisco: real emergency calls near you, checked on calls it never saw, and in the November 18, 2026 storm).
    Addresses come from Overture Maps address points packed by scripts/12_address_index.py. The lookup runs in this browser: nothing
    typed here is sent anywhere or stored. The only network call is the rain forecast for the area's centre (Open-Meteo, no key), which
-   carries no address. Where a prediction does not exist for an area, the answer says so. */
+   carries no address. Where a prediction does not exist for an area, the answer says so. Each answer is a measure drawn as a card by
+   site/js/cards.js; another model adds or replaces one with GTAddress.addMeasure (see cards.js). */
 (function (root) {
   'use strict';
   const $ = s => document.querySelector(s);
@@ -207,108 +208,135 @@
     return { ok: true, km, exit, via: [...via].sort((a, b) => b[1] - a[1]).map(v => v[0]).slice(0, 4), line, blockedNearby: avoided };
   }
 
-  /* plain words for a 0..100 band */
+  /* ------------------------------------------------ measures: one card each, drawn by GTCards from the numbers computed above.
+     Other models add or replace a card with GTAddress.addMeasure({ id, order, run(ctx) }) (see the top of cards.js). */
   const word = v => v >= 75 ? 'High' : v >= 50 ? 'Elevated' : v >= 25 ? 'Guarded' : 'Low';
-  function tile(o, head, level, cls, lines, todo, details, more) {
-    const t = document.createElement('div'); t.className = 'tile addr-t';
-    const h = document.createElement('div'); h.className = 'card-h'; const h3 = document.createElement('h3'); h3.textContent = head; h.appendChild(h3);
-    if (level) { const b = document.createElement('span'); b.className = 'tier ' + (cls || ''); b.textContent = level; h.appendChild(b); }
-    t.appendChild(h);
-    for (const l of lines) { const p = document.createElement('p'); p.className = 'body'; p.textContent = l; t.appendChild(p); }
-    if (todo && todo.length) { const ul = document.createElement('ul'); ul.className = 'addr-do'; ul.setAttribute('aria-label', 'What to do'); for (const x of todo) { const li = document.createElement('li'); li.innerHTML = '<svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span>'; li.lastChild.textContent = x; ul.appendChild(li); } t.appendChild(ul); }
-    if (details && details.length) { const d = document.createElement('details'); d.className = 'addr-more'; const s = document.createElement('summary'); s.textContent = 'How we know'; d.appendChild(s); for (const x of details) { const p = document.createElement('p'); p.className = 'note'; p.textContent = x; d.appendChild(p); } t.appendChild(d); }
-    if (more) { const r = document.createElement('div'); r.className = 'row'; const b = document.createElement('button'); b.type = 'button'; b.className = 'btn sm'; b.textContent = more[0]; b.addEventListener('click', more[1]); r.appendChild(b); t.appendChild(r); }
-    o.appendChild(t); return t;
-  }
   const open = (id, then) => () => { app.go(id); if (then) setTimeout(then, 80); };
   const ALERTS = () => REG.id === 'sf' ? 'Sign up for AlertSF emergency texts (text ALERTSF to 888-777).' : 'Sign up for Contra Costa County Community Warning System alerts (cwsalerts.com).';
+  const creekTxt = c => c >= 1000 ? 'over 1 km' : fmt(Math.round(c / 10) * 10) + ' m';
+  const MEASURES = [];
+  API.addMeasure = m => { const i = MEASURES.findIndex(x => x.id === m.id); if (i >= 0) MEASURES[i] = m; else MEASURES.push(m); MEASURES.sort((a, b) => (a.order || 0) - (b.order || 0)); if (last && last._fc !== undefined && document.querySelector('#addrOut .mc')) render(last, last._fc); };
+  API.measures = () => MEASURES.map(m => m.id);
+
+  API.addMeasure({ id: 'landslide', order: 10, run(c) {
+    const { hit, storms: st, fc } = c, ls = landslide(hit, st); c.prior.landslideRaw = ls;
+    if (ls.area !== 'ok') return { title: 'Landslides', icon: 'slide', tone: 'none', big: 'No prediction', chip: 'No model',
+      line: ls.area === 'edge' ? 'This address is at the edge of our map, so there is no landslide score for it.' : `There is no landslide model for ${REG.short} yet. Too few slides are on record here to train one, so we won't guess.`,
+      stats: ls.slope != null ? [[fmt(ls.slope) + '°', 'steepest ground within 60 m'], [ls.slope >= 25 ? 'Steep' : ls.slope >= 15 ? 'Moderate' : 'Gentle', 'slope, from real terrain']] : [],
+      todo: ls.slope >= 15 ? ['After heavy rain, watch for new cracks, tilting walls or fences, and muddy runoff.', ALERTS()] : [ALERTS()],
+      how: ['The map draws a placeholder score from slope and rain, which is not a trained prediction, so it is not used here.', ls.slope >= 25 ? 'Steep ground near homes is where slides usually start.' : ''] };
+    const lv = word(ls.vBig), nowLv = word(ls.vNext), pctAbove = Math.round(Math.max(0, Math.min(100, (1 - ls.top) * 100)));
+    const watch = ls.tipWet === 0 ? 'already Elevated when the soil is soaked' : ls.tipWet != null ? rainTxt(ls.tipWet) + ' in 3 days' : 'not reached even at 400 mm';
+    return { title: 'Landslides', icon: 'slide', level: lv, score: ls.vBig, kicker: `In ${st.big.short}`, chip: lv,
+      line: lv === nowLv ? `${lv} now and in a big storm. In a storm like that, the ground here scores above ${pctAbove}% of the land in ${REG.places}.`
+        : `${nowLv} for the next few days, ${lv.toLowerCase()} in a big storm. Then the ground here scores above ${pctAbove}% of the land in ${REG.places}.`,
+      stats: [[fmt(ls.vBig) + '/100', 'model score in that storm'], [nowLv, 'next few days'], [ls.tipWet ? `${fmt(ls.tipWet)} mm` : ls.tipWet === 0 ? 'Soaked soil' : '400+ mm', 'rain that tips it to Elevated']],
+      todo: ls.vBig >= 50 || ls.vNext >= 50 ? ['Before winter: clear gutters and drains, and send roof water away from the slope.', `When ${ls.tipWet ? rainTxt(ls.tipWet) : 'heavy rain'} or more is forecast: watch for new cracks, tilting fences, doors that stick, muddy water. Be ready to leave.`, 'If the ground is moving, leave right away and call 911.', 'During heavy rain at night, stay awake and listen. Many debris flows happen while people sleep.', ALERTS()]
+        : ['No slope is guaranteed safe. Watch for new cracks or tilting after big storms.', ALERTS()],
+      how: [`From the trained landslide model: 300 decision trees learned from 1,398 slides the USGS mapped in the 2016 to 2017 storms. It looks at the ${ls.cells} ground cells (about 30 m each) within about 60 m of the address and reports the riskiest.`,
+        `When to watch: once the soil is soaked, ${watch} pushes the slope near you to Elevated.` + (ls.tipWet ? ` That much rain fell about ${ls.times} ${ls.times === 1 ? 'time' : 'times'} since ${ls.since}${ls.lastDate ? ', most recently around ' + ls.lastDate : ''}.` + (fc ? (fc.max3 >= ls.tipWet ? ' The current forecast reaches that amount.' : ` The current forecast (${rainTxt(fc.max3)}) stays below it.`) : '') : ''),
+        `Next few days uses ${st.next.name}: ${rainTxt(st.next.r72)}, on soil as wet as the gauges measured on ${dstr(st.asOf)}. The big storm is ${st.big.name}: ${rainTxt(st.big.r72)} in 3 days on soaked soil.`,
+        `Scores: ${fmt(ls.vNext, 1)} and ${fmt(ls.vBig, 1)} out of 100. Low under 25, Guarded 25 to 50, Elevated 50 to 75, High 75 and up. These rank ground against other ground. They are not the chance of a slide.`,
+        `Steepest ground within 60 m: ${fmt(ls.slope)} degrees. Nearest creek: ${ls.creek >= 1000 ? 'over 1 km' : 'about ' + creekTxt(ls.creek)} away.`,
+        root.GTLocalModel && root.GTLocalModel.report ? (r => `Checked on 11 winter 2023 slides it never saw: on average a slide site scored above ${Math.round(r.holdout_winter2023.tuned.mean_land_percentile * 100)}% of the land (slope steepness alone: ${Math.round(r.holdout_winter2023.slope_alone.mean_land_percentile * 100)}%). Promising, not proven.`)(root.GTLocalModel.report) : '',
+        'For a real concern, call your city engineering staff or a licensed geotechnical engineer.'],
+      actions: [['Open the slope behind you', open('inspect', () => app.select && app.select(hit.lon, hit.lat))]] };
+  } });
+
+  API.addMeasure({ id: 'flood', order: 20, run(c) {
+    const { hit, fc } = c, fl = flood(hit), creek = c.prior.landslideRaw ? c.prior.landslideRaw.creek : null;
+    if (fl.area !== 'ok') return { title: 'Flooding', icon: 'flood', tone: 'none', big: 'No prediction', chip: 'No model',
+      line: `There is no flood model for ${REG.short} yet.`, stats: creek != null ? [[creekTxt(creek), 'to the nearest creek']] : [],
+      todo: creek != null && creek < 150 ? ['Creeks can rise fast in heavy rain. Never cross a flooded road or creek.', ALERTS()] : [ALERTS()] };
+    const hst = fl.hist || { reports: 0, days: 0 }, pct = fl.rank ? fl.rank / fl.of : 1;
+    const level = hst.days >= 5 || pct <= 0.1 ? 'High' : hst.days >= 1 || pct <= 0.33 ? 'Elevated' : 'Low';
+    const since = fl.fm.first.slice(0, 4);
+    return { title: 'Flooding', icon: 'flood', level, kicker: 'Street flooding near you', chip: level,
+      line: hst.days ? `Neighbors within ${fl.fm.radius_m} m reported flooding on ${hst.days} rainy ${hst.days === 1 ? 'day' : 'days'} since ${since}, most recently ${dstr(new Date(hst.last + 'T12:00:00Z'))}.` : `No flooding has been reported to 311 within ${fl.fm.radius_m} m of you on a rainy day since ${since}.`,
+      stats: [[fmt(hst.days), 'rainy days with reports'], fl.rank ? [`${fmt(Math.round((1 - pct) * 100))}%`, 'of streets flood less than yours'] : ['–', 'no street score nearby'], hst.days ? [`${fmt(hst.typical)} mm`, 'rain that usually floods it'] : [hst.nov18 ? fmt(hst.nov18) : '0', 'reports on Nov 18, 2026']],
+      todo: level === 'Low' ? ['Keep the storm drain in front of you clear of leaves before big storms.', ALERTS()] : ['Before a storm: clear the storm drain, move cars and valuables out of garages and basements, keep sandbags handy (the city gives them out free).', 'Never drive or walk through flooded streets. A foot of moving water can float a car.', 'Report flooding to 311.', ALERTS()],
+      how: [hst.days ? `When to watch: flooding near you has usually come after about ${rainTxt(hst.typical)} of rain over 3 days, and once after as little as ${rainTxt(hst.lightest)}.` + (fc ? (fc.max3 >= hst.lightest ? ` The forecast brings ${rainTxt(fc.max3)}, so flooding near you is possible this week.` : ` The forecast (${rainTxt(fc.max3)}) is below that.`) : '') + (hst.nov18 ? ` ${hst.nov18} ${hst.nov18 === 1 ? 'report' : 'reports'} came in the November 18, 2026 storm.` : '') : '',
+        fl.rank ? `Our flood model ranks your street, ${fl.street}, ${fmt(fl.rank)} of ${fmt(fl.of)} San Francisco streets for flooding in a storm like November 18, 2026 (1 floods most).` : '',
+        `311 history: ${fl.fm.what}. ${fmt(fl.fm.reports)} reports in all. 311 shows where people reported, which is not every place that flooded.`,
+        fl.rank ? `Flood model: 300 decision trees trained on 311 flood reports before October 2022. On storms it never saw it scored 0.89 (winter 2023) and 0.91 (November 2026), where 0.5 is a coin flip. Your street scored ${fmt(fl.score, 1)} out of 100 on the ${fmt(fl.rain)} mm storm of November 18, 2026. It is a ranking, not a chance of flooding, and it does not change with the forecast.` : 'No street with a flood model score within 200 m.'],
+      actions: [['See how the storm unfolded', open('response')]] };
+  } });
+
+  API.addMeasure({ id: 'help', order: 30, run(c) {
+    const { hit } = c, hp = help(hit), plan = root.GTRescue ? root.GTRescue.plan(hit.lon, hit.lat) : null; c.prior.helpRaw = hp;
+    const first = plan ? plan.stations[0] : null, F = root.GT_FIRE;
+    const extra = plan ? (t => { const b = root.GTRescue.block(plan); t.querySelector('.mc-stats') ? t.querySelector('.mc-stats').after(b) : t.appendChild(b); c.after.push(() => root.GTRescue.play(plan, b)); }) : null;
+    const todo = ['In an emergency, call 911 right away. Don\'t wait for water or a slide to get worse.', 'Make sure your house number is easy to see from the street, day and night.', 'If you or someone at home needs help to leave, plan that before the storm.'];
+    const routeHow = plan ? `The map drives an engine from each of the ${plan.stations.length} stations with the shortest modelled drive (${plan.stations.map(s => s.name).join(', ')}), along the shortest path on the street network. The route only draws the way: the minutes come from the drive-time model, plus ${fmt(plan.turnout, 1)} min, the median time an engine takes to leave the station. Station positions: ${F.stations[0].src.startsWith('Overture') ? 'Overture Maps places' : 'published addresses'}, with published addresses for the few Overture lacks.` + (plan.stations.some(s => s.extrapolated) ? ` Some of these stations are farther than the ${fmt(root.GTRescue.curve(F.meta).fitTo / 1000, 2)} km the model was fitted on, so their times extend its curve in a straight line.` : '') : '';
+    if (hp.area === 'ok') {
+      const cs = hp.m.check_storm, cv = hp.m.check, slower = cs.median_signed_err_min < 0 ? -cs.median_signed_err_min * 60 : 0;
+      const H = root.GT_HELP; let faster = 0; for (const r of H.help) if (r[2] > hp.med) faster++;
+      const pf = Math.round(faster / H.help.length * 100);
+      return { title: 'Help in a storm', icon: 'help', big: fmt(hp.med, 0), unit: 'min', kicker: 'After a 911 call, first unit on scene', chip: `${fmt(hp.med, 0)} min`,
+        level: hp.med > H.meta.help.city.p90 ? 'High' : hp.med > H.meta.help.city.med * 1.25 ? 'Elevated' : '',
+        line: `The first fire engine or ambulance usually reaches your block in about ${fmt(hp.med, 0)} minutes. 9 in 10 times it is there within ${fmt(Math.ceil(hp.p90))}.`,
+        stats: [[`${fmt(Math.ceil(hp.p90))} min`, '9 in 10 calls'], [`${pf}%`, 'of city blocks wait longer'], [slower >= 15 ? `+${fmt(Math.round(slower / 5) * 5)} s` : 'Same', 'in the Nov 18, 2026 storm']],
+        extra, todo,
+        how: [`From ${fmt(hp.calls)} real emergency calls (lights and sirens) within ${hp.m.radius_m} m of your block, September 2025 to August 2026: the time from the call being received to the first unit on scene. Typical is the middle call, slow is the 9 in 10 mark.`,
+          `In the November 18, 2026 storm, emergency calls across the city were reached ${slower >= 15 ? 'about ' + fmt(Math.round(slower / 5) * 5) + ' seconds slower than usual' : 'about as fast as usual'}, and ${fmt(Math.round((1 - cs.within_slow) * 100))} in 100 took longer than the slow time, against ${fmt(Math.round((1 - cv.within_slow) * 100))} in 100 normally.` + (hp.nb && !hp.nb.few ? ` In ${hp.nb.label}, the typical wait in that storm was ${fmt(hp.nb.storm_med, 1)} minutes against ${fmt(hp.nb.dry_med, 1)} on dry days.` : ''),
+          `Checked on ${fmt(cv.n)} October 2026 calls it never saw: ${fmt(cv.within_typical * 100)}% arrived within the typical time and ${fmt(cv.within_slow * 100)}% within the slow time (50% and 90% would be perfect). In the storm window: ${fmt(cs.within_typical * 100)}% and ${fmt(cs.within_slow * 100)}% of ${fmt(cs.n)} calls.`,
+          routeHow, plan ? `Drive-time model: ${F.meta.curve_rule} Checked on ${fmt(F.meta.curve_check.n)} October 2026 trips it was not fitted on: median error ${fmt(F.meta.curve_check.mae, 2)} min.` : '',
+          'Source: DataSF Fire Department and Emergency Medical Services Dispatched Calls for Service. Call positions are block-level.'],
+        actions: [['See help times in the storm', open('response')]] };
+    }
+    if (hp.area === 'few') return { title: 'Help in a storm', icon: 'help', tone: first ? '' : 'none', badge: first ? 'Modelled' : '', big: first ? fmt(plan.turnout + first.drive, 0) : 'Not enough calls', unit: first ? 'min drive' : '', kicker: first ? 'Modelled drive from the nearest station' : '', chip: first ? `${fmt(plan.turnout + first.drive, 0)} min` : 'Few calls',
+      line: `Fewer than ${hp.m.min_calls} emergency calls came from within ${hp.m.radius_m} m in a year, so there is no measured time here. The drive time comes from the drive-time model.`, extra, todo: ['In an emergency, call 911 right away.'], how: [routeHow] };
+    /* no 911 records here (Lamorinda): the drive-time estimate, labelled as one */
+    if (!first) return { title: 'Help in a storm', icon: 'help', tone: 'none', big: 'No estimate', chip: 'No records', line: `There are no emergency response records for ${REG.short}.`, todo };
+    const est = plan.turnout + first.drive;
+    return { title: 'Help in a storm', icon: 'help', badge: 'Estimate', big: '≈ ' + fmt(est, 0), unit: 'min drive', kicker: `From ${first.name}, ${first.agency}`, chip: `≈ ${fmt(est, 0)} min`,
+      line: `${REG.short} has no public 911 records, so this is an estimate: about ${fmt(est, 0)} minutes for an engine to leave ${first.name} and drive here, before the time it takes to answer the call.`,
+      stats: [[`${fmt(first.gridM / 1000, 1)} km`, 'street-grid distance'], [plan.stations[1] ? `${fmt(plan.turnout + plan.stations[1].drive, 0)} min` : '–', 'next station'], ['Estimate', 'not measured here']],
+      extra, todo,
+      how: [F.meta.note, routeHow, `Drive-time model: ${F.meta.curve_rule} In San Francisco it was checked on ${fmt(F.meta.curve_check.n)} October 2026 trips it was not fitted on (median error ${fmt(F.meta.curve_check.mae, 2)} min). It was never checked in ${REG.short}.`, 'Contra Costa County does not publish dispatch records the way San Francisco does.'] };
+  } });
+
+  API.addMeasure({ id: 'wayout', order: 40, run(c) {
+    const { hit, storms: st } = c, ro = roadOut(hit, st.big); if (!ro) return null;
+    const how = ['From the Getting out view: the named street network, with road segments closed where the map\'s landslide score' + (REG.landslideModel ? ' (the trained model)' : ' (a placeholder formula from slope and rain, since San Francisco has no landslide model)') + ' is Elevated or higher, or where debris traced downhill from risky slopes would cross. It does not know about fallen trees, floods on the road or traffic.'];
+    const openRoute = open('evac', () => { if (app.setStorm) app.setStorm(Math.min(300, st.big.r72), Math.min(280, st.big.api)); setTimeout(() => root.GTEvac.pick && root.GTEvac.pick(hit.lon, hit.lat), 400); });
+    if (ro.ok) {
+      return { title: 'Your way out', icon: 'route', tone: 'ok', level: 'Low', big: 'Open', kicker: `In ${st.big.short}`, chip: 'Open',
+        line: `You would still have a road out, leaving the area on ${ro.exit}.`,
+        stats: [[`${fmt(ro.km, 1)} km`, 'to leave the area'], [ro.via[0] || '–', 'main road'], [fmt(ro.blockedNearby), 'road segments closed in that storm']],
+        todo: ['Know a second way out in case a road you expect is closed.', 'Keep your gas tank at least half full in storm season.', ALERTS()], how: [`The route goes by way of ${ro.via.join(', ')}.`].concat(how), actions: [['Open your route out', openRoute]] };
+    }
+    const cut = ro.why === 'cut';
+    return { title: 'Your way out', icon: 'route', level: cut ? 'High' : '', tone: cut ? '' : 'none', big: cut ? 'Cut off' : 'Not known', kicker: `In ${st.big.short}`, chip: cut ? 'Cut off' : 'Not known',
+      line: cut ? `The roads around you could be blocked${ro.names.length ? ' on ' + ro.names.slice(0, 3).join(', ') : ''}, leaving no road out.` : ro.why === 'far' ? 'There is no named street within 250 m of this address in our road data.' : 'This address joins the street network by a road our data does not have (a private road or a driveway), so we cannot trace a route.',
+      stats: cut ? [[fmt(ro.blocked), 'road segments closed in that storm']] : [],
+      todo: cut ? ['Plan to leave early, before a big storm peaks, rather than wait.', 'Ask a neighbor with a different route out to ride with them (see Neighbor rides).', 'Keep a go-bag ready: water, medicine, phone charger, documents.', ALERTS()] : [ALERTS()],
+      how, actions: [cut ? ['Find a neighbor to ride with', open('rides')] : ['Open your route out', openRoute]] };
+  } });
+
+  /* measures from scripts that loaded before this one: window.GT_MEASURES = [..]; later ones can push to it too */
+  (Array.isArray(root.GT_MEASURES) ? root.GT_MEASURES : []).forEach(m => API.addMeasure(m)); root.GT_MEASURES = { push: m => API.addMeasure(m) };
 
   function render(hit, fc) {
-    const o = out(); o.textContent = ''; o.hidden = false; last = hit;
-    const st = storms(fc);
+    const o = out(); o.textContent = ''; o.hidden = false; last = hit; hit._fc = fc;
+    const st = storms(fc), C = root.GTCards;
+    if (root.GTRescue) root.GTRescue.stop(); Sc.showPath(null);
     const head = document.createElement('div'); head.className = 'addr-head';
     const h = document.createElement('h3'); h.textContent = hit.label; head.appendChild(h);
     const p = document.createElement('p'); p.className = 'note';
-    p.textContent = (hit.note ? hit.note + ' ' : '') + (fc ? `Rain forecast for the next 7 days: ${rainTxt(fc.total)}. The wettest 3 days bring ${rainTxt(fc.max3)}.` : `The live rain forecast did not load, so "next few days" uses the last 3 days of gauge rain, ${rainTxt(st.next.r72)}.`);
+    p.textContent = (hit.note ? hit.note + ' ' : '') + (fc ? `Rain forecast, next 7 days: ${rainTxt(fc.total)}. Wettest 3 days: ${rainTxt(fc.max3)}.` : `The live rain forecast did not load, so "next few days" uses the last 3 days of gauge rain, ${rainTxt(st.next.r72)}.`);
     head.appendChild(p); o.appendChild(head);
-
-    /* landslides */
-    const ls = landslide(hit, st);
-    if (ls.area === 'ok') {
-      const lv = word(ls.vBig), nowLv = word(ls.vNext);
-      const lines = [`Next few days: ${nowLv.toLowerCase()}. In ${st.big.short}: ${lv.toLowerCase()}. In a storm like that, the ground at your address scores higher than ${fmt(Math.max(0, Math.min(100, (1 - ls.top) * 100)))}% of the land in ${REG.places}.`];
-      if (ls.tipWet === 0) lines.push('The slope near you scores Elevated even before more rain falls when the soil is soaked.');
-      else if (ls.tipWet != null) lines.push(`When to watch: once the soil is soaked, about ${rainTxt(ls.tipWet)} of rain in 3 days pushes the slope near you to Elevated. That much rain fell about ${ls.times} ${ls.times === 1 ? 'time' : 'times'} since ${ls.since}${ls.lastDate ? ', most recently around ' + ls.lastDate : ''}.` + (fc ? (fc.max3 >= ls.tipWet ? ' The current forecast reaches that amount.' : ` The current forecast (${rainTxt(fc.max3)}) stays below it.`) : ''));
-      else lines.push('Even 400 mm of rain in 3 days keeps the slope near you below Elevated.');
-      const todo = ls.vBig >= 50 || ls.vNext >= 50 ? ['Before winter: clear gutters and drains, and send roof water away from the slope.', `When ${ls.tipWet ? rainTxt(ls.tipWet) : 'heavy rain'} or more is forecast: watch for new cracks, tilting fences or walls, doors that stick, and muddy water. Be ready to leave.`, 'During heavy rain at night, stay awake and listen. Many debris flows happen while people sleep.', ALERTS(), 'If the ground is moving, leave right away and call 911.']
-        : ['Your slope is not among the riskiest, but no slope is guaranteed safe. Watch for new cracks or tilting after big storms.', ALERTS()];
-      tile(o, 'Landslides', lv === nowLv ? lv : `${nowLv} now · ${lv} in a big storm`, lv, lines, todo, [
-        `From the trained landslide model: 300 decision trees learned from 1,398 slides the USGS mapped in the 2016 to 2017 storms. It looks at the ${ls.cells} ground cells (about 30 m each) within about 60 m of the address and reports the riskiest.`,
-        `Next few days uses ${st.next.name}: ${rainTxt(st.next.r72)}, on soil as wet as the gauges measured on ${dstr(st.asOf)}. The big storm is ${st.big.name}: ${rainTxt(st.big.r72)} in 3 days on soaked soil.`,
-        `Scores: ${fmt(ls.vNext, 1)} and ${fmt(ls.vBig, 1)} out of 100. Low under 25, Guarded 25 to 50, Elevated 50 to 75, High 75 and up. These rank ground against other ground. They are not the chance of a slide.`,
-        `Steepest ground within 60 m: ${fmt(ls.slope)} degrees. Nearest creek: ${ls.creek >= 1000 ? 'over 1 km' : 'about ' + fmt(Math.round(ls.creek / 10) * 10) + ' m'} away.`,
-        root.GTLocalModel && root.GTLocalModel.report ? (r => `Checked on 11 winter 2023 slides it never saw: on average a slide site scored above ${Math.round(r.holdout_winter2023.tuned.mean_land_percentile * 100)}% of the land (slope steepness alone: ${Math.round(r.holdout_winter2023.slope_alone.mean_land_percentile * 100)}%). Promising, not proven.`)(root.GTLocalModel.report) : '',
-        'For a real concern, call your city engineering staff or a licensed geotechnical engineer.'].filter(Boolean), ['Open the slope behind you', open('inspect', () => app.select && app.select(hit.lon, hit.lat))]);
-    } else {
-      tile(o, 'Landslides', 'No prediction here', '', [ls.area === 'edge' ? 'This address is at the edge of our map, so we have no landslide score for it.' : `We don't have a landslide prediction for ${REG.short} yet. Too few slides have been recorded here to train one, so we won't guess.`].concat(ls.slope != null ? [`What we can say from real terrain: the steepest ground within 60 m of you slopes about ${fmt(ls.slope)} degrees${ls.slope >= 25 ? ', which is steep. Steep ground near homes is where slides usually start' : ls.slope >= 15 ? ', a moderate slope' : ', fairly gentle'}.`] : []),
-        ls.slope >= 15 ? ['After heavy rain, watch for new cracks, tilting walls or fences, and muddy runoff.', ALERTS()] : [ALERTS()], ['The map draws a placeholder score from slope and rain, which is not a trained prediction, so it is not used here.']);
+    const ctx = { hit, fc, storms: st, region: REG, app, scene: Sc, cards: C, prior: {}, after: [] }, made = [];
+    for (const m of MEASURES) {
+      let spec = null; try { spec = m.run(ctx); } catch (e) { console.error('measure ' + m.id, e); spec = { title: m.title || m.id, icon: m.icon, tone: 'none', big: 'Unavailable', line: 'This answer could not be worked out for this address.' }; }
+      if (!spec) continue; spec.id = spec.id || m.id; ctx.prior[m.id] = spec; made.push({ spec, node: C.card(spec) });
     }
-
-    /* flooding */
-    const fl = flood(hit);
-    if (fl.area === 'ok') {
-      const hst = fl.hist || { reports: 0, days: 0 }, pct = fl.rank ? fl.rank / fl.of : 1;
-      const level = hst.days >= 5 || pct <= 0.1 ? 'High' : hst.days >= 1 || pct <= 0.33 ? 'Elevated' : 'Low';
-      const lines = [];
-      if (hst.days) lines.push(`Neighbors within ${fl.fm.radius_m} m have reported flooding to 311 on ${hst.days} rainy ${hst.days === 1 ? 'day' : 'days'} since ${fl.fm.first.slice(0, 4)}, most recently ${dstr(new Date(hst.last + 'T12:00:00Z'))}.` + (hst.nov18 ? ` ${hst.nov18} ${hst.nov18 === 1 ? 'report' : 'reports'} came in the November 18, 2026 storm.` : ''));
-      else lines.push(`No flooding has been reported to 311 within ${fl.fm.radius_m} m of you on a rainy day since ${fl.fm.first.slice(0, 4)}.`);
-      if (hst.days) lines.push(`When to watch: flooding near you has usually come after about ${rainTxt(hst.typical)} of rain over 3 days, and once after as little as ${rainTxt(hst.lightest)}.` + (fc ? (fc.max3 >= hst.lightest ? ` The forecast brings ${rainTxt(fc.max3)}, so flooding near you is possible this week.` : ` The forecast (${rainTxt(fc.max3)}) is below that.`) : ''));
-      if (fl.rank) lines.push(`Our flood model ranks your street, ${fl.street}, ${fmt(fl.rank)} of ${fmt(fl.of)} San Francisco streets for flooding in a storm like November 18, 2026 (1 floods most).`);
-      tile(o, 'Flooding', level, level, lines,
-        level === 'Low' ? ['Keep the storm drain in front of you clear of leaves before big storms.', ALERTS()] : ['Before a storm: clear the storm drain near you, move cars and valuables out of garages and basements, and keep sandbags handy (the city gives them out free during storms).', 'Never drive or walk through flooded streets. A foot of moving water can float a car.', 'Report flooding to 311.', ALERTS()],
-        [`311 history: ${fl.fm.what}. ${fmt(fl.fm.reports)} reports in all. 311 shows where people reported, which is not every place that flooded.`,
-          fl.rank ? `Flood model: 300 decision trees trained on 311 flood reports before October 2022. On storms it never saw it scored 0.89 (winter 2023) and 0.91 (November 2026), where 0.5 is a coin flip. Your street scored ${fmt(fl.score, 1)} out of 100 on the ${fmt(fl.rain)} mm storm of November 18, 2026. It is a ranking, not a chance of flooding, and it does not change with the forecast.` : 'No street with a flood model score within 200 m.'], ['See how the storm unfolded', open('response')]);
-    } else {
-      tile(o, 'Flooding', 'No prediction here', '', [`We don't have a flood prediction for ${REG.short} yet.` + (ls.creek != null ? ` Nearest creek: ${ls.creek >= 1000 ? 'over 1 km away' : 'about ' + fmt(Math.round(ls.creek / 10) * 10) + ' m away'}.` : '')],
-        ls.creek != null && ls.creek < 150 ? ['Creeks can rise fast in heavy rain. Never cross a flooded road or creek.', ALERTS()] : [ALERTS()], []);
-    }
-
-    /* help arrival */
-    const hp = help(hit);
-    if (hp.area === 'ok') {
-      const cs = hp.m.check_storm, cv = hp.m.check, slower = cs.median_signed_err_min < 0 ? -cs.median_signed_err_min * 60 : 0;
-      const lines = [`After you call 911 for an emergency, the first fire truck or ambulance usually reaches your block in about ${fmt(hp.med, 0)} minutes. 9 in 10 times it arrives within ${fmt(Math.ceil(hp.p90))} minutes.`,
-        `In a storm: during the November 18, 2026 storm, emergency calls across the city were reached ${slower >= 15 ? 'about ' + fmt(Math.round(slower / 5) * 5) + ' seconds slower than usual' : 'about as fast as usual'}, and ${fmt(Math.round((1 - cs.within_slow) * 100))} in 100 took longer than the slow time, against ${fmt(Math.round((1 - cv.within_slow) * 100))} in 100 normally. So expect about ${fmt(hp.med, 0)} minutes, and up to ${fmt(Math.ceil(hp.p90))} or a little more.`];
-      if (hp.nb && !hp.nb.few) lines.push(`In ${hp.nb.label}, the typical wait in that storm was ${fmt(hp.nb.storm_med, 1)} minutes against ${fmt(hp.nb.dry_med, 1)} on dry days.`);
-      tile(o, 'Help arriving', `About ${fmt(hp.med, 0)} min`, '', lines,
-        ['In an emergency, call 911 right away. Don\'t wait for water or a slide to get worse.', 'Make sure your house number is easy to see from the street, day and night.', 'If you or someone at home needs help to leave, plan that before the storm.'],
-        [`From ${fmt(hp.calls)} real emergency calls (lights and sirens) within ${hp.m.radius_m} m of your block, September 2025 to August 2026: the time from the call being received to the first unit on scene. Typical is the middle call, slow is the 9 in 10 mark.`,
-          `Checked on ${fmt(cv.n)} October 2026 calls it never saw: ${fmt(cv.within_typical * 100)}% arrived within the typical time and ${fmt(cv.within_slow * 100)}% within the slow time (50% and 90% would be perfect). In the storm window: ${fmt(cs.within_typical * 100)}% and ${fmt(cs.within_slow * 100)}% of ${fmt(cs.n)} calls.`,
-          'Source: DataSF Fire Department and Emergency Medical Services Dispatched Calls for Service. Call positions are block-level.'], ['See help times in the storm', open('response')]);
-    } else if (hp.area === 'few') {
-      tile(o, 'Help arriving', 'Not enough calls', '', [`Fewer than ${hp.m.min_calls} emergency calls came from within ${hp.m.radius_m} m of this address in a year, so we can't give a reliable time.`], ['In an emergency, call 911 right away.'], []);
-    } else {
-      tile(o, 'Help arriving', 'No estimate here', '', [`We don't have emergency response records for ${REG.short}, so we can't say how long help would take to reach you. The county does not publish them the way San Francisco does.`], ['In an emergency, call 911 right away. Don\'t wait for things to get worse.', 'Make sure your house number is easy to see from the street.', 'If anyone at home needs help to leave, plan that before the storm.'], []);
-    }
-
-    /* road out */
-    const ro = roadOut(hit, st.big);
-    if (ro) {
-      if (ro.ok) {
-        tile(o, 'Your way out', ro.blockedNearby ? 'You have a way out' : 'Roads open', 'Low', [`In ${st.big.short}, you would still have a road out: about ${fmt(ro.km, 1)} km by way of ${ro.via.join(', ')}, leaving the area on ${ro.exit}. The map shows the route.`],
-          ['Know a second way out in case a road you expect is closed.', 'Keep your gas tank at least half full in storm season.', ALERTS()],
-          ['From the Getting out view: the named street network, with road segments closed where the map\'s landslide score' + (REG.landslideModel ? ' (the trained model)' : ' (a placeholder formula from slope and rain, since San Francisco has no landslide model)') + ' is Elevated or higher, or where debris traced downhill from risky slopes would cross. It does not know about fallen trees, floods on the road or traffic.'], ['Open your route out', open('evac', () => { if (app.setStorm) app.setStorm(Math.min(300, st.big.r72), Math.min(280, st.big.api)); setTimeout(() => root.GTEvac.pick && root.GTEvac.pick(hit.lon, hit.lat), 400); })]);
-        if (ro.line.length > 1) Sc.showPath(ro.line);
-      } else {
-        tile(o, 'Your way out', ro.why === 'cut' ? 'Could be cut off' : 'Not known', ro.why === 'cut' ? 'High' : '', [ro.why === 'cut' ? `In ${st.big.short}, the roads around you could be blocked${ro.names.length ? ' on ' + ro.names.slice(0, 3).join(', ') : ''}, leaving no road out.` : ro.why === 'far' ? 'There is no named street within 250 m of this address in our road data.' : 'This address connects to the street network through a road our data does not have (a private road or a driveway), so we cannot trace a route.'],
-          ro.why === 'cut' ? ['Plan to leave early, before a big storm peaks, rather than wait.', 'Ask a neighbor with a different route out if you can ride with them (see Neighbor rides).', 'Keep a go-bag ready: water, medicine, phone charger, documents.', ALERTS()] : [ALERTS()],
-          ['From the Getting out view, which closes road segments where the map\'s landslide score' + (REG.landslideModel ? ' (the trained model)' : ' (a placeholder formula from slope and rain, since San Francisco has no landslide model)') + ' is Elevated or higher or where traced debris would cross.'], ro.why === 'cut' ? ['Find a neighbor to ride with', open('rides')] : ['Open your route out', open('evac', () => { if (app.setStorm) app.setStorm(Math.min(300, st.big.r72), Math.min(280, st.big.api)); setTimeout(() => root.GTEvac.pick && root.GTEvac.pick(hit.lon, hit.lat), 400); })]);
-      }
-    }
-
-    { const y = $('#srYouTxt'); if (y && hp.area !== 'none') { y.textContent = hp.area === 'ok' ? `At ${hit.label}: help usually arrives in about ${fmt(hp.med, 0)} minutes after a 911 emergency call, and within ${fmt(Math.ceil(hp.p90))} minutes 9 in 10 times. In the November 18, 2026 storm it was about the same, with a few more slow calls.` : `At ${hit.label}: too few emergency calls nearby to estimate a time.`; const b = $('#srYouBtn'); if (b) b.textContent = 'Check another address'; } }
+    o.appendChild(C.summary(made)); for (const x of made) o.appendChild(x.node);
+    { const hv = ctx.prior.helpRaw, y = $("#srYouTxt");
+      if (y && hv && hv.area !== 'none') { y.textContent = hv.area === 'ok' ? `At ${hit.label}: help usually arrives in about ${fmt(hv.med, 0)} minutes after a 911 emergency call, and within ${fmt(Math.ceil(hv.p90))} minutes 9 in 10 times. In the November 18, 2026 storm it was about the same, with a few more slow calls.` : `At ${hit.label}: too few emergency calls nearby to estimate a time.`; const b = $('#srYouBtn'); if (b) b.textContent = 'Check another address'; } }
     const f = document.createElement('p'); f.className = 'foot'; f.textContent = 'A student project built on public data. It cannot tell you a home is safe. In danger, leave if you can and call 911. Follow the National Weather Service and your city.'; o.appendChild(f);
     Sc.highlight(hit.lon, hit.lat, true); app.flyTo(hit.lon, hit.lat, 5.6);
+    for (const fn of ctx.after) try { fn(); } catch (e) { console.error(e); }
     { const vs = $('#viewScroll'); if (vs && vs.scrollHeight > vs.clientHeight) vs.scrollTo({ top: Math.max(0, head.offsetTop - vs.offsetTop - 8), behavior: 'smooth' }); }
   }
   API.last = () => last;

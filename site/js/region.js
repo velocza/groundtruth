@@ -40,7 +40,7 @@
   window.GT_REGIONS = REGIONS; window.GT_REGION = R;
   document.documentElement.setAttribute('data-region', id);
   if (R.title) document.title = R.title;
-  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model', 'landslide_layers'] : [], ['roads_graph', 'usgs_inventory', 'census_bg'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
+  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model', 'landslide_layers'] : [], ['roads_graph', 'usgs_inventory', 'census_bg', 'fire_stations'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
 
   /* switch area: remember the choice and reload with that area's data */
   window.GT_setRegion = function (next) {
