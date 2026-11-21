@@ -1,0 +1,1316 @@
+
+119 
+WGUS86 KMTR 200523
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+923 PM PST Thu Nov 19 2026
+
+CAC053-200600-
+/O.EXT.KMTR.FA.Y.0056.000000T0000Z-261120T0600Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Monterey CA-
+923 PM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY NOW IN EFFECT UNTIL 10 PM PST THIS EVENING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...West Central Monterey County in central California...
+
+* WHEN...Until 1000 PM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+  Ponding of water in urban or other areas is occurring or is
+  imminent.
+
+* ADDITIONAL DETAILS...
+  - At 923 PM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2.5 and 3.5 inches of rain have fallen over the last 48
+    hours with soils becoming more saturated and increasing flooding
+    risk.
+  - Some locations that will experience flooding include...
+    Salinas, Seaside, Monterey, Marina, Pacific Grove, Carmel-By-
+    The-Sea, Del Monte Forest, Del Rey Oaks and Sand City.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3672 12181 3667 12164 3656 12168 3652 12193
+      3656 12193 3657 12195 3656 12196 3658 12198
+      3658 12197 3661 12196 3662 12194 3664 12193
+      3662 12190 3661 12189 3661 12190 3660 12189
+      3661 12186 3666 12183
+
+
+$$
+
+Kennedy
+
+
+
+387 
+WGUS86 KMTR 200412
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+812 PM PST Thu Nov 19 2026
+
+CAC053-200530-
+/O.EXT.KMTR.FA.Y.0056.000000T0000Z-261120T0530Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Monterey CA-
+812 PM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY NOW IN EFFECT UNTIL 930 PM PST THIS EVENING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...West Central Monterey County in central California...
+
+* WHEN...Until 930 PM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+  Ponding of water in urban or other areas is occurring or is
+  imminent.
+
+* ADDITIONAL DETAILS...
+  - At 812 PM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2.5 and 3.5 inches of rain have fallen.
+  - Some locations that will experience flooding include...
+    Salinas, Seaside, Monterey, Marina, Pacific Grove, Carmel-By-
+    The-Sea, Del Monte Forest, Del Rey Oaks and Sand City.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3672 12181 3667 12164 3656 12168 3652 12193
+      3656 12193 3657 12195 3656 12196 3658 12198
+      3658 12197 3661 12196 3662 12194 3664 12193
+      3662 12190 3661 12189 3661 12190 3660 12189
+      3661 12186 3666 12183
+
+
+$$
+
+KR
+
+
+
+460 
+WGUS86 KMTR 200336
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+736 PM PST Thu Nov 19 2026
+
+CAC053-200430-
+/O.NEW.KMTR.FA.Y.0056.261120T0336Z-261120T0430Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Monterey CA-
+736 PM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 830 PM PST THIS EVENING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...West Central Monterey County in central California...
+
+* WHEN...Until 830 PM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+  Ponding of water in urban or other areas is occurring or is
+  imminent.
+
+* ADDITIONAL DETAILS...
+  - At 736 PM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2.5 and 3.5 inches of rain have fallen over the last 48
+    hours with soils becoming more saturated and increasing flooding
+    risk.
+  - Some locations that will experience flooding include...
+    Salinas, Seaside, Monterey, Marina, Pacific Grove, Carmel-By-
+    The-Sea, Del Monte Forest, Del Rey Oaks and Sand City.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3672 12181 3667 12164 3656 12168 3652 12193
+      3656 12193 3657 12195 3656 12196 3658 12198
+      3658 12197 3661 12196 3662 12194 3664 12193
+      3662 12190 3661 12189 3661 12190 3660 12189
+      3661 12186 3666 12183
+
+
+$$
+
+Kennedy
+
+
+
+549 
+WGUS86 KMTR 192122
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+122 PM PST Thu Nov 19 2026
+
+CAC081-085-087-192132-
+/O.EXP.KMTR.FA.Y.0055.000000T0000Z-261119T2130Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-Santa Clara CA-Santa Cruz CA-
+122 PM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 130 PM PST THIS AFTERNOON...
+
+The Flood Advisory will expire at 130 PM PST this afternoon for
+coastal portion of the San Francisco peninsula and Santa Cruz
+Mountain.
+
+The heavy rain has ended. Please continue to heed remaining road
+closures.
+
+&&
+
+LAT...LON 3771 12250 3751 12239 3737 12223 3733 12210
+      3721 12198 3721 12176 3697 12158 3696 12164
+      3690 12158 3692 12171 3685 12181 3697 12190
+      3695 12210 3712 12234 3724 12242 3748 12245
+      3752 12252
+
+
+$$
+
+CW
+
+
+
+529 
+WGUS86 KMTR 191830
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1030 AM PST Thu Nov 19 2026
+
+CAC081-085-087-192130-
+/O.NEW.KMTR.FA.Y.0055.261119T1830Z-261119T2130Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-Santa Clara CA-Santa Cruz CA-
+1030 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 130 PM PST THIS AFTERNOON...
+
+* WHAT...Urban area and small stream flooding caused by excessive
+  rainfall is expected.
+
+* WHERE...Coastal San Francisco peninsula and Santa Cruz Mountains
+
+* WHEN...Until 130 PM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1029 AM PST, Doppler radar indicated heavy rain. This will
+    cause urban and small stream flooding.
+  - Additional rainfall amounts of 0.5 to 0.75 inches are expected
+    over the area. This additional rain will result in minor
+    flooding.
+  - Some locations that will experience flooding include...
+    Daly City, Palo Alto, Santa Cruz, Watsonville, Gilroy, San Bruno,
+    Pacifica, Saratoga, Los Gatos, Corralitos, Scotts Valley, Half
+    Moon Bay, Capitola, Live Oak and Woodside.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+&&
+
+LAT...LON 3771 12250 3751 12239 3737 12223 3733 12210
+      3721 12198 3721 12176 3697 12158 3696 12164
+      3690 12158 3692 12171 3685 12181 3697 12190
+      3695 12210 3712 12234 3724 12242 3748 12245
+      3752 12252
+
+
+$$
+
+CW
+
+
+
+663 
+WGUS86 KMTR 191438
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+638 AM PST Thu Nov 19 2026
+
+CAC085-087-191448-
+/O.EXP.KMTR.FA.Y.0054.000000T0000Z-261119T1445Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Santa Clara CA-Santa Cruz CA-
+638 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 645 AM PST THIS MORNING...
+
+The Flood Advisory will expire at 645 AM PST this morning for a
+portion of northern California, including the following areas, Santa
+Clara and Santa Cruz.
+
+The heavy rain has ended. Please continue to heed remaining road
+closures.
+
+&&
+
+LAT...LON 3698 12194 3714 12194 3737 12214 3746 12206
+      3747 12194 3746 12192 3747 12188 3748 12148
+      3747 12149 3745 12146 3742 12147 3740 12146
+      3738 12141 3736 12142 3731 12141 3728 12146
+      3725 12145 3719 12141 3711 12140 3693 12186
+
+
+$$
+
+CW
+
+
+
+588 
+WGUS86 KMTR 191407
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+607 AM PST Thu Nov 19 2026
+
+CAC081-085-087-191417-
+/O.EXP.KMTR.FA.Y.0053.000000T0000Z-261119T1415Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-Santa Clara CA-Santa Cruz CA-
+607 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 615 AM PST THIS MORNING...
+
+The Flood Advisory will expire at 615 AM PST this morning for a
+portion of northern California, including the following areas, San
+Mateo, Santa Clara and Santa Cruz.
+
+The heavy rain has ended. Please continue to heed remaining road
+closures.
+
+&&
+
+LAT...LON 3714 12234 3720 12241 3724 12242 3725 12240
+      3730 12241 3737 12213 3714 12194 3698 12194
+      3695 12197 3697 12200 3695 12207 3703 12222
+      3710 12228 3709 12228 3711 12233 3711 12234
+
+
+$$
+
+CW
+
+
+
+208 
+WGUS86 KMTR 191335
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+535 AM PST Thu Nov 19 2026
+
+CAC001-013-191345-
+/O.EXP.KMTR.FA.Y.0052.000000T0000Z-261119T1345Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Alameda CA-Contra Costa CA-
+535 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 545 AM PST EARLY THIS MORNING...
+
+The Flood Advisory will expire at 545 AM PST early this morning for a
+portion of northern California, including the following areas,
+Alameda and Contra Costa.
+
+The heavy rain has ended. Please continue to heed remaining road
+closures.
+
+&&
+
+LAT...LON 3806 12225 3800 12171 3801 12171 3801 12168
+      3803 12173 3809 12158 3754 12156 3748 12147
+      3747 12205 3748 12203 3750 12211 3774 12226
+      3775 12225 3775 12221 3776 12222 3776 12221
+      3780 12234 3796 12243
+
+
+$$
+
+CW
+
+
+
+490 
+WGUS86 KMTR 191322
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+522 AM PST Thu Nov 19 2026
+
+CAC075-081-085-191332-
+/O.EXP.KMTR.FA.Y.0051.000000T0000Z-261119T1330Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Francisco CA-San Mateo CA-Santa Clara CA-
+522 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 530 AM PST EARLY THIS MORNING...
+
+The Flood Advisory will expire at 530 AM PST early this morning for a
+portion of northern California, including the following areas, San
+Francisco, San Mateo and Santa Clara.
+
+The heavy rain has ended. Please continue to heed remaining road
+closures.
+
+&&
+
+LAT...LON 3778 12251 3781 12240 3773 12236 3771 12239
+      3761 12238 3759 12232 3753 12228 3757 12229
+      3757 12225 3753 12227 3755 12222 3751 12225
+      3750 12222 3749 12223 3751 12214 3746 12205
+      3737 12214 3730 12241 3748 12245 3752 12252
+
+
+$$
+
+CW
+
+
+
+026 
+WGUS86 KMTR 191309
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+509 AM PST Thu Nov 19 2026
+
+CAC041-097-191319-
+/O.EXP.KMTR.FA.Y.0050.000000T0000Z-261119T1315Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Marin CA-Sonoma CA-
+509 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 515 AM PST EARLY THIS MORNING...
+
+The Flood Advisory will expire at 515 AM PST early this morning for a
+portion of northern California, including the following areas, Marin
+and Sonoma.
+
+The heavy rain has eased. Light to moderate rain will continue
+through the day. Flooding is no longer expected to pose a threat.
+Please continue to heed remaining road closures.
+
+&&
+
+LAT...LON 3850 12321 3867 12265 3818 12247 3794 12248
+      3795 12254 3787 12246 3789 12249 3783 12248
+      3793 12269 3790 12273 3809 12293 3799 12302
+      3815 12295 3823 12299 3809 12283
+
+
+$$
+
+CW
+
+
+
+986 
+WGUS86 KMTR 191146
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+346 AM PST Thu Nov 19 2026
+
+CAC085-087-191445-
+/O.NEW.KMTR.FA.Y.0054.261119T1146Z-261119T1445Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Santa Clara CA-Santa Cruz CA-
+346 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 645 AM PST THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...Santa Clara County in northern California...
+  Central Santa Cruz County in northern California...
+
+* WHEN...Until 645 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 346 AM PST, Doppler radar indicated heavy rain due to
+    thunderstorms. Minor flooding is ongoing or expected to begin
+    shortly in the advisory area. Between 2 and 4 inches of rain have
+    fallen.
+  - Some locations that will experience flooding include...
+    San Jose, Sunnyvale, Santa Clara, Mountain View, Milpitas,
+    Cupertino, Campbell, Morgan Hill, Saratoga, Los Gatos, Los Altos,
+    Corralitos, Capitola, Los Altos Hills, Seven Trees, Mt. Hamilton
+    and Alum Rock.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+&&
+
+LAT...LON 3698 12194 3714 12194 3737 12214 3746 12206
+      3747 12194 3746 12192 3747 12188 3748 12148
+      3747 12149 3745 12146 3742 12147 3740 12146
+      3738 12141 3736 12142 3731 12141 3728 12146
+      3725 12145 3719 12141 3711 12140 3693 12186
+
+
+$$
+
+DialH
+
+
+
+664 
+WGUS86 KMTR 191115
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+315 AM PST Thu Nov 19 2026
+
+CAC081-085-087-191415-
+/O.NEW.KMTR.FA.Y.0053.261119T1115Z-261119T1415Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-Santa Clara CA-Santa Cruz CA-
+315 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 615 AM PST THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...Southeastern San Mateo County in northern California...
+  West Central Santa Clara County in northern California...
+  Santa Cruz County in northern California...
+
+* WHEN...Until 615 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 315 AM PST, Doppler radar indicated heavy rain due to
+    thunderstorms. Minor flooding is ongoing or expected to begin
+    shortly in the advisory area. Between 2 and 4 inches of rain have
+    fallen.
+  - Some locations that will experience flooding include...
+    Palo Alto, Santa Cruz, Saratoga, Scotts Valley, Capitola, Live
+    Oak, Los Altos Hills, Boulder Creek, Ben Lomond, Felton, Twin
+    Lakes, Soquel, Opal Cliffs and Lexington Hills.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+&&
+
+LAT...LON 3714 12234 3720 12241 3724 12242 3725 12240
+      3730 12241 3737 12213 3714 12194 3698 12194
+      3695 12197 3697 12200 3695 12207 3703 12222
+      3710 12228 3709 12228 3711 12233 3711 12234
+
+
+$$
+
+DialH
+
+
+
+715 
+WGUS86 KMTR 191044
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+244 AM PST Thu Nov 19 2026
+
+CAC001-013-191345-
+/O.NEW.KMTR.FA.Y.0052.261119T1044Z-261119T1345Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Alameda CA-Contra Costa CA-
+244 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 545 AM PST EARLY THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...Alameda County in northern California...
+  Contra Costa County in northern California...
+
+* WHEN...Until 545 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 243 AM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2 and 4 inches of rain have fallen.
+  - The next round of moderate to heavy rain will reach the East Bay
+    shortly and exacerbate flooding from earlier rounds of rain.
+  - Some locations that will experience flooding include...
+    Oakland, Fremont, Hayward, Concord, Berkeley, Richmond, Antioch,
+    San Leandro, Livermore, Alameda, San Ramon, Pleasanton, Union
+    City, Walnut Creek, Pittsburg, Dublin, Newark, Danville and
+    Martinez.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3806 12225 3800 12171 3801 12171 3801 12168
+      3803 12173 3809 12158 3754 12156 3748 12147
+      3747 12205 3748 12203 3750 12211 3774 12226
+      3775 12225 3775 12221 3776 12222 3776 12221
+      3780 12234 3796 12243
+
+
+$$
+
+Kennedy
+
+
+
+581 
+WGUS86 KMTR 191034
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+234 AM PST Thu Nov 19 2026
+
+CAC075-081-085-191330-
+/O.NEW.KMTR.FA.Y.0051.261119T1034Z-261119T1330Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Francisco CA-San Mateo CA-Santa Clara CA-
+234 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 530 AM PST EARLY THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...San Francisco County in northern California...
+  San Mateo County in northern California...
+  Northwestern Santa Clara County in northern California...
+
+* WHEN...Until 530 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 234 AM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2 and 4 inches of rain have fallen.
+  - Some locations that will experience flooding include...
+    San Francisco, Daly City, San Mateo, Redwood City, Mountain View,
+    Palo Alto, South San Francisco, San Bruno, Pacifica, Menlo Park,
+    Foster City, Los Altos, Burlingame, San Carlos, East Palo Alto,
+    Belmont, Millbrae and Half Moon Bay.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3778 12251 3781 12240 3773 12236 3771 12239
+      3761 12238 3759 12232 3753 12228 3757 12229
+      3757 12225 3753 12227 3755 12222 3751 12225
+      3750 12222 3749 12223 3751 12214 3746 12205
+      3737 12214 3730 12241 3748 12245 3752 12252
+
+
+$$
+
+Kennedy
+
+
+
+577 
+WGUS86 KMTR 191022 RRA
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+222 AM PST Thu Nov 19 2026
+
+CAC013-191032-
+/O.CAN.KMTR.FA.Y.0049.000000T0000Z-261119T1115Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Contra Costa CA-
+222 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IS CANCELLED...
+
+The Flood Advisory is cancelled for a portion of northern California,
+including the following area, Contra Costa.
+
+The heavy rain from round two has ended. Additional rounds of heavy
+rain and increasing flooding potential are expected over the next few
+hours.
+
+&&
+
+LAT...LON 3804 12189 3802 12184 3802 12177 3794 12174
+      3783 12197 3805 12209 3805 12195 3804 12191
+
+
+$$
+
+Kennedy
+
+
+
+710 
+WGUS86 KMTR 191022
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+222 AM PST Thu Nov 19 2026
+
+CAC001-013-191032-
+/O.CAN.KMTR.FA.Y.0048.000000T0000Z-261119T1100Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Alameda CA-Contra Costa CA-
+222 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IS CANCELLED...
+
+The Flood Advisory is cancelled for a portion of northern California,
+including the following areas, Alameda and Contra Costa.
+
+The heavy rain from round two has ended. Additional rounds of heavy
+rain and increasing flooding potential are expected over the next few
+hours.
+
+&&
+
+LAT...LON 3789 12231 3791 12229 3805 12209 3783 12197
+      3766 12216 3771 12220 3772 12219 3771 12221
+      3774 12226 3775 12225 3773 12221 3775 12222
+      3774 12221 3775 12221 3776 12222 3776 12221
+      3779 12225 3781 12233 3783 12230
+
+
+$$
+
+Kennedy
+
+
+
+186 
+WGUS86 KMTR 191021
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+221 AM PST Thu Nov 19 2026
+
+CAC041-097-191315-
+/O.NEW.KMTR.FA.Y.0050.261119T1021Z-261119T1315Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Marin CA-Sonoma CA-
+221 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY IN EFFECT UNTIL 515 AM PST EARLY THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall is expected.
+
+* WHERE...Marin County in northern California...
+  Central Sonoma County in northern California...
+
+* WHEN...Until 515 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 220 AM PST, Doppler radar indicated heavy rain. Minor flooding
+    is ongoing or expected to begin shortly in the advisory area.
+    Between 2 and 4 inches of rain have fallen.
+  - Incoming rounds of rain will exacerbate preexisting flooding from
+    earlier rounds of rain.
+  - Some locations that will experience flooding include...
+    Santa Rosa, Petaluma, San Rafael, Novato, Rohnert Park, Windsor,
+    Mill Valley, San Anselmo, Larkspur, Healdsburg, Corte Madera,
+    Tiburon, Fairfax, Sebastopol, Cotati, Sausalito, South Santa Rosa
+    Cdp, Roseland, Tomales and Dillon Beach.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3850 12321 3867 12265 3818 12247 3794 12248
+      3795 12254 3787 12246 3789 12249 3783 12248
+      3793 12269 3790 12273 3809 12293 3799 12302
+      3815 12295 3823 12299 3809 12283
+
+
+$$
+
+Kennedy
+
+
+
+136 
+WGUS86 KMTR 190952
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+152 AM PST Thu Nov 19 2026
+
+CAC081-191002-
+/O.EXP.KMTR.FA.Y.0046.000000T0000Z-261119T1000Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-
+152 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 2 AM PST EARLY THIS MORNING...
+
+The Flood Advisory will expire at 2 AM PST early this morning for a
+portion of northern California, including the following area, San
+Mateo.
+
+The heavy rain has ended. Additional flooding is likely as the next
+round of rain moves onshore.
+
+&&
+
+LAT...LON 3771 12239 3766 12240 3766 12237 3765 12240
+      3765 12239 3764 12240 3764 12239 3763 12240
+      3760 12236 3759 12234 3759 12236 3758 12232
+      3754 12228 3747 12245 3750 12247 3749 12248
+      3751 12251 3766 12249 3771 12250
+
+
+$$
+
+Kennedy
+
+
+
+474 
+WGUS86 KMTR 190846
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1246 AM PST Thu Nov 19 2026
+
+CAC013-191115-
+/O.EXT.KMTR.FA.Y.0049.000000T0000Z-261119T1115Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Contra Costa CA-
+1246 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY NOW IN EFFECT UNTIL 315 AM PST EARLY THIS
+MORNING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Central Contra Costa County in northern California...
+
+* WHEN...Until 315 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1246 AM PST, Doppler radar indicated heavy rain due to
+    thunderstorms. Minor flooding is ongoing or expected to begin
+    shortly in the advisory area.
+  - Additional rainfall amounts of 1 to 2 inches are expected over
+    the area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Concord, Antioch, Walnut Creek, Pittsburg, Clayton, West
+    Pittsburg Cdp, West Pittsburg, Diablo, Clyde and Alamo.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3804 12189 3802 12184 3802 12177 3794 12174
+      3783 12197 3805 12209 3805 12195 3804 12191
+
+
+$$
+
+Kennedy
+
+
+
+950 
+WGUS86 KMTR 190833
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1233 AM PST Thu Nov 19 2026
+
+CAC001-013-191100-
+/O.EXT.KMTR.FA.Y.0048.000000T0000Z-261119T1100Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Alameda CA-Contra Costa CA-
+1233 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY NOW IN EFFECT UNTIL 3 AM PST EARLY THIS MORNING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Northwestern Alameda County in northern California...
+  Western Contra Costa County in northern California...
+
+* WHEN...Until 300 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1233 AM PST, Doppler radar and automated rain gauges indicated
+    heavy rain. Minor flooding is already occurring in the advisory
+    area. Between 1 and 3 inches of rain have fallen.
+  - Additional rainfall amounts of 1 to 2 inches are expected over
+    the area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Oakland, Berkeley, San Leandro, Alameda, Walnut Creek, Danville,
+    Martinez, Pleasant Hill, Lafayette, Castro Valley, San Lorenzo,
+    Albany, Orinda, Moraga, Piedmont and Emeryville.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3789 12231 3791 12229 3805 12209 3783 12197
+      3766 12216 3771 12220 3772 12219 3771 12221
+      3774 12226 3775 12225 3773 12221 3775 12222
+      3774 12221 3775 12221 3776 12222 3776 12221
+      3779 12225 3781 12233 3783 12230
+
+
+$$
+
+Kennedy
+
+
+
+505 
+WGUS86 KMTR 190811 RRA
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1211 AM PST Thu Nov 19 2026
+
+CAC013-190915-
+/O.CON.KMTR.FA.Y.0049.000000T0000Z-261119T0915Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Contra Costa CA-
+1211 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY REMAINS IN EFFECT UNTIL 115 AM PST EARLY THIS
+MORNING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Central Contra Costa County in northern California...
+
+* WHEN...Until 115 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1211 AM PST, Doppler radar indicated heavy rain due to
+    thunderstorms. Minor flooding is ongoing or expected to begin
+    shortly in the advisory area.
+  - Additional rainfall amounts of 1 to 2 inches are expected over
+    the area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Concord, Antioch, Walnut Creek, Pittsburg, Clayton, West
+    Pittsburg Cdp, West Pittsburg, Diablo, Clyde and Alamo.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3804 12189 3802 12184 3802 12177 3794 12174
+      3783 12197 3805 12209 3805 12195 3804 12191
+
+
+$$
+
+Kennedy
+
+
+
+043 
+WGUS86 KMTR 190811
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1211 AM PST Thu Nov 19 2026
+
+CAC001-013-190900-
+/O.CON.KMTR.FA.Y.0048.000000T0000Z-261119T0900Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Alameda CA-Contra Costa CA-
+1211 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY REMAINS IN EFFECT UNTIL 1 AM PST EARLY THIS
+MORNING...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Northwestern Alameda County in northern California...
+  Western Contra Costa County in northern California...
+
+* WHEN...Until 100 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1211 AM PST, Doppler radar and automated rain gauges indicated
+    heavy rain. Minor flooding is already occurring in the advisory
+    area. Between 1 and 3 inches of rain have fallen.
+  - Additional rainfall amounts of 1 to 2 inches are expected over
+    the area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Oakland, Berkeley, San Leandro, Alameda, Walnut Creek, Danville,
+    Martinez, Pleasant Hill, Lafayette, Castro Valley, San Lorenzo,
+    Albany, Orinda, Moraga, Piedmont and Emeryville.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3789 12231 3791 12229 3805 12209 3783 12197
+      3766 12216 3771 12220 3772 12219 3771 12221
+      3774 12226 3775 12225 3773 12221 3775 12222
+      3774 12221 3775 12221 3776 12222 3776 12221
+      3779 12225 3781 12233 3783 12230
+
+
+$$
+
+Kennedy
+
+
+
+670 
+WGUS86 KMTR 190808
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1208 AM PST Thu Nov 19 2026
+
+CAC041-190818-
+/O.EXP.KMTR.FA.Y.0047.000000T0000Z-261119T0815Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+Marin CA-
+1208 AM PST Thu Nov 19 2026
+
+...FLOOD ADVISORY WILL EXPIRE AT 1215 AM PST EARLY THIS MORNING...
+
+The Flood Advisory will expire at 1215 AM PST early this morning for
+a portion of northern California, including the following area,
+Marin.
+
+The heavy rain has ended. Additional flooding likely overnight due to
+additional rounds of storms.
+
+&&
+
+LAT...LON 3802 12250 3799 12245 3797 12251 3794 12248
+      3794 12253 3795 12254 3794 12254 3788 12244
+      3790 12252 3789 12251 3789 12252 3784 12247
+      3782 12253 3793 12268 3790 12273 3800 12282
+      3803 12290 3814 12252 3806 12248
+
+
+$$
+
+Kennedy
+
+
+
+031 
+WGUS86 KMTR 190735
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1135 PM PST Wed Nov 18 2026
+
+CAC081-191000-
+/O.EXT.KMTR.FA.Y.0046.000000T0000Z-261119T1000Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-
+1135 PM PST Wed Nov 18 2026
+
+...FLOOD ADVISORY NOW IN EFFECT UNTIL 2 AM PST THURSDAY...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Northwestern San Mateo County in northern California...
+
+* WHEN...Until 200 AM PST.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1135 PM PST, Doppler radar indicated heavy rain. Minor
+    flooding is ongoing or expected to begin shortly in the advisory
+    area. Between 1.5 and 2.5 inches of rain have fallen over the
+    last 24 hours. Flooding concerns with the training showers will
+    be exacerbated due to lingering flooding from rain earlier in the
+    day.
+  - Additional rainfall amounts up to 1 inch are expected over the
+    area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Daly City, San Mateo, South San Francisco, San Bruno, Pacifica,
+    Burlingame, Millbrae, Half Moon Bay, Hillsborough, El Granada,
+    Highlands-Baywood Park, Brisbane, Colma, Montara, Highlands, Moss
+    Beach and Broadmoor.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3771 12239 3766 12240 3766 12237 3765 12240
+      3765 12239 3764 12240 3764 12239 3763 12240
+      3760 12236 3759 12234 3759 12236 3758 12232
+      3754 12228 3747 12245 3750 12247 3749 12248
+      3751 12251 3766 12249 3771 12250
+
+
+$$
+
+Kennedy
+
+
+
+733 
+WGUS86 KMTR 190734
+FLSMTR
+
+Flood Advisory
+National Weather Service San Francisco CA
+1134 PM PST Wed Nov 18 2026
+
+CAC075-190744-
+/O.CAN.KMTR.FA.Y.0046.000000T0000Z-261119T0800Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Francisco CA-
+1134 PM PST Wed Nov 18 2026
+
+...FLOOD ADVISORY IS CANCELLED...
+
+The Flood Advisory is cancelled for a portion of northern California,
+including the following area, San Francisco.
+
+Heavy rain has moved out of San Francisco. Expect increased flooding
+potential again later tonight as additional rain arrives.
+
+&&
+
+LAT...LON 3771 12239 3766 12240 3766 12237 3765 12240
+      3765 12239 3764 12240 3764 12239 3763 12240
+      3760 12236 3759 12234 3759 12236 3758 12232
+      3754 12228 3747 12245 3750 12247 3749 12248
+      3751 12251 3766 12249 3771 12250
+
+
+$$
+
+CAC081-190800-
+/O.CON.KMTR.FA.Y.0046.000000T0000Z-261119T0800Z/
+/00000.N.ER.000000T0000Z.000000T0000Z.000000T0000Z.OO/
+San Mateo CA-
+1134 PM PST Wed Nov 18 2026
+
+...FLOOD ADVISORY REMAINS IN EFFECT UNTIL MIDNIGHT PST TONIGHT...
+
+* WHAT...Flooding caused by excessive rainfall continues.
+
+* WHERE...Northwestern San Mateo County in northern California...
+
+* WHEN...Until midnight PST tonight.
+
+* IMPACTS...Minor flooding in low-lying and poor drainage areas.
+
+* ADDITIONAL DETAILS...
+  - At 1134 PM PST, Doppler radar indicated heavy rain. Minor
+    flooding is ongoing or expected to begin shortly in the advisory
+    area. Between 1.5 and 2.5 inches of rain have fallen.
+  - Additional rainfall amounts up to 1 inch are expected over the
+    area. This additional rain will result in minor flooding.
+  - Some locations that will experience flooding include...
+    Daly City, San Mateo, South San Francisco, San Bruno, Pacifica,
+    Burlingame, Millbrae, Half Moon Bay, Hillsborough, El Granada,
+    Highlands-Baywood Park, Brisbane, Colma, Montara, Highlands, Moss
+    Beach and Broadmoor.
+  - http://www.weather.gov/safety/flood
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+Turn around, don't drown when encountering flooded roads. Most flood
+deaths occur in vehicles.
+
+Be especially cautious at night when it is harder to recognize the
+dangers of flooding.
+
+Be aware of your surroundings and do not drive on flooded roads.
+
+&&
+
+LAT...LON 3771 12239 3766 12240 3766 12237 3765 12240
+      3765 12239 3764 12240 3764 12239 3763 12240
+      3760 12236 3759 12234 3759 12236 3758 12232
+      3754 12228 3747 12245 3750 12247 3749 12248
+      3751 12251 3766 12249 3771 12250
+
+
+$$
+
+Kennedy
+
+

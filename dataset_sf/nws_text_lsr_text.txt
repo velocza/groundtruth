@@ -1,0 +1,1030 @@
+
+401 
+NWUS56 KMTR 192219
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+219 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0142 PM     Flood            3 E Santa Clara         37.35N 121.92W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            Flooding was reported across lanes of the
+            onramp from Airport Boulevard to southbound
+            Interstate 880.
+
+&&
+
+$$
+DH
+
+
+
+090 
+NWUS56 KMTR 192115
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+115 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0106 PM     Flood            7 S Salinas             36.59N 121.60W
+11/19/2026                   Monterey           CA   Law Enforcement
+
+            Southbound lane of River Road completely
+            submerged at Parker Road.
+
+&&
+
+$$
+DH
+
+
+
+960 
+NWUS56 KMTR 192103
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+103 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1220 PM     Flood            3 NW San Jose           37.32N 121.90W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            The offramp from northbound Interstate 280
+            to Bird Avenue was shut down due to
+            flooding.
+
+&&
+
+$$
+DH
+
+
+
+493 
+NWUS56 KMTR 192038
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1238 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1223 PM     Non-Tstm Wnd Dmg 2 W Piedmont            37.82N 122.27W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            A large metal pole blocked the slow lane of
+            the transition between westbound Interstate
+            580 to westbound Interstate 980.
+
+&&
+
+$$
+DH
+
+
+
+559 
+NWUS56 KMTR 192037
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1237 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1224 PM     Flood            1 SE Monte Sereno       37.22N 121.98W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            One lane of southbound California Highway 17
+            is starting to flood at California Highway
+            9.
+
+&&
+
+$$
+DH
+
+
+
+459 
+NWUS56 KMTR 192008
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1207 PM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1155 AM     Flood            4 NW San Jose           37.34N 121.90W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            Two lanes of northbound California Highway
+            87 and two lanes of southbound California
+            Highway 87 were flooded at Julian Street.
+
+&&
+
+$$
+DH
+
+
+
+921 
+NWUS56 KMTR 191940
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1140 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1129 AM     Non-Tstm Wnd Dmg 3 SW Martinez           37.96N 122.14W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            Tree down blocking both lanes of Alhambra
+            Valley Road at Chelsea Drive.
+
+&&
+
+$$
+DH
+
+
+
+428 
+NWUS56 KMTR 191835
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1035 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1029 AM     Flood            3 SE Del Monte Forest   36.56N 121.91W
+11/19/2026                   Monterey           CA   Law Enforcement
+
+            Water was reported backing up into a
+            driveway and garage along southbound
+            California Highway 1 just south of Ocean
+            Avenue.
+
+&&
+
+$$
+DH
+
+
+
+689 
+NWUS56 KMTR 191833
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+1033 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1027 AM     Landslide        2 NW Lexington Hills    37.19N 122.00W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            Rocks blocking the westbound lane of Bear
+            Creek Road at Quail Ridge Drive.
+
+&&
+
+$$
+DH
+
+
+
+550 
+NWUS56 KMTR 191724
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+924 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0841 AM     Non-Tstm Wnd Dmg 3 SW Freedom            36.90N 121.82W
+11/19/2026                   Santa Cruz         CA   Law Enforcement
+
+            A tree was cleared off of San Andreas Road
+            just south of Sunset Beach Road.
+
+&&
+
+$$
+DH
+
+
+
+032 
+NWUS56 KMTR 191716
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+916 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0911 AM     Landslide        5 NE Livermore          37.72N 121.68W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            Two large boulders were reported on Carroll
+            Road at Altamont Pass Road.
+
+&&
+
+$$
+DH
+
+
+
+091 
+NWUS56 KMTR 191651
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+851 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0851 AM     Non-Tstm Wnd Dmg 1 NW Ashland            37.71N 122.12W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            Power lines down blocking Boulevard Court at
+            149th Avenue.
+
+&&
+
+$$
+DH
+
+
+
+941 
+NWUS56 KMTR 191651
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+850 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0844 AM     Landslide        9 SE Bodega Bay         38.24N 122.91W
+11/19/2026                   Marin              CA   Law Enforcement
+
+            Rocks blocking the northbound lanes of
+            California Highway 1 at Tomales Petaluma
+            Road.
+
+&&
+
+$$
+DH
+
+
+
+614 
+NWUS56 KMTR 191635
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+835 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0834 AM     Landslide        2 SW Pleasant Hill      37.93N 122.10W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            A large boulder blocked a northbound lane of
+            Taylor Road at Withers Avenue.
+
+&&
+
+$$
+DH
+
+
+
+701 
+NWUS56 KMTR 191634
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+834 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0758 AM     Non-Tstm Wnd Dmg 13 SW Portola Valley    37.26N 122.41W
+11/19/2026                   San Mateo          CA   Law Enforcement
+
+            A large tree blocked the northbound lane of
+            California Highway 1 at Pescadero Creek
+            Road,.
+
+&&
+
+$$
+DH
+
+
+
+754 
+NWUS56 KMTR 191516
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+716 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0711 AM     Landslide        9 SE Bodega Bay         38.23N 122.91W
+11/19/2026                   Marin              CA   Law Enforcement
+
+            A rockslide was reported into the northbound
+            lane of California Highway 1 near the Keys
+            Creek Fishing Access location.
+
+&&
+
+$$
+DH
+
+
+
+150 
+NWUS56 KMTR 191457
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+657 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0643 AM     Non-Tstm Wnd Dmg 3 W Felton              37.06N 122.12W
+11/19/2026                   Santa Cruz         CA   Law Enforcement
+
+            Tree down on Felton Empire Road partially
+            blocking the eastbound lane from Empire
+            Grade to California Highway 9.
+
+&&
+
+$$
+DH
+
+
+
+866 
+NWUS56 KMTR 191447
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+647 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0639 AM     Flood            2 SW Richmond           37.93N 122.39W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            Flooding was reported on both lanes on the
+            offramp from eastbound Interstate 580 to
+            Canal Boulevard.
+
+&&
+
+$$
+DH
+
+
+
+280 
+NWUS56 KMTR 191428
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+627 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0618 AM     Landslide        4 SE Clayton            37.91N 121.87W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            A large boulder was blocking the eastbound
+            lane of Marsh Creek Road at Morgan Territory
+            Road.
+
+&&
+
+$$
+DH
+
+
+
+485 
+NWUS56 KMTR 191425
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+625 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0619 AM     Landslide        7 S Antioch             37.89N 121.81W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            Boulders were reported in the eastbound
+            lanes of Marsh Creek Road at Sycamore
+            Springs Road.
+
+&&
+
+$$
+DH
+
+
+
+769 
+NWUS56 KMTR 191422
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+622 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0617 AM     Flood            1 NE San Bruno          37.63N 122.41W
+11/19/2026                   San Mateo          CA   Law Enforcement
+
+            One lane of eastbound Interstate 380 is
+            flooded just west of US Highway 101.
+
+&&
+
+$$
+DH
+
+
+
+720 
+NWUS56 KMTR 191412
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+610 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0600 AM     Flood            3 E Gilroy              37.01N 121.52W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            Roadway flooding was reported on westbound
+            California Highway 152 just south of
+            Ferguson Road.
+
+&&
+
+$$
+DH
+
+
+
+846 
+NWUS56 KMTR 191355
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+555 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0547 AM     Flood            1 E San Bruno           37.63N 122.40W
+11/19/2026                   San Mateo          CA   Law Enforcement
+
+            Two lanes of southbound US Highway 101 are
+            flooded at San Bruno Avenue.
+
+&&
+
+$$
+DH
+
+
+
+969 
+NWUS56 KMTR 191345
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+545 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0535 AM     Flood            3 N Brisbane            37.73N 122.40W
+11/19/2026                   San Francisco      CA   Law Enforcement
+
+            Flooding was reported on the onramp from
+            Silver Avenue to southbound Interstate 101.
+
+&&
+
+$$
+DH
+
+
+
+993 
+NWUS56 KMTR 191341
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+541 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0531 AM     Non-Tstm Wnd Dmg 1 SW Castro Valley      37.70N 122.07W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            A tree fell on top of two cars and blocked a
+            lane of southbound Forest Avenue just south
+            of Omega Avenue.
+
+&&
+
+$$
+DH
+
+
+
+721 
+NWUS56 KMTR 191305
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+505 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0459 AM     Non-Tstm Wnd Dmg 3 SW Aptos Hills-Larkin 36.93N 121.86W
+11/19/2026                   Santa Cruz         CA   Law Enforcement
+
+            A tree blocked the entirety of San Andreas
+            Road between the entrance to Manresa State
+            Beach and the railway overpass.
+
+&&
+
+$$
+DH
+
+
+
+484 
+NWUS56 KMTR 191257
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+457 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1159 PM     Rain             1 SW San Francisco      37.77N 122.43W
+11/18/2026  M2.64 Inch       San Francisco      CA   Official NWS Obse
+
+            2.64 inches of rain were reported at
+            downtown San Francisco through November 18,
+            setting a new daily record.
+
+&&
+
+$$
+DH
+
+
+
+758 
+NWUS56 KMTR 191255
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+455 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0439 AM     Flood            1 W Millbrae            37.60N 122.42W
+11/19/2026                   San Mateo          CA   Law Enforcement
+
+            Around 4 to 6 inches of water blocked the
+            numbers 1 and 2 lanes of northbound
+            Interstate 280 just north of Larkspur Drive.
+
+&&
+
+$$
+DH
+
+
+
+716 
+NWUS56 KMTR 191251
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+451 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0422 AM     Flood            1 S Berkeley            37.85N 122.30W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            Heavy flooding was reported on the Ashby
+            Avenue offramp from eastbound Interstate 80.
+
+&&
+
+$$
+DH
+
+
+
+555 
+NWUS56 KMTR 191246
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+446 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0442 AM     Flood            3 NW San Jose           37.32N 121.89W
+11/19/2026                   Santa Clara        CA   Law Enforcement
+
+            The number 1 lane of the connector from
+            northbound California Highway 87 to
+            northbound Interstate 280 was completely
+            flooded.
+
+&&
+
+$$
+DH
+
+
+
+497 
+NWUS56 KMTR 191238
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+436 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0429 AM     Flood            San Francisco           37.77N 122.42W
+11/19/2026                   San Francisco      CA   Law Enforcement
+
+            Flooding was reported on the onramp from
+            South Van Ness Avenue to southbound US
+            Highway 101.
+
+&&
+
+$$
+DH
+
+
+
+210 
+NWUS56 KMTR 191235
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+435 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1118 PM     Non-Tstm Wnd Dmg 1 W Ben Lomond          37.11N 122.11W
+11/18/2026                   Santa Cruz         CA   Law Enforcement
+
+            California Highway 9 was shut down between
+            Pike Road and Irwin Way in Brookdale due to
+            a tree completely blocking the roadway with
+            power lines involved.
+
+&&
+
+$$
+DH
+
+
+
+901 
+NWUS56 KMTR 191232
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+431 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0355 AM     Flood            2 S Piedmont            37.80N 122.23W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            Three lanes of westbound Interstate 580 were
+            flooded at 14th Avenue.
+
+&&
+
+$$
+DH
+
+
+
+506 
+NWUS56 KMTR 191230
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+430 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0356 AM     Flood            2 NE Oakland            37.80N 122.21W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            Several inches of water were reported on all
+            lanes of westbound Interstate 580 at
+            Coolidge Avenue.
+
+&&
+
+$$
+DH
+
+
+
+058 
+NWUS56 KMTR 191214
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+414 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0356 AM     Landslide        2 SE Clayton            37.92N 121.91W
+11/19/2026                   Contra Costa       CA   Law Enforcement
+
+            Three rocks were blocking the southbound
+            lane of Marsh Creek Road near Russelman Park
+            Road.
+
+&&
+
+$$
+DH
+
+
+
+638 
+NWUS56 KMTR 191157
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+357 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0353 AM     Flood            2 NE Oakland            37.79N 122.20W
+11/19/2026                   Alameda            CA   Law Enforcement
+
+            All lanes of westbound Interstate 580 were
+            flooded just west of High Street.
+
+&&
+
+$$
+DH
+
+
+
+092 
+NWUS56 KMTR 191107
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+307 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0906 PM     Flood            2 S Soledad             36.40N 121.33W
+11/18/2026                   Monterey           CA   Law Enforcement
+
+            Flooding was reported on Arroyo Seco Road
+            just west of Fort Romie Road.
+
+&&
+
+$$
+DH
+
+
+
+503 
+NWUS56 KMTR 191105
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+305 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1244 AM     Landslide        3 NE Greenfield         36.34N 121.20W
+11/19/2026                   Monterey           CA   Law Enforcement
+
+            A small mudslide was reported along
+            northbound Metz Road just south of Elm
+            Avenue east of Greenfield.
+
+&&
+
+$$
+DH
+
+
+
+455 
+NWUS56 KMTR 191103
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+303 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+1230 AM     Flood            San Bruno               37.62N 122.43W
+11/19/2026                   San Mateo          CA   Law Enforcement
+
+            Flooding was reported on both lanes of
+            northbound Interstate 280 at the San Bruno
+            Avenue Onramp.
+
+&&
+
+$$
+DH
+
+
+
+498 
+NWUS56 KMTR 191059
+LSRMTR
+
+Preliminary Local Storm Report
+National Weather Service San Francisco CA
+259 AM PST Thu Nov 19 2026
+
+..TIME...   ...EVENT...      ...CITY LOCATION...     ...LAT.LON...
+..DATE...   ....MAG....      ..COUNTY LOCATION..ST.. ...SOURCE....
+            ..REMARKS..
+
+0128 AM     Landslide        10 W Monte Rio          38.49N 123.19W
+11/19/2026                   Sonoma             CA   Law Enforcement
+
+            Multiple large boulders blocked California
+            Highway 1 in the Timber Cove area around 3
+            and a half miles north of Russian Gulch
+            State Beach.
+
+&&
+
+$$
+DH
+
+
