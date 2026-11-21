@@ -582,7 +582,7 @@ body.exploring .maptools .ex-rain{display:flex}
   <a class="nav" href="#inspect" data-go="inspect"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6-11 4 6 2.2-3L21 19z"/></svg><span>Slopes</span></a>
   <div class="sp"></div>
   <a class="nav" href="#ask" data-go="ask"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7.5L7 20.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><span>Ask</span></a>
-  <a class="nav" href="#evac" data-go="evac"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
+  <a class="nav" href="#evac" data-go="evac" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
   <a class="nav" href="#method" data-go="method"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><span>Data and method</span></a>
 </nav>
 
@@ -783,7 +783,7 @@ body.exploring .maptools .ex-rain{display:flex}
     </div>
   </section>
 
-  <section id="evac">
+  <section id="evac" data-only="lamorinda">
     <style>
       #evac .opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12px;color:var(--text-2)}
       #evac .opts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -795,7 +795,7 @@ body.exploring .maptools .ex-rain{display:flex}
       .pin-label.evac-mk::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;transform:rotate(45deg);box-shadow:0 0 0 1.5px currentColor}
       .pin-label.evac-mk.local::before{border-radius:50%;transform:none}
     </style>
-    <div class="card-h"><h3>Getting out.</h3><span class="badge quiet">Real streets and buildings</span></div>
+    <div class="card-h"><h3>Getting out.</h3><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real streets and buildings</span></div>
     <p class="body">For the storm you set, which buildings still have a road out of the map, the safest route, and the stretches of road that would cut off the most homes if they failed. A screening view, not an evacuation order.</p>
     <label class="ctl" for="evR72"><span class="top"><span>Rain forecast, next 72 hours</span><b><span id="evR72v">92</span> mm</b></span><input type="range" id="evR72" min="0" max="300" value="92" step="2"></label>
     <div class="chips" role="group" aria-label="Load a real day from the rain gauges">

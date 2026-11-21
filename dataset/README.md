@@ -48,3 +48,12 @@ Three of those four were reported within five days of one of the eight wettest s
 Timing across all 14 dated slides: 12 were reported within three days after a day in the wettest 5% of the gauge record (trigger T at or above 0.28). Only 6% of all days are that close to one. The misses are the April 2017 Canyon bridge slide and 57 Tarry Lane (reported February 7, 2023).
 
 A slide site outscores a random street point 6.5 times in 10. Ten events cannot validate a model. These are the numbers the trained model has to beat.
+
+## USGS landslide inventories (added for the Getting out view)
+
+Built by `scripts/10_usgs_inventory.py`, clipped to the map box. Both sources are public domain.
+
+- `usgs_landslides_2023.csv`: points from the San Francisco Bay Area Reconnaissance Landslide Inventory, January 2023 (doi 10.5066/P9NJ3KMG). Only 1 of the 164 points falls inside the box, so it is a spot check. USGS states the inventory is not complete. Its shapefile holds the routes the survey crews travelled (27.9 km inside the box), not landslide paths.
+- `usgs_landslides_2016_17.csv`: 1,398 of the 8,928 polygons mapped for USGS SIM 3503 (doi 10.5066/P98MVEGI) from a March 11, 2017 satellite image. One row per slide: centroid, area, the length and end points of its long axis, the source area where one was mapped, and whether it affected infrastructure. No dates. Converted from NAD83 UTM zone 10N as read from the `.prj`.
+
+Neither file was used to build or tune the score. `site/data/roads_graph.js` comes from `scripts/08_road_graph.py`.
