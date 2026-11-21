@@ -1,0 +1,387 @@
+[13:32:30] data: {'slides': 1398, 'positive_cells': 2298, 'mapped_cells': 214439, 'neg_pool': 183056, 'storm_mornings': [('2017-01-08', 167.0, 97.7), ('2017-01-09', 116.1, 144.4), ('2017-01-10', 76.4, 173.9), ('2017-01-20', 57.4, 171.1), ('2017-01-11', 5.0, 231.5), ('2017-01-19', 61.5, 162.1)]} rows=75834 positives=13788
+[13:32:48] #  1 cv_auc=0.8405 where=0.826 when=0.967 (15s) trees=80 eta=0.03 depth=6 leaf=200 | best 0.8405
+[13:32:50] #  2 cv_auc=0.8462 where=0.829 when=0.993 (17s) trees=120 eta=0.08 depth=4 leaf=20 | best 0.8462
+[13:32:50] #  3 cv_auc=0.8376 where=0.824 when=0.956 (18s) trees=80 eta=0.03 depth=5 leaf=50 | best 0.8462
+[13:32:59] #  4 cv_auc=0.8471 where=0.830 when=0.993 (26s) trees=120 eta=0.08 depth=4 leaf=50 | best 0.8471
+[13:33:00] #  5 cv_auc=0.8471 where=0.831 when=0.986 (27s) trees=200 eta=0.03 depth=4 leaf=200 | best 0.8471
+[13:33:10] #  6 cv_auc=0.8419 where=0.824 when=0.996 (38s) trees=200 eta=0.08 depth=6 leaf=20 | best 0.8471
+[13:33:10] #  7 cv_auc=0.8340 where=0.817 when=0.975 (12s) trees=120 eta=0.03 depth=2 leaf=200 | best 0.8471
+[13:33:11] #  8 cv_auc=0.8466 where=0.829 when=0.997 (39s) trees=400 eta=0.12 depth=2 leaf=20 | best 0.8471
+[13:33:12] #  9 cv_auc=0.8417 where=0.826 when=0.973 (23s) trees=300 eta=0.03 depth=2 leaf=20 | best 0.8471
+[13:33:20] # 10 cv_auc=0.8433 where=0.825 when=0.996 (30s) trees=120 eta=0.12 depth=5 leaf=100 | best 0.8471
+[13:33:26] # 11 cv_auc=0.8364 where=0.823 when=0.952 (15s) trees=200 eta=0.03 depth=2 leaf=200 | best 0.8471
+[13:33:28] # 12 cv_auc=0.8350 where=0.816 when=0.997 (55s) trees=300 eta=0.12 depth=6 leaf=100 | best 0.8471
+[13:33:32] # 13 cv_auc=0.8437 where=0.827 when=0.982 (21s) trees=80 eta=0.05 depth=6 leaf=20 | best 0.8471
+[13:33:34] # 14 cv_auc=0.8469 where=0.829 when=0.996 (46s) trees=400 eta=0.08 depth=2 leaf=20 | best 0.8471
+[13:33:43] # 15 cv_auc=0.8412 where=0.825 when=0.979 (9s) trees=80 eta=0.03 depth=4 leaf=50 | best 0.8471
+[13:33:51] # 16 cv_auc=0.8484 where=0.831 when=0.992 (25s) trees=300 eta=0.05 depth=3 leaf=200 | best 0.8484
+[13:33:55] # 17 cv_auc=0.8471 where=0.830 when=0.993 (55s) trees=400 eta=0.03 depth=4 leaf=10 | best 0.8484
+[13:34:01] # 18 cv_auc=0.8476 where=0.831 when=0.991 (18s) trees=120 eta=0.08 depth=3 leaf=50 | best 0.8484
+[13:34:03] # 19 cv_auc=0.8395 where=0.821 when=0.997 (90s) trees=400 eta=0.05 depth=6 leaf=50 | best 0.8484
+[13:34:03] # 20 cv_auc=0.8372 where=0.818 when=0.996 (52s) trees=300 eta=0.08 depth=6 leaf=10 | best 0.8484
+[13:34:10] # 21 cv_auc=0.8473 where=0.830 when=0.993 (42s) trees=200 eta=0.05 depth=4 leaf=200 | best 0.8484
+[13:34:15] # 22 cv_auc=0.8459 where=0.829 when=0.991 (14s) trees=80 eta=0.12 depth=4 leaf=10 | best 0.8484
+[13:34:16] # 23 cv_auc=0.8411 where=0.824 when=0.982 (21s) trees=80 eta=0.03 depth=5 leaf=50 | best 0.8484
+[13:34:19] # 24 cv_auc=0.8476 where=0.830 when=0.994 (17s) trees=200 eta=0.12 depth=2 leaf=10 | best 0.8484
+[13:34:22] # 25 cv_auc=0.8420 where=0.828 when=0.966 (12s) trees=80 eta=0.05 depth=4 leaf=10 | best 0.8484
+[13:34:23] # 26 cv_auc=0.8452 where=0.827 when=0.994 (63s) trees=300 eta=0.03 depth=5 leaf=10 | best 0.8484
+[13:34:26] # 27 cv_auc=0.8410 where=0.827 when=0.963 (10s) trees=80 eta=0.05 depth=4 leaf=100 | best 0.8484
+[13:34:27] # 28 cv_auc=0.8287 where=0.808 when=0.998 (114s) trees=400 eta=0.12 depth=6 leaf=10 | best 0.8484
+[13:34:31] # 29 cv_auc=0.8426 where=0.826 when=0.979 (16s) trees=80 eta=0.03 depth=5 leaf=10 | best 0.8484
+[13:34:38] # 30 cv_auc=0.8466 where=0.830 when=0.987 (7s) trees=80 eta=0.12 depth=3 leaf=20 | best 0.8484
+[13:34:44] # 31 cv_auc=0.8289 where=0.809 when=0.997 (92s) trees=400 eta=0.12 depth=5 leaf=10 | best 0.8484
+[13:34:44] # 32 cv_auc=0.8431 where=0.827 when=0.981 (22s) trees=80 eta=0.03 depth=6 leaf=50 | best 0.8484
+[13:34:47] # 33 cv_auc=0.8359 where=0.816 when=0.998 (56s) trees=400 eta=0.12 depth=4 leaf=200 | best 0.8484
+[13:34:49] # 34 cv_auc=0.8471 where=0.830 when=0.991 (46s) trees=300 eta=0.03 depth=5 leaf=200 | best 0.8484
+[13:34:55] # 35 cv_auc=0.8399 where=0.823 when=0.980 (11s) trees=120 eta=0.05 depth=2 leaf=100 | best 0.8484
+[13:34:57] # 36 cv_auc=0.8472 where=0.830 when=0.990 (31s) trees=200 eta=0.03 depth=5 leaf=50 | best 0.8484
+[13:34:57] # 37 cv_auc=0.8453 where=0.828 when=0.991 (38s) trees=120 eta=0.05 depth=6 leaf=20 | best 0.8484
+[13:34:59] # 38 cv_auc=0.8467 where=0.830 when=0.988 (21s) trees=120 eta=0.05 depth=4 leaf=20 | best 0.8484
+[13:35:03] # 39 cv_auc=0.8412 where=0.825 when=0.981 (19s) trees=80 eta=0.03 depth=5 leaf=100 | best 0.8484
+[13:35:08] # 40 cv_auc=0.8373 where=0.824 when=0.957 (19s) trees=80 eta=0.03 depth=5 leaf=20 | best 0.8484
+[13:35:08] # 41 cv_auc=0.8421 where=0.827 when=0.976 (6s) trees=80 eta=0.12 depth=2 leaf=50 | best 0.8484
+[13:35:20] # 42 cv_auc=0.8437 where=0.825 when=0.996 (33s) trees=200 eta=0.08 depth=5 leaf=50 | best 0.8484
+[13:35:29] # 43 cv_auc=0.8446 where=0.826 when=0.997 (62s) trees=300 eta=0.08 depth=4 leaf=200 | best 0.8484
+[13:35:31] # 44 cv_auc=0.8463 where=0.829 when=0.988 (36s) trees=200 eta=0.03 depth=4 leaf=100 | best 0.8484
+[13:35:31] # 45 cv_auc=0.8462 where=0.828 when=0.995 (32s) trees=300 eta=0.12 depth=2 leaf=100 | best 0.8484
+[13:35:32] # 46 cv_auc=0.8414 where=0.823 when=0.997 (121s) trees=400 eta=0.05 depth=5 leaf=20 | best 0.8484
+[13:35:35] # 47 cv_auc=0.8486 where=0.831 when=0.993 (26s) trees=200 eta=0.05 depth=4 leaf=200 | best 0.8486
+[13:35:36] # 48 cv_auc=0.8372 where=0.818 when=0.996 (73s) trees=200 eta=0.08 depth=6 leaf=10 | best 0.8486
+[13:35:39] # 49 cv_auc=0.8384 where=0.826 when=0.953 (8s) trees=80 eta=0.05 depth=3 leaf=50 | best 0.8486
+[13:35:44] # 50 cv_auc=0.8456 where=0.829 when=0.985 (15s) trees=120 eta=0.05 depth=3 leaf=200 | best 0.8486
+[13:35:45] # 51 cv_auc=0.8345 where=0.815 when=0.997 (48s) trees=300 eta=0.12 depth=5 leaf=100 | best 0.8486
+[13:35:46] # 52 cv_auc=0.8441 where=0.826 when=0.995 (37s) trees=120 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:35:48] # 53 cv_auc=0.8467 where=0.829 when=0.996 (51s) trees=400 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:35:52] # 54 cv_auc=0.8402 where=0.826 when=0.967 (15s) trees=80 eta=0.03 depth=6 leaf=100 | best 0.8486
+[13:35:52] # 55 cv_auc=0.8365 where=0.824 when=0.952 (12s) trees=120 eta=0.05 depth=2 leaf=200 | best 0.8486
+[13:35:57] # 56 cv_auc=0.8476 where=0.830 when=0.997 (22s) trees=300 eta=0.12 depth=2 leaf=50 | best 0.8486
+[13:36:02] # 57 cv_auc=0.8379 where=0.821 when=0.979 (5s) trees=80 eta=0.03 depth=3 leaf=50 | best 0.8486
+[13:36:09] # 58 cv_auc=0.8474 where=0.830 when=0.993 (17s) trees=120 eta=0.12 depth=3 leaf=50 | best 0.8486
+[13:36:17] # 59 cv_auc=0.8460 where=0.828 when=0.997 (46s) trees=400 eta=0.08 depth=3 leaf=200 | best 0.8486
+[13:36:18] # 60 cv_auc=0.8454 where=0.828 when=0.989 (10s) trees=120 eta=0.12 depth=2 leaf=200 | best 0.8486
+[13:36:21] # 61 cv_auc=0.8458 where=0.828 when=0.996 (19s) trees=120 eta=0.12 depth=4 leaf=200 | best 0.8486
+[13:36:23] # 62 cv_auc=0.8373 where=0.824 when=0.955 (6s) trees=80 eta=0.08 depth=2 leaf=20 | best 0.8486
+[13:36:24] # 63 cv_auc=0.8451 where=0.827 when=0.996 (32s) trees=400 eta=0.12 depth=2 leaf=200 | best 0.8486
+[13:36:26] # 64 cv_auc=0.8477 where=0.831 when=0.989 (40s) trees=300 eta=0.03 depth=3 leaf=20 | best 0.8486
+[13:36:26] # 65 cv_auc=0.8400 where=0.823 when=0.982 (8s) trees=80 eta=0.08 depth=2 leaf=20 | best 0.8486
+[13:36:29] # 66 cv_auc=0.8421 where=0.827 when=0.970 (8s) trees=80 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:36:35] # 67 cv_auc=0.8401 where=0.821 when=0.997 (75s) trees=400 eta=0.05 depth=6 leaf=10 | best 0.8486
+[13:36:37] # 68 cv_auc=0.8397 where=0.827 when=0.955 (14s) trees=120 eta=0.03 depth=3 leaf=200 | best 0.8486
+[13:36:37] # 69 cv_auc=0.8363 where=0.823 when=0.952 (14s) trees=200 eta=0.03 depth=2 leaf=50 | best 0.8486
+[13:36:38] # 70 cv_auc=0.8478 where=0.831 when=0.992 (54s) trees=400 eta=0.03 depth=3 leaf=20 | best 0.8486
+[13:36:45] # 71 cv_auc=0.8359 where=0.823 when=0.951 (10s) trees=200 eta=0.03 depth=2 leaf=100 | best 0.8486
+[13:36:48] # 72 cv_auc=0.8466 where=0.829 when=0.996 (63s) trees=300 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:36:55] # 73 cv_auc=0.8349 where=0.815 when=0.997 (67s) trees=300 eta=0.08 depth=6 leaf=10 | best 0.8486
+[13:36:58] # 74 cv_auc=0.8374 where=0.825 when=0.950 (10s) trees=80 eta=0.03 depth=4 leaf=10 | best 0.8486
+[13:37:04] # 75 cv_auc=0.8480 where=0.831 when=0.992 (27s) trees=300 eta=0.05 depth=3 leaf=100 | best 0.8486
+[13:37:08] # 76 cv_auc=0.8433 where=0.828 when=0.978 (23s) trees=120 eta=0.03 depth=6 leaf=10 | best 0.8486
+[13:37:09] # 77 cv_auc=0.8423 where=0.824 when=0.997 (43s) trees=200 eta=0.12 depth=4 leaf=200 | best 0.8486
+[13:37:10] # 78 cv_auc=0.8480 where=0.831 when=0.993 (45s) trees=400 eta=0.03 depth=4 leaf=20 | best 0.8486
+[13:37:12] # 79 cv_auc=0.8449 where=0.827 when=0.995 (99s) trees=400 eta=0.03 depth=6 leaf=50 | best 0.8486
+[13:37:15] # 80 cv_auc=0.8470 where=0.829 when=0.996 (36s) trees=300 eta=0.08 depth=3 leaf=200 | best 0.8486
+[13:37:20] # 81 cv_auc=0.8456 where=0.828 when=0.993 (23s) trees=120 eta=0.08 depth=5 leaf=10 | best 0.8486
+[13:37:22] # 82 cv_auc=0.8403 where=0.823 when=0.981 (14s) trees=120 eta=0.05 depth=2 leaf=20 | best 0.8486
+[13:37:24] # 83 cv_auc=0.8436 where=0.825 when=0.997 (47s) trees=300 eta=0.08 depth=4 leaf=10 | best 0.8486
+[13:37:26] # 84 cv_auc=0.8412 where=0.824 when=0.981 (5s) trees=80 eta=0.08 depth=2 leaf=10 | best 0.8486
+[13:37:28] # 85 cv_auc=0.8478 where=0.830 when=0.993 (18s) trees=120 eta=0.12 depth=3 leaf=200 | best 0.8486
+[13:37:35] # 86 cv_auc=0.8433 where=0.828 when=0.977 (21s) trees=80 eta=0.05 depth=5 leaf=50 | best 0.8486
+[13:37:37] # 87 cv_auc=0.8424 where=0.826 when=0.981 (26s) trees=80 eta=0.03 depth=6 leaf=10 | best 0.8486
+[13:37:38] # 88 cv_auc=0.8483 where=0.831 when=0.992 (15s) trees=120 eta=0.08 depth=4 leaf=50 | best 0.8486
+[13:37:38] # 89 cv_auc=0.8435 where=0.828 when=0.977 (13s) trees=80 eta=0.05 depth=5 leaf=10 | best 0.8486
+[13:37:45] # 90 cv_auc=0.8455 where=0.828 when=0.991 (8s) trees=80 eta=0.12 depth=4 leaf=20 | best 0.8486
+[13:37:47] # 91 cv_auc=0.8451 where=0.827 when=0.997 (52s) trees=300 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:37:52] # 92 cv_auc=0.8426 where=0.826 when=0.985 (6s) trees=80 eta=0.12 depth=2 leaf=100 | best 0.8486
+[13:38:01] # 93 cv_auc=0.8399 where=0.821 when=0.997 (92s) trees=400 eta=0.05 depth=6 leaf=50 | best 0.8486
+[13:38:04] # 94 cv_auc=0.8395 where=0.821 when=0.996 (38s) trees=120 eta=0.12 depth=6 leaf=10 | best 0.8486
+[13:38:05] # 95 cv_auc=0.8475 where=0.830 when=0.994 (36s) trees=300 eta=0.05 depth=3 leaf=50 | best 0.8486
+[13:38:13] # 96 cv_auc=0.8472 where=0.830 when=0.991 (38s) trees=300 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:38:14] # 97 cv_auc=0.8400 where=0.821 when=0.997 (36s) trees=200 eta=0.12 depth=5 leaf=100 | best 0.8486
+[13:38:14] # 98 cv_auc=0.8467 where=0.829 when=0.992 (22s) trees=300 eta=0.08 depth=2 leaf=100 | best 0.8486
+[13:38:17] # 99 cv_auc=0.8425 where=0.824 when=0.996 (73s) trees=400 eta=0.05 depth=5 leaf=10 | best 0.8486
+[13:38:26] #100 cv_auc=0.8461 where=0.830 when=0.985 (13s) trees=80 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:38:33] #101 cv_auc=0.8375 where=0.818 when=0.997 (85s) trees=300 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:38:38] #102 cv_auc=0.8307 where=0.811 when=0.997 (61s) trees=200 eta=0.12 depth=6 leaf=20 | best 0.8486
+[13:38:48] #103 cv_auc=0.8451 where=0.827 when=0.995 (44s) trees=300 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:38:49] #104 cv_auc=0.8443 where=0.826 when=0.997 (35s) trees=300 eta=0.08 depth=4 leaf=100 | best 0.8486
+[13:38:49] #105 cv_auc=0.8433 where=0.827 when=0.980 (16s) trees=80 eta=0.05 depth=5 leaf=50 | best 0.8486
+[13:38:54] #106 cv_auc=0.8472 where=0.829 when=0.996 (40s) trees=400 eta=0.08 depth=3 leaf=200 | best 0.8486
+[13:38:57] #107 cv_auc=0.8434 where=0.825 when=0.996 (55s) trees=400 eta=0.08 depth=3 leaf=50 | best 0.8486
+[13:38:59] #108 cv_auc=0.8470 where=0.830 when=0.989 (11s) trees=200 eta=0.08 depth=2 leaf=20 | best 0.8486
+[13:39:05] #109 cv_auc=0.8453 where=0.829 when=0.983 (12s) trees=80 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:39:08] #110 cv_auc=0.8407 where=0.822 when=0.996 (81s) trees=400 eta=0.05 depth=6 leaf=10 | best 0.8486
+[13:39:11] #111 cv_auc=0.8459 where=0.828 when=0.996 (54s) trees=400 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:39:12] #112 cv_auc=0.8363 where=0.823 when=0.951 (12s) trees=200 eta=0.03 depth=2 leaf=20 | best 0.8486
+[13:39:14] #113 cv_auc=0.8284 where=0.808 when=0.998 (70s) trees=400 eta=0.12 depth=5 leaf=20 | best 0.8486
+[13:39:18] #114 cv_auc=0.8426 where=0.824 when=0.997 (39s) trees=400 eta=0.12 depth=3 leaf=20 | best 0.8486
+[13:39:18] #115 cv_auc=0.8428 where=0.824 when=0.996 (29s) trees=120 eta=0.12 depth=5 leaf=10 | best 0.8486
+[13:39:21] #116 cv_auc=0.8473 where=0.830 when=0.995 (55s) trees=400 eta=0.05 depth=3 leaf=50 | best 0.8486
+[13:39:23] #117 cv_auc=0.8383 where=0.825 when=0.956 (17s) trees=80 eta=0.03 depth=5 leaf=10 | best 0.8486
+[13:39:27] #118 cv_auc=0.8433 where=0.826 when=0.985 (10s) trees=120 eta=0.08 depth=2 leaf=200 | best 0.8486
+[13:39:28] #119 cv_auc=0.8238 where=0.811 when=0.934 (5s) trees=80 eta=0.03 depth=2 leaf=50 | best 0.8486
+[13:39:29] #120 cv_auc=0.8473 where=0.831 when=0.988 (18s) trees=200 eta=0.05 depth=3 leaf=50 | best 0.8486
+[13:39:34] #121 cv_auc=0.8403 where=0.825 when=0.974 (6s) trees=80 eta=0.12 depth=2 leaf=20 | best 0.8486
+[13:39:36] #122 cv_auc=0.8441 where=0.828 when=0.984 (22s) trees=120 eta=0.05 depth=5 leaf=20 | best 0.8486
+[13:39:45] #123 cv_auc=0.8454 where=0.827 when=0.995 (37s) trees=300 eta=0.08 depth=3 leaf=50 | best 0.8486
+[13:39:53] #124 cv_auc=0.8367 where=0.818 when=0.996 (56s) trees=300 eta=0.12 depth=5 leaf=200 | best 0.8486
+[13:39:56] #125 cv_auc=0.8467 where=0.829 when=0.992 (44s) trees=200 eta=0.03 depth=6 leaf=20 | best 0.8486
+[13:39:56] #126 cv_auc=0.8422 where=0.826 when=0.982 (11s) trees=120 eta=0.03 depth=3 leaf=200 | best 0.8486
+[13:39:57] #127 cv_auc=0.8448 where=0.828 when=0.988 (40s) trees=200 eta=0.03 depth=4 leaf=10 | best 0.8486
+[13:39:58] #128 cv_auc=0.8446 where=0.828 when=0.986 (37s) trees=120 eta=0.03 depth=6 leaf=50 | best 0.8486
+[13:40:07] #129 cv_auc=0.8370 where=0.824 when=0.957 (9s) trees=80 eta=0.08 depth=2 leaf=20 | best 0.8486
+[13:40:08] #130 cv_auc=0.8458 where=0.829 when=0.987 (13s) trees=80 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:40:13] #131 cv_auc=0.8429 where=0.826 when=0.985 (20s) trees=200 eta=0.05 depth=2 leaf=100 | best 0.8486
+[13:40:14] #132 cv_auc=0.8454 where=0.827 when=0.996 (38s) trees=200 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:40:18] #133 cv_auc=0.8422 where=0.824 when=0.997 (51s) trees=400 eta=0.12 depth=3 leaf=200 | best 0.8486
+[13:40:19] #134 cv_auc=0.8368 where=0.818 when=0.997 (90s) trees=300 eta=0.08 depth=6 leaf=100 | best 0.8486
+[13:40:22] #135 cv_auc=0.8401 where=0.823 when=0.981 (8s) trees=80 eta=0.08 depth=2 leaf=200 | best 0.8486
+[13:40:26] #136 cv_auc=0.8476 where=0.830 when=0.994 (57s) trees=400 eta=0.03 depth=4 leaf=50 | best 0.8486
+[13:40:27] #137 cv_auc=0.8441 where=0.829 when=0.978 (29s) trees=200 eta=0.03 depth=3 leaf=50 | best 0.8486
+[13:40:31] #138 cv_auc=0.8429 where=0.828 when=0.969 (18s) trees=120 eta=0.03 depth=4 leaf=200 | best 0.8486
+[13:40:33] #139 cv_auc=0.8458 where=0.828 when=0.992 (15s) trees=80 eta=0.12 depth=6 leaf=200 | best 0.8486
+[13:40:45] #140 cv_auc=0.8462 where=0.829 when=0.989 (18s) trees=80 eta=0.08 depth=6 leaf=100 | best 0.8486
+[13:40:53] #141 cv_auc=0.8459 where=0.828 when=0.996 (45s) trees=300 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:40:54] #142 cv_auc=0.8478 where=0.831 when=0.992 (32s) trees=400 eta=0.03 depth=3 leaf=10 | best 0.8486
+[13:41:00] #143 cv_auc=0.8349 where=0.815 when=0.997 (41s) trees=300 eta=0.12 depth=5 leaf=20 | best 0.8486
+[13:41:00] #144 cv_auc=0.8372 where=0.824 when=0.954 (16s) trees=200 eta=0.03 depth=2 leaf=20 | best 0.8486
+[13:41:04] #145 cv_auc=0.8441 where=0.826 when=0.997 (68s) trees=300 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:41:10] #146 cv_auc=0.8467 where=0.829 when=0.993 (63s) trees=300 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:41:10] #147 cv_auc=0.8353 where=0.823 when=0.943 (10s) trees=80 eta=0.03 depth=3 leaf=50 | best 0.8486
+[13:41:12] #148 cv_auc=0.8475 where=0.830 when=0.992 (42s) trees=300 eta=0.03 depth=4 leaf=100 | best 0.8486
+[13:41:19] #149 cv_auc=0.8437 where=0.826 when=0.995 (27s) trees=120 eta=0.08 depth=6 leaf=10 | best 0.8486
+[13:41:21] #150 cv_auc=0.8427 where=0.828 when=0.971 (17s) trees=120 eta=0.03 depth=4 leaf=10 | best 0.8486
+[13:41:33] #151 cv_auc=0.8426 where=0.824 when=0.996 (60s) trees=300 eta=0.05 depth=6 leaf=10 | best 0.8486
+[13:41:35] #152 cv_auc=0.8422 where=0.826 when=0.981 (14s) trees=120 eta=0.03 depth=3 leaf=50 | best 0.8486
+[13:41:39] #153 cv_auc=0.8474 where=0.831 when=0.988 (39s) trees=300 eta=0.03 depth=3 leaf=10 | best 0.8486
+[13:41:40] #154 cv_auc=0.8470 where=0.830 when=0.990 (30s) trees=200 eta=0.05 depth=4 leaf=200 | best 0.8486
+[13:41:43] #155 cv_auc=0.8462 where=0.828 when=0.995 (31s) trees=400 eta=0.08 depth=2 leaf=10 | best 0.8486
+[13:41:45] #156 cv_auc=0.8318 where=0.812 when=0.998 (131s) trees=400 eta=0.08 depth=6 leaf=10 | best 0.8486
+[13:41:47] #157 cv_auc=0.8458 where=0.829 when=0.988 (14s) trees=120 eta=0.12 depth=2 leaf=50 | best 0.8486
+[13:41:48] #158 cv_auc=0.8466 where=0.829 when=0.992 (28s) trees=300 eta=0.08 depth=2 leaf=50 | best 0.8486
+[13:41:49] #159 cv_auc=0.8374 where=0.818 when=0.997 (83s) trees=400 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:41:50] #160 cv_auc=0.8429 where=0.828 when=0.974 (15s) trees=120 eta=0.03 depth=5 leaf=100 | best 0.8486
+[13:41:50] #161 cv_auc=0.8340 where=0.817 when=0.975 (11s) trees=120 eta=0.03 depth=2 leaf=10 | best 0.8486
+[13:41:53] #162 cv_auc=0.8463 where=0.829 when=0.989 (10s) trees=120 eta=0.08 depth=3 leaf=200 | best 0.8486
+[13:42:02] #163 cv_auc=0.8463 where=0.829 when=0.989 (17s) trees=120 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:42:05] #164 cv_auc=0.8422 where=0.826 when=0.981 (16s) trees=80 eta=0.03 depth=6 leaf=20 | best 0.8486
+[13:42:07] #165 cv_auc=0.8429 where=0.828 when=0.975 (17s) trees=80 eta=0.05 depth=4 leaf=200 | best 0.8486
+[13:42:08] #166 cv_auc=0.8424 where=0.824 when=0.995 (27s) trees=120 eta=0.12 depth=5 leaf=20 | best 0.8486
+[13:42:10] #167 cv_auc=0.8441 where=0.829 when=0.978 (17s) trees=80 eta=0.05 depth=6 leaf=100 | best 0.8486
+[13:42:12] #168 cv_auc=0.8457 where=0.828 when=0.991 (62s) trees=200 eta=0.03 depth=6 leaf=10 | best 0.8486
+[13:42:13] #169 cv_auc=0.8480 where=0.831 when=0.993 (11s) trees=120 eta=0.12 depth=3 leaf=20 | best 0.8486
+[13:42:14] #170 cv_auc=0.8470 where=0.830 when=0.989 (26s) trees=200 eta=0.05 depth=3 leaf=100 | best 0.8486
+[13:42:15] #171 cv_auc=0.8261 where=0.805 when=0.998 (81s) trees=300 eta=0.12 depth=6 leaf=10 | best 0.8486
+[13:42:17] #172 cv_auc=0.8351 where=0.823 when=0.943 (10s) trees=80 eta=0.03 depth=3 leaf=50 | best 0.8486
+[13:42:22] #173 cv_auc=0.8428 where=0.827 when=0.980 (15s) trees=200 eta=0.05 depth=2 leaf=200 | best 0.8486
+[13:42:26] #174 cv_auc=0.8425 where=0.826 when=0.980 (10s) trees=80 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:42:27] #175 cv_auc=0.8467 where=0.829 when=0.995 (17s) trees=120 eta=0.12 depth=4 leaf=50 | best 0.8486
+[13:42:30] #176 cv_auc=0.8465 where=0.830 when=0.988 (8s) trees=120 eta=0.08 depth=3 leaf=10 | best 0.8486
+[13:42:31] #177 cv_auc=0.8459 where=0.828 when=0.996 (19s) trees=200 eta=0.12 depth=3 leaf=50 | best 0.8486
+[13:42:33] #178 cv_auc=0.8462 where=0.828 when=0.995 (20s) trees=120 eta=0.08 depth=5 leaf=50 | best 0.8486
+[13:42:42] #179 cv_auc=0.8469 where=0.829 when=0.993 (55s) trees=400 eta=0.03 depth=5 leaf=50 | best 0.8486
+[13:42:44] #180 cv_auc=0.8406 where=0.826 when=0.967 (12s) trees=80 eta=0.03 depth=6 leaf=10 | best 0.8486
+[13:42:46] #181 cv_auc=0.8409 where=0.824 when=0.981 (19s) trees=80 eta=0.03 depth=5 leaf=50 | best 0.8486
+[13:42:46] #182 cv_auc=0.8468 where=0.829 when=0.995 (41s) trees=300 eta=0.05 depth=5 leaf=100 | best 0.8486
+[13:42:47] #183 cv_auc=0.8229 where=0.811 when=0.933 (4s) trees=80 eta=0.03 depth=2 leaf=20 | best 0.8486
+[13:42:50] #184 cv_auc=0.8424 where=0.824 when=0.996 (60s) trees=300 eta=0.05 depth=6 leaf=100 | best 0.8486
+[13:42:53] #185 cv_auc=0.8452 where=0.828 when=0.986 (26s) trees=120 eta=0.03 depth=6 leaf=200 | best 0.8486
+[13:42:55] #186 cv_auc=0.8461 where=0.828 when=0.994 (22s) trees=200 eta=0.08 depth=4 leaf=50 | best 0.8486
+[13:42:58] #187 cv_auc=0.8414 where=0.827 when=0.967 (15s) trees=120 eta=0.03 depth=4 leaf=10 | best 0.8486
+[13:43:05] #188 cv_auc=0.8475 where=0.830 when=0.994 (35s) trees=300 eta=0.05 depth=4 leaf=50 | best 0.8486
+[13:43:12] #189 cv_auc=0.8464 where=0.829 when=0.991 (19s) trees=120 eta=0.05 depth=6 leaf=50 | best 0.8486
+[13:43:15] #190 cv_auc=0.8322 where=0.812 when=0.997 (60s) trees=300 eta=0.12 depth=6 leaf=20 | best 0.8486
+[13:43:17] #191 cv_auc=0.8474 where=0.830 when=0.992 (31s) trees=400 eta=0.05 depth=2 leaf=50 | best 0.8486
+[13:43:18] #192 cv_auc=0.8482 where=0.831 when=0.993 (20s) trees=120 eta=0.08 depth=4 leaf=50 | best 0.8486
+[13:43:35] #193 cv_auc=0.8416 where=0.823 when=0.997 (49s) trees=300 eta=0.12 depth=4 leaf=20 | best 0.8486
+[13:43:35] #194 cv_auc=0.8457 where=0.829 when=0.990 (29s) trees=120 eta=0.05 depth=6 leaf=100 | best 0.8486
+[13:43:37] #195 cv_auc=0.8412 where=0.823 when=0.997 (47s) trees=400 eta=0.08 depth=4 leaf=50 | best 0.8486
+[13:43:44] #196 cv_auc=0.8369 where=0.824 when=0.949 (10s) trees=80 eta=0.03 depth=4 leaf=50 | best 0.8486
+[13:43:48] #197 cv_auc=0.8381 where=0.819 when=0.997 (61s) trees=300 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:43:48] #198 cv_auc=0.8372 where=0.818 when=0.997 (52s) trees=300 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:43:51] #199 cv_auc=0.8429 where=0.826 when=0.984 (17s) trees=200 eta=0.05 depth=2 leaf=50 | best 0.8486
+[13:43:51] #200 cv_auc=0.8428 where=0.827 when=0.979 (14s) trees=200 eta=0.05 depth=2 leaf=10 | best 0.8486
+[13:43:52] #201 cv_auc=0.8259 where=0.805 when=0.998 (98s) trees=400 eta=0.12 depth=6 leaf=100 | best 0.8486
+[13:43:52] #202 cv_auc=0.8472 where=0.830 when=0.993 (37s) trees=300 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:43:55] #203 cv_auc=0.8445 where=0.828 when=0.985 (38s) trees=400 eta=0.03 depth=2 leaf=20 | best 0.8486
+[13:43:58] #204 cv_auc=0.8485 where=0.831 when=0.993 (39s) trees=400 eta=0.03 depth=4 leaf=200 | best 0.8486
+[13:44:03] #205 cv_auc=0.8420 where=0.826 when=0.980 (12s) trees=80 eta=0.03 depth=4 leaf=100 | best 0.8486
+[13:44:07] #206 cv_auc=0.8432 where=0.825 when=0.996 (55s) trees=300 eta=0.05 depth=5 leaf=20 | best 0.8486
+[13:44:18] #207 cv_auc=0.8449 where=0.827 when=0.995 (31s) trees=300 eta=0.08 depth=3 leaf=10 | best 0.8486
+[13:44:19] #208 cv_auc=0.8459 where=0.829 when=0.988 (28s) trees=300 eta=0.05 depth=2 leaf=10 | best 0.8486
+[13:44:19] #209 cv_auc=0.8434 where=0.825 when=0.996 (35s) trees=200 eta=0.08 depth=5 leaf=50 | best 0.8486
+[13:44:21] #210 cv_auc=0.8454 where=0.830 when=0.979 (23s) trees=200 eta=0.03 depth=4 leaf=100 | best 0.8486
+[13:44:21] #211 cv_auc=0.8456 where=0.828 when=0.996 (29s) trees=200 eta=0.08 depth=5 leaf=200 | best 0.8486
+[13:44:29] #212 cv_auc=0.8454 where=0.827 when=0.996 (41s) trees=300 eta=0.08 depth=3 leaf=10 | best 0.8486
+[13:44:37] #213 cv_auc=0.8474 where=0.830 when=0.992 (16s) trees=80 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:44:43] #214 cv_auc=0.8481 where=0.831 when=0.994 (47s) trees=300 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:44:45] #215 cv_auc=0.8396 where=0.821 when=0.997 (38s) trees=300 eta=0.08 depth=5 leaf=20 | best 0.8486
+[13:44:49] #216 cv_auc=0.8315 where=0.812 when=0.998 (57s) trees=400 eta=0.12 depth=5 leaf=100 | best 0.8486
+[13:44:50] #217 cv_auc=0.8366 where=0.823 when=0.953 (6s) trees=120 eta=0.05 depth=2 leaf=200 | best 0.8486
+[13:44:56] #218 cv_auc=0.8433 where=0.828 when=0.975 (34s) trees=120 eta=0.03 depth=6 leaf=200 | best 0.8486
+[13:44:56] #219 cv_auc=0.8436 where=0.827 when=0.983 (19s) trees=300 eta=0.03 depth=2 leaf=10 | best 0.8486
+[13:44:57] #220 cv_auc=0.8369 where=0.824 when=0.955 (7s) trees=80 eta=0.08 depth=2 leaf=10 | best 0.8486
+[13:45:02] #221 cv_auc=0.8459 where=0.828 when=0.995 (43s) trees=300 eta=0.05 depth=5 leaf=20 | best 0.8486
+[13:45:05] #222 cv_auc=0.8326 where=0.813 when=0.997 (63s) trees=400 eta=0.08 depth=6 leaf=50 | best 0.8486
+[13:45:08] #223 cv_auc=0.8409 where=0.822 when=0.996 (48s) trees=200 eta=0.08 depth=6 leaf=50 | best 0.8486
+[13:45:08] #224 cv_auc=0.8368 where=0.824 when=0.954 (18s) trees=200 eta=0.03 depth=2 leaf=10 | best 0.8486
+[13:45:09] #225 cv_auc=0.8472 where=0.830 when=0.995 (26s) trees=400 eta=0.12 depth=2 leaf=50 | best 0.8486
+[13:45:11] #226 cv_auc=0.8479 where=0.831 when=0.993 (42s) trees=200 eta=0.05 depth=4 leaf=200 | best 0.8486
+[13:45:15] #227 cv_auc=0.8452 where=0.828 when=0.987 (14s) trees=200 eta=0.08 depth=2 leaf=10 | best 0.8486
+[13:45:20] #228 cv_auc=0.8411 where=0.825 when=0.980 (12s) trees=80 eta=0.03 depth=4 leaf=100 | best 0.8486
+[13:45:24] #229 cv_auc=0.8462 where=0.829 when=0.987 (18s) trees=80 eta=0.05 depth=6 leaf=100 | best 0.8486
+[13:45:25] #230 cv_auc=0.8427 where=0.826 when=0.982 (5s) trees=80 eta=0.12 depth=2 leaf=10 | best 0.8486
+[13:45:25] #231 cv_auc=0.8416 where=0.825 when=0.980 (11s) trees=80 eta=0.03 depth=4 leaf=50 | best 0.8486
+[13:45:27] #232 cv_auc=0.8427 where=0.824 when=0.996 (32s) trees=120 eta=0.12 depth=5 leaf=100 | best 0.8486
+[13:45:27] #233 cv_auc=0.8437 where=0.827 when=0.983 (16s) trees=120 eta=0.03 depth=4 leaf=100 | best 0.8486
+[13:45:29] #234 cv_auc=0.8341 where=0.814 when=0.998 (70s) trees=300 eta=0.12 depth=6 leaf=100 | best 0.8486
+[13:45:40] #235 cv_auc=0.8365 where=0.823 when=0.953 (11s) trees=120 eta=0.05 depth=2 leaf=200 | best 0.8486
+[13:45:45] #236 cv_auc=0.8469 where=0.829 when=0.995 (19s) trees=300 eta=0.12 depth=2 leaf=200 | best 0.8486
+[13:45:45] #237 cv_auc=0.8463 where=0.829 when=0.990 (18s) trees=200 eta=0.08 depth=2 leaf=100 | best 0.8486
+[13:45:45] #238 cv_auc=0.8459 where=0.829 when=0.991 (38s) trees=200 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:45:49] #239 cv_auc=0.8469 where=0.830 when=0.992 (25s) trees=200 eta=0.05 depth=4 leaf=20 | best 0.8486
+[13:45:52] #240 cv_auc=0.8463 where=0.829 when=0.994 (11s) trees=80 eta=0.12 depth=5 leaf=20 | best 0.8486
+[13:45:54] #241 cv_auc=0.8469 where=0.829 when=0.994 (27s) trees=300 eta=0.08 depth=2 leaf=50 | best 0.8486
+[13:45:56] #242 cv_auc=0.8458 where=0.828 when=0.994 (60s) trees=300 eta=0.03 depth=6 leaf=20 | best 0.8486
+[13:46:01] #243 cv_auc=0.8445 where=0.827 when=0.989 (15s) trees=200 eta=0.08 depth=2 leaf=20 | best 0.8486
+[13:46:03] #244 cv_auc=0.8465 where=0.830 when=0.988 (12s) trees=80 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:46:16] #245 cv_auc=0.8466 where=0.829 when=0.994 (27s) trees=300 eta=0.08 depth=2 leaf=10 | best 0.8486
+[13:46:19] #246 cv_auc=0.8453 where=0.827 when=0.995 (25s) trees=120 eta=0.12 depth=4 leaf=200 | best 0.8486
+[13:46:23] #247 cv_auc=0.8404 where=0.822 when=0.996 (86s) trees=300 eta=0.05 depth=6 leaf=10 | best 0.8486
+[13:46:29] #248 cv_auc=0.8436 where=0.825 when=0.995 (64s) trees=200 eta=0.05 depth=6 leaf=50 | best 0.8486
+[13:46:30] #249 cv_auc=0.8357 where=0.819 when=0.976 (6s) trees=80 eta=0.05 depth=2 leaf=50 | best 0.8486
+[13:46:30] #250 cv_auc=0.8445 where=0.826 when=0.995 (46s) trees=200 eta=0.05 depth=6 leaf=50 | best 0.8486
+[13:46:35] #251 cv_auc=0.8464 where=0.829 when=0.988 (16s) trees=120 eta=0.05 depth=5 leaf=20 | best 0.8486
+[13:46:38] #252 cv_auc=0.8438 where=0.825 when=0.997 (42s) trees=400 eta=0.12 depth=3 leaf=10 | best 0.8486
+[13:46:41] #253 cv_auc=0.8463 where=0.830 when=0.984 (12s) trees=80 eta=0.08 depth=4 leaf=20 | best 0.8486
+[13:46:42] #254 cv_auc=0.8438 where=0.825 when=0.997 (39s) trees=300 eta=0.12 depth=3 leaf=20 | best 0.8486
+[13:46:50] #255 cv_auc=0.8385 where=0.820 when=0.997 (35s) trees=120 eta=0.12 depth=6 leaf=10 | best 0.8486
+[13:46:57] #256 cv_auc=0.8422 where=0.824 when=0.996 (108s) trees=400 eta=0.03 depth=6 leaf=50 | best 0.8486
+[13:46:57] #257 cv_auc=0.8458 where=0.829 when=0.991 (15s) trees=80 eta=0.08 depth=6 leaf=20 | best 0.8486
+[13:46:58] #258 cv_auc=0.8483 where=0.831 when=0.993 (16s) trees=120 eta=0.08 depth=4 leaf=200 | best 0.8486
+[13:46:59] #259 cv_auc=0.8318 where=0.812 when=0.997 (74s) trees=300 eta=0.12 depth=6 leaf=20 | best 0.8486
+[13:47:00] #260 cv_auc=0.8484 where=0.831 when=0.991 (30s) trees=300 eta=0.03 depth=4 leaf=200 | best 0.8486
+[13:47:00] #261 cv_auc=0.8385 where=0.819 when=0.997 (59s) trees=300 eta=0.08 depth=6 leaf=200 | best 0.8486
+[13:47:05] #262 cv_auc=0.8238 where=0.812 when=0.931 (5s) trees=80 eta=0.03 depth=2 leaf=10 | best 0.8486
+[13:47:12] #263 cv_auc=0.8481 where=0.831 when=0.993 (34s) trees=300 eta=0.05 depth=3 leaf=20 | best 0.8486
+[13:47:16] #264 cv_auc=0.8478 where=0.830 when=0.995 (46s) trees=400 eta=0.05 depth=3 leaf=20 | best 0.8486
+[13:47:22] #265 cv_auc=0.8428 where=0.825 when=0.995 (17s) trees=80 eta=0.12 depth=6 leaf=10 | best 0.8486
+[13:47:26] #266 cv_auc=0.8457 where=0.828 when=0.996 (27s) trees=200 eta=0.08 depth=5 leaf=10 | best 0.8486
+[13:47:27] #267 cv_auc=0.8437 where=0.828 when=0.980 (11s) trees=80 eta=0.08 depth=3 leaf=100 | best 0.8486
+[13:47:31] #268 cv_auc=0.8457 where=0.829 when=0.985 (9s) trees=200 eta=0.08 depth=2 leaf=50 | best 0.8486
+[13:47:33] #269 cv_auc=0.8467 where=0.829 when=0.994 (37s) trees=300 eta=0.05 depth=4 leaf=100 | best 0.8486
+[13:47:41] #270 cv_auc=0.8418 where=0.823 when=0.997 (66s) trees=400 eta=0.05 depth=5 leaf=10 | best 0.8486
+[13:47:42] #271 cv_auc=0.8453 where=0.828 when=0.993 (15s) trees=80 eta=0.12 depth=5 leaf=100 | best 0.8486
+[13:47:46] #272 cv_auc=0.8446 where=0.827 when=0.996 (48s) trees=300 eta=0.05 depth=5 leaf=20 | best 0.8486
+[13:47:48] #273 cv_auc=0.8409 where=0.822 when=0.996 (51s) trees=200 eta=0.08 depth=5 leaf=20 | best 0.8486
+[13:47:48] #274 cv_auc=0.8446 where=0.826 when=0.996 (48s) trees=300 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:47:50] #275 cv_auc=0.8467 where=0.830 when=0.989 (19s) trees=120 eta=0.05 depth=4 leaf=50 | best 0.8486
+[13:48:01] #276 cv_auc=0.8477 where=0.830 when=0.996 (15s) trees=300 eta=0.12 depth=2 leaf=200 | best 0.8486
+[13:48:04] #277 cv_auc=0.8473 where=0.830 when=0.994 (14s) trees=120 eta=0.12 depth=3 leaf=50 | best 0.8486
+[13:48:04] #278 cv_auc=0.8455 where=0.829 when=0.985 (17s) trees=200 eta=0.03 depth=3 leaf=10 | best 0.8486
+[13:48:06] #279 cv_auc=0.8454 where=0.828 when=0.989 (19s) trees=120 eta=0.05 depth=5 leaf=10 | best 0.8486
+[13:48:09] #280 cv_auc=0.8482 where=0.831 when=0.990 (28s) trees=300 eta=0.03 depth=3 leaf=200 | best 0.8486
+[13:48:13] #281 cv_auc=0.8451 where=0.827 when=0.997 (83s) trees=400 eta=0.05 depth=4 leaf=200 | best 0.8486
+[13:48:15] #282 cv_auc=0.8404 where=0.822 when=0.996 (33s) trees=120 eta=0.12 depth=6 leaf=100 | best 0.8486
+[13:48:25] #283 cv_auc=0.8461 where=0.829 when=0.991 (10s) trees=80 eta=0.12 depth=4 leaf=200 | best 0.8486
+[13:48:32] #284 cv_auc=0.8461 where=0.828 when=0.994 (66s) trees=300 eta=0.03 depth=6 leaf=200 | best 0.8486
+[13:48:33] #285 cv_auc=0.8468 where=0.830 when=0.991 (23s) trees=120 eta=0.05 depth=5 leaf=200 | best 0.8486
+[13:48:35] #286 cv_auc=0.8436 where=0.825 when=0.995 (28s) trees=200 eta=0.08 depth=5 leaf=100 | best 0.8486
+[13:48:35] #287 cv_auc=0.8463 where=0.829 when=0.990 (21s) trees=200 eta=0.08 depth=2 leaf=100 | best 0.8486
+[13:48:35] #288 cv_auc=0.8457 where=0.829 when=0.989 (31s) trees=300 eta=0.05 depth=2 leaf=20 | best 0.8486
+[13:48:41] #289 cv_auc=0.8449 where=0.827 when=0.995 (88s) trees=400 eta=0.03 depth=5 leaf=20 | best 0.8486
+[13:48:42] #290 cv_auc=0.8344 where=0.815 when=0.997 (38s) trees=200 eta=0.12 depth=6 leaf=50 | best 0.8486
+[13:48:42] #291 cv_auc=0.8406 where=0.824 when=0.980 (7s) trees=80 eta=0.08 depth=2 leaf=50 | best 0.8486
+[13:48:52] #292 cv_auc=0.8451 where=0.828 when=0.987 (20s) trees=300 eta=0.05 depth=2 leaf=10 | best 0.8486
+[13:48:55] #293 cv_auc=0.8441 where=0.828 when=0.983 (14s) trees=120 eta=0.03 depth=4 leaf=20 | best 0.8486
+[13:48:56] #294 cv_auc=0.8457 where=0.829 when=0.984 (31s) trees=200 eta=0.03 depth=4 leaf=10 | best 0.8486
+[13:49:01] #295 cv_auc=0.8445 where=0.827 when=0.995 (26s) trees=200 eta=0.08 depth=4 leaf=10 | best 0.8486
+[13:49:02] #296 cv_auc=0.8464 where=0.829 when=0.992 (10s) trees=120 eta=0.12 depth=3 leaf=10 | best 0.8486
+[13:49:09] #297 cv_auc=0.8487 where=0.831 when=0.994 (28s) trees=300 eta=0.05 depth=3 leaf=200 | best 0.8487
+[13:49:10] #298 cv_auc=0.8419 where=0.824 when=0.996 (35s) trees=200 eta=0.08 depth=6 leaf=20 | best 0.8487
+[13:49:11] #299 cv_auc=0.8347 where=0.815 when=0.998 (70s) trees=400 eta=0.12 depth=4 leaf=10 | best 0.8487
+[13:49:23] #300 cv_auc=0.8455 where=0.827 when=0.996 (27s) trees=400 eta=0.08 depth=3 leaf=20 | best 0.8487
+[13:49:25] #301 cv_auc=0.8400 where=0.821 when=0.997 (52s) trees=400 eta=0.12 depth=3 leaf=20 | best 0.8487
+[13:49:30] #302 cv_auc=0.8288 where=0.809 when=0.997 (116s) trees=400 eta=0.12 depth=6 leaf=20 | best 0.8487
+[13:49:32] #303 cv_auc=0.8439 where=0.826 when=0.996 (51s) trees=300 eta=0.05 depth=6 leaf=20 | best 0.8487
+[13:49:37] #304 cv_auc=0.8458 where=0.828 when=0.995 (27s) trees=200 eta=0.08 depth=5 leaf=100 | best 0.8487
+[13:49:41] #305 cv_auc=0.8481 where=0.831 when=0.993 (30s) trees=200 eta=0.05 depth=4 leaf=100 | best 0.8487
+[13:49:42] #306 cv_auc=0.8440 where=0.828 when=0.984 (41s) trees=400 eta=0.03 depth=2 leaf=100 | best 0.8487
+[13:49:43] #307 cv_auc=0.8461 where=0.828 when=0.996 (41s) trees=200 eta=0.08 depth=4 leaf=20 | best 0.8487
+[13:49:47] #308 cv_auc=0.8434 where=0.825 when=0.996 (37s) trees=400 eta=0.12 depth=3 leaf=20 | best 0.8487
+[13:49:49] #309 cv_auc=0.8472 where=0.829 when=0.996 (17s) trees=300 eta=0.12 depth=2 leaf=100 | best 0.8487
+[13:49:55] #310 cv_auc=0.8417 where=0.826 when=0.975 (6s) trees=120 eta=0.08 depth=2 leaf=20 | best 0.8487
+[13:49:59] #311 cv_auc=0.8462 where=0.829 when=0.992 (36s) trees=400 eta=0.05 depth=2 leaf=100 | best 0.8487
+[13:50:00] #312 cv_auc=0.8453 where=0.828 when=0.993 (18s) trees=120 eta=0.08 depth=6 leaf=20 | best 0.8487
+[13:50:04] #313 cv_auc=0.8459 where=0.828 when=0.994 (21s) trees=80 eta=0.12 depth=5 leaf=100 | best 0.8487
+[13:50:06] #314 cv_auc=0.8457 where=0.828 when=0.992 (41s) trees=400 eta=0.05 depth=2 leaf=20 | best 0.8487
+[13:50:11] #315 cv_auc=0.8442 where=0.826 when=0.995 (42s) trees=300 eta=0.05 depth=6 leaf=100 | best 0.8487
+[13:50:15] #316 cv_auc=0.8453 where=0.828 when=0.994 (17s) trees=120 eta=0.08 depth=5 leaf=20 | best 0.8487
+[13:50:18] #317 cv_auc=0.8445 where=0.826 when=0.996 (83s) trees=400 eta=0.05 depth=4 leaf=100 | best 0.8487
+[13:50:20] #318 cv_auc=0.8472 where=0.829 when=0.997 (39s) trees=400 eta=0.08 depth=3 leaf=200 | best 0.8487
+[13:50:20] #319 cv_auc=0.8430 where=0.828 when=0.974 (14s) trees=80 eta=0.05 depth=4 leaf=20 | best 0.8487
+[13:50:32] #320 cv_auc=0.8422 where=0.824 when=0.995 (27s) trees=120 eta=0.12 depth=5 leaf=10 | best 0.8487
+[13:50:39] #321 cv_auc=0.8392 where=0.820 when=0.997 (62s) trees=300 eta=0.12 depth=4 leaf=100 | best 0.8487
+[13:50:43] #322 cv_auc=0.8415 where=0.827 when=0.967 (22s) trees=120 eta=0.03 depth=4 leaf=50 | best 0.8487
+[13:50:44] #323 cv_auc=0.8452 where=0.827 when=0.996 (57s) trees=400 eta=0.05 depth=4 leaf=10 | best 0.8487
+[13:50:46] #324 cv_auc=0.8467 where=0.829 when=0.994 (51s) trees=300 eta=0.03 depth=6 leaf=200 | best 0.8487
+[13:50:48] #325 cv_auc=0.8412 where=0.826 when=0.970 (32s) trees=120 eta=0.03 depth=5 leaf=10 | best 0.8487
+[13:50:50] #326 cv_auc=0.8409 where=0.827 when=0.963 (11s) trees=120 eta=0.03 depth=4 leaf=100 | best 0.8487
+[13:50:53] #327 cv_auc=0.8430 where=0.826 when=0.983 (5s) trees=80 eta=0.12 depth=2 leaf=50 | best 0.8487
+[13:51:02] #328 cv_auc=0.8481 where=0.831 when=0.994 (51s) trees=400 eta=0.03 depth=4 leaf=50 | best 0.8487
+[13:51:02] #329 cv_auc=0.8423 where=0.828 when=0.969 (16s) trees=120 eta=0.03 depth=4 leaf=10 | best 0.8487
+[13:51:05] #330 cv_auc=0.8471 where=0.830 when=0.993 (65s) trees=300 eta=0.03 depth=5 leaf=200 | best 0.8487
+[13:51:05] #331 cv_auc=0.8475 where=0.830 when=0.993 (21s) trees=120 eta=0.08 depth=4 leaf=100 | best 0.8487
+[13:51:15] #332 cv_auc=0.8464 where=0.829 when=0.991 (25s) trees=400 eta=0.05 depth=2 leaf=10 | best 0.8487
+[13:51:17] #333 cv_auc=0.8320 where=0.812 when=0.998 (57s) trees=400 eta=0.12 depth=4 leaf=10 | best 0.8487
+[13:51:17] #334 cv_auc=0.8457 where=0.828 when=0.994 (15s) trees=120 eta=0.12 depth=4 leaf=50 | best 0.8487
+[13:51:21] #335 cv_auc=0.8484 where=0.831 when=0.993 (29s) trees=300 eta=0.05 depth=3 leaf=200 | best 0.8487
+[13:51:23] #336 cv_auc=0.8462 where=0.829 when=0.990 (17s) trees=200 eta=0.08 depth=2 leaf=200 | best 0.8487
+[13:51:27] #337 cv_auc=0.8252 where=0.813 when=0.934 (6s) trees=80 eta=0.03 depth=2 leaf=200 | best 0.8487
+[13:51:29] #338 cv_auc=0.8410 where=0.822 when=0.997 (71s) trees=400 eta=0.08 depth=4 leaf=50 | best 0.8487
+[13:51:35] #339 cv_auc=0.8424 where=0.824 when=0.995 (18s) trees=80 eta=0.12 depth=6 leaf=100 | best 0.8487
+[13:51:36] #340 cv_auc=0.8375 where=0.824 when=0.959 (7s) trees=80 eta=0.08 depth=2 leaf=10 | best 0.8487
+[13:51:38] #341 cv_auc=0.8466 where=0.830 when=0.989 (32s) trees=200 eta=0.03 depth=5 leaf=10 | best 0.8487
+[13:51:38] #342 cv_auc=0.8429 where=0.826 when=0.984 (21s) trees=200 eta=0.05 depth=2 leaf=200 | best 0.8487
+[13:51:40] #343 cv_auc=0.8319 where=0.812 when=0.998 (58s) trees=300 eta=0.12 depth=5 leaf=20 | best 0.8487
+[13:51:48] #344 cv_auc=0.8470 where=0.830 when=0.993 (21s) trees=300 eta=0.08 depth=2 leaf=20 | best 0.8487
+[13:51:53] #345 cv_auc=0.8480 where=0.831 when=0.994 (37s) trees=400 eta=0.05 depth=3 leaf=20 | best 0.8487
+[13:51:55] #346 cv_auc=0.8437 where=0.828 when=0.978 (18s) trees=120 eta=0.03 depth=6 leaf=100 | best 0.8487
+[13:51:55] #347 cv_auc=0.8404 where=0.825 when=0.970 (15s) trees=300 eta=0.03 depth=2 leaf=20 | best 0.8487
+[13:51:58] #348 cv_auc=0.8458 where=0.829 when=0.991 (36s) trees=400 eta=0.05 depth=2 leaf=20 | best 0.8487
+[13:52:02] #349 cv_auc=0.8332 where=0.814 when=0.997 (61s) trees=400 eta=0.08 depth=6 leaf=100 | best 0.8487
+[13:52:04] #350 cv_auc=0.8440 where=0.826 when=0.997 (26s) trees=200 eta=0.12 depth=4 leaf=200 | best 0.8487
+[13:52:05] #351 cv_auc=0.8377 where=0.825 when=0.950 (10s) trees=80 eta=0.03 depth=4 leaf=50 | best 0.8487
+[13:52:08] #352 cv_auc=0.8343 where=0.817 when=0.976 (5s) trees=120 eta=0.03 depth=2 leaf=20 | best 0.8487
+[13:52:13] #353 cv_auc=0.8440 where=0.826 when=0.997 (38s) trees=400 eta=0.12 depth=3 leaf=200 | best 0.8487
+[13:52:14] #354 cv_auc=0.8475 where=0.830 when=0.994 (16s) trees=120 eta=0.12 depth=3 leaf=20 | best 0.8487
+[13:52:19] #355 cv_auc=0.8298 where=0.810 when=0.997 (107s) trees=400 eta=0.12 depth=5 leaf=50 | best 0.8487
+[13:52:20] #356 cv_auc=0.8419 where=0.827 when=0.972 (28s) trees=120 eta=0.03 depth=5 leaf=50 | best 0.8487
+[13:52:21] #357 cv_auc=0.8438 where=0.827 when=0.985 (16s) trees=80 eta=0.05 depth=5 leaf=10 | best 0.8487
+[13:52:24] #358 cv_auc=0.8431 where=0.828 when=0.976 (11s) trees=80 eta=0.05 depth=5 leaf=100 | best 0.8487
+[13:52:26] #359 cv_auc=0.8414 where=0.826 when=0.974 (32s) trees=300 eta=0.03 depth=2 leaf=50 | best 0.8487
+[13:52:27] #360 cv_auc=0.8478 where=0.830 when=0.994 (13s) trees=120 eta=0.12 depth=3 leaf=20 | best 0.8487
+[13:52:30] #361 cv_auc=0.8451 where=0.828 when=0.990 (10s) trees=120 eta=0.12 depth=2 leaf=200 | best 0.8487
+[13:52:31] #362 cv_auc=0.8433 where=0.828 when=0.974 (12s) trees=80 eta=0.05 depth=4 leaf=10 | best 0.8487
+[13:52:32] #363 cv_auc=0.8447 where=0.827 when=0.996 (25s) trees=300 eta=0.12 depth=3 leaf=50 | best 0.8487
+[13:52:33] #364 cv_auc=0.8390 where=0.826 when=0.958 (9s) trees=80 eta=0.05 depth=3 leaf=10 | best 0.8487
+[13:52:35] #365 cv_auc=0.8401 where=0.821 when=0.997 (57s) trees=400 eta=0.08 depth=4 leaf=20 | best 0.8487
+[13:52:37] #366 cv_auc=0.8422 where=0.826 when=0.982 (10s) trees=120 eta=0.03 depth=3 leaf=200 | best 0.8487
+[13:52:40] #367 cv_auc=0.8366 where=0.817 when=0.997 (36s) trees=300 eta=0.12 depth=5 leaf=10 | best 0.8487
+[13:52:47] #368 cv_auc=0.8467 where=0.829 when=0.995 (27s) trees=300 eta=0.12 depth=2 leaf=50 | best 0.8487
+[13:52:51] #369 cv_auc=0.8431 where=0.825 when=0.997 (63s) trees=400 eta=0.08 depth=4 leaf=10 | best 0.8487
+[13:52:52] #370 cv_auc=0.8410 where=0.825 when=0.977 (5s) trees=80 eta=0.12 depth=2 leaf=100 | best 0.8487
+[13:52:56] #371 cv_auc=0.8471 where=0.829 when=0.996 (26s) trees=400 eta=0.12 depth=2 leaf=100 | best 0.8487
+[13:52:58] #372 cv_auc=0.8467 where=0.829 when=0.992 (17s) trees=120 eta=0.08 depth=5 leaf=20 | best 0.8487
+[13:52:59] #373 cv_auc=0.8470 where=0.830 when=0.993 (28s) trees=200 eta=0.05 depth=5 leaf=200 | best 0.8487
+[13:53:07] #374 cv_auc=0.8436 where=0.825 when=0.996 (34s) trees=300 eta=0.08 depth=5 leaf=100 | best 0.8487
+[13:53:16] #375 cv_auc=0.8461 where=0.828 when=0.996 (38s) trees=200 eta=0.08 depth=4 leaf=200 | best 0.8487
+[13:53:19] #376 cv_auc=0.8463 where=0.828 when=0.997 (29s) trees=400 eta=0.08 depth=3 leaf=200 | best 0.8487
+[13:53:23] #377 cv_auc=0.8459 where=0.828 when=0.996 (56s) trees=300 eta=0.05 depth=4 leaf=100 | best 0.8487
+[13:53:25] #378 cv_auc=0.8467 where=0.829 when=0.993 (52s) trees=300 eta=0.03 depth=4 leaf=100 | best 0.8487
+[13:53:31] #379 cv_auc=0.8483 where=0.831 when=0.995 (34s) trees=300 eta=0.05 depth=3 leaf=200 | best 0.8487
+[13:53:40] #380 cv_auc=0.8414 where=0.823 when=0.996 (48s) trees=200 eta=0.08 depth=6 leaf=100 | best 0.8487
+[13:53:52] #381 cv_auc=0.8418 where=0.823 when=0.996 (77s) trees=400 eta=0.05 depth=5 leaf=100 | best 0.8487
+[13:53:52] search done: 381 configs, best cv_auc=0.8487 where=0.831 (baseline 0.8462) cfg={'n_trees': 300, 'eta': 0.05, 'max_depth': 3, 'min_leaf': 200, 'lam': 3.0, 'subsample': 0.6, 'colsample': 0.8, 'max_bins': 32}
+[13:54:28] HOLDOUT tuned USGS model: mean share of street spots beaten=0.651, mean land percentile=0.912 over 11 slides
+[13:54:28] HOLDOUT slope alone: mean share of street spots beaten=0.663, mean land percentile=0.853 over 11 slides
+[13:54:32] HOLDOUT old 4-report model: mean share of street spots beaten=0.547, mean land percentile=0.848 over 11 slides
+[13:54:35] wrote local_model_landslide/trees.json, report.json, lamorinda_landslide_map_2022-12-31.png
