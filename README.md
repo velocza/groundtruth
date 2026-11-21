@@ -78,6 +78,16 @@ Placeholder: the risk score on the site. It is a fixed formula (section 12 of th
 
 Not trained yet: `model/gbm.py` passes its tests, and its only contact with real labels is the ten-slide trial above, which came out at chance. The smoke run only shows it can relearn the placeholder formula under spatial cross-validation.
 
+## The 3D map
+
+The map draws real building outlines extruded to their mapped heights, real road centre lines, water, green space and place names from Overture Maps, with sun shadows, over a USGS and USDA NAIP aerial photo and hill shading from the USGS 3DEP 10 m elevation model. In Free look, drag moves the map, right-drag or Shift-drag turns and tilts it, and scroll or pinch zooms toward the pointer.
+
+- `scripts/11_fetch_map3d.py <workdir>` pulls the Overture layers for both areas from AWS open data.
+- `scripts/12_build_map3d.py <workdir> <lamorinda|sf>` packs them into `site/data/map3d.js` or `site/data_sf/map3d.js`, and writes `map3d_hi.js` (hill shading and the aerial photo) when `dem10_<area>.npy` and `naip_<area>.jpg` are in the work folder.
+- Lamorinda draws 41,423 buildings, 87% with a mapped height. San Francisco draws 166,583, 96% with a mapped height. A building with no mapped height stands at the area median (5.2 m and 7.0 m). Heights and terrain are both drawn 1.6 times taller.
+- The aerial photo came from the USGS NAIP image service at 4096 px per area, about 3.4 m per pixel. That server is not reachable from every build machine, so the stitched photos are kept with the project files.
+- Phones get a lighter build: a coarser terrain grid, no footpaths, and buildings only near the point in view.
+
 ## Next steps
 
 1. Download OPERA DISP-S1 frames for the box from ASF Vertex and replace the `SIM_` layers in `scripts/03_build.py`.

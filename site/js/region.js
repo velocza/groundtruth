@@ -23,6 +23,7 @@
         methodBody: 'Everything on this map was pulled from public data for this exact box of the city. The risk score is a hand-set placeholder that marks where the trained model will plug in.',
         srcRain: 'NOAA GHCN-Daily and CoCoRaHS gauges with the downtown gauge, 2008 to 2026-11-20',
         srcStreets: 'Overture Maps, 1,817 named streets', srcBld: 'Overture Maps, 166,518 footprints',
+        src3d: 'Overture Maps building outlines, 166,583 drawn. 96% carry a mapped height and the rest stand at the area median of 7.0 m. Roads, water, parks and names are Overture too. Hill shading uses the USGS 3DEP 10 m elevation model and the ground photo is USGS and USDA NAIP aerial imagery. Heights are drawn 1.6 times taller, the same as the terrain.',
         srcSlides: '6 mapped by the USGS in winter 2023. The dataset also holds 31,478 city flood reports and 382 NWS storm reports'
       },
       attrs: { '[data-t=topBadge]': ['class', 'badge quiet'], '#gl': ['aria-label', '3D terrain of San Francisco with landslide risk drawn as light'], '#askIn': ['placeholder', 'Ulloa Street, Twin Peaks Boulevard, Folsom Street'] },
@@ -37,7 +38,7 @@
   window.GT_REGIONS = REGIONS; window.GT_REGION = R;
   document.documentElement.setAttribute('data-region', id);
   if (R.title) document.title = R.title;
-  ['assets', 'buildings', 'data', 'rainlong', 'local-model'].forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
+  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong', 'local-model'].forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
 
   /* switch area: remember the choice and reload with that area's data */
   window.GT_setRegion = function (next) {

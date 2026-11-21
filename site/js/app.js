@@ -151,14 +151,14 @@
     flyTo(mid[0], mid[1], 5.2);
   }
   function flyTo(lon, lat, dist) {
-    const p = Sc.focusPose(lon, lat, dist, $('#inspector').classList.contains('on') && $('.stage').clientWidth > 700 ? -0.14 : 0);
-    if (exploring) { gsap.to(Sc.orbit, { tx: p.tx, tz: p.tz, dist: dist * 1.25, duration: reduce ? 0 : 1.4, ease: 'power3.inOut' }); }
+    dist = dist || 4.2; const p = Sc.focusPose(lon, lat, dist * 0.5, $('#inspector').classList.contains('on') && $('.stage').clientWidth > 700 ? -0.14 : 0);
+    if (exploring) { gsap.to(Sc.orbit, { tx: p.tx, tz: p.tz, dist: dist * 0.42, duration: reduce ? 0 : 1.4, ease: 'power3.inOut' }); }
     else gsap.to(Sc.cam, { ...p, duration: reduce ? 0 : 1.6, ease: 'power3.inOut', overwrite: 'auto' });
   }
 
   /* ------------------------------------------------ views */
   const POSES = {
-    top: { px: -1.2, py: 6.4, pz: 12.4, tx: 0, ty: 0, tz: -0.4 },
+    top: { px: -2.0, py: 4.4, pz: 8.2, tx: -0.2, ty: 0.1, tz: -0.6 },
     motion: { px: 4.4, py: 4.6, pz: 6.6, tx: 1.2, ty: 0.2, tz: -1.2 },
     storm: { px: -0.8, py: 10.2, pz: 11.6, tx: 0, ty: 0, tz: -0.2 },
     replay: { px: 0.3, py: 13.2, pz: 9.8, tx: 0, ty: 0, tz: 0.3 },
@@ -193,6 +193,7 @@
 
   function applyLook(id) {
     const k = LOOKS[id], d = reduce ? 0 : 0.9;
+    Sc.setLayer('roads', true); Sc.setLayer('buildings', true); Sc.setLayer('labels', true);   // the base map is always whole inside a view; Free look can switch layers off
     gsap.to(U.uRisk, { value: k.risk, duration: d, overwrite: true }); gsap.to(U.uMotion, { value: k.motion, duration: d, overwrite: true });
     gsap.to(U.uRoads, { value: k.roads, duration: d, overwrite: true }); gsap.to(U.uSplitVis, { value: k.splitVis, duration: d, overwrite: true });
     gsap.to(U.uDim, { value: k.dim, duration: d, overwrite: true }); gsap.to(U.uBld, { value: k.bld, duration: d, overwrite: true });
@@ -364,16 +365,36 @@
   });
   let lastRunout = null;
   $('#inClose').addEventListener('click', () => { sel = null; $('#inspector').classList.remove('on'); Sc.highlight(0, 0, false); Sc.showPath(null); });
-  let down = null;
-  $('#gl').addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, az: Sc.orbit.az, el: Sc.orbit.el }; if (exploring) $('#gl').setPointerCapture(e.pointerId); });
-  $('#gl').addEventListener('pointermove', e => { if (!down) return; if (!exploring) { if (e.pointerType !== 'mouse' || Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6) return; setExplore(true); down.az = Sc.orbit.az; down.el = Sc.orbit.el; down.x = e.clientX; down.y = e.clientY; down.drag = true; try { $('#gl').setPointerCapture(e.pointerId); } catch (err) {} } Sc.orbit.az = down.az - (e.clientX - down.x) * 0.005; Sc.orbit.el = Math.max(0.18, Math.min(1.45, down.el + (e.clientY - down.y) * 0.004)); });
-  $('#gl').addEventListener('pointerup', e => {
-    const moved = down && (down.drag || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6); down = null;
-    if (moved) return;
+  /* map moves in free look: drag to move, right-drag or Shift-drag to turn and tilt, scroll or pinch to zoom toward the pointer, double-click to step in */
+  const glEl = $('#gl'), ptrs = new Map(); let down = null, pinch = null;
+  glEl.addEventListener('contextmenu', e => e.preventDefault());
+  glEl.addEventListener('pointerdown', e => {
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); pinch = null;
+    down = { sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, turn: e.button === 2 || e.button === 1 || e.shiftKey || e.ctrlKey || e.metaKey, drag: ptrs.size > 1 };
+    if (exploring) try { glEl.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  glEl.addEventListener('pointermove', e => {
+    const p = ptrs.get(e.pointerId); if (!p || !down) return;
+    if (ptrs.size >= 2 && exploring) {
+      p.x = e.clientX; p.y = e.clientY; const [a, b] = [...ptrs.values()], d = Math.max(24, Math.hypot(b.x - a.x, b.y - a.y)), ang = Math.atan2(b.y - a.y, b.x - a.x), cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+      if (pinch) { let da = ang - pinch.ang; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI; Sc.nav.zoom(pinch.d / d, cx, cy); Sc.nav.twist(da); Sc.nav.pan(cx - pinch.cx, cy - pinch.cy); }
+      pinch = { d, ang, cx, cy }; down.drag = true; return;
+    }
+    if (!down.drag && Math.hypot(e.clientX - down.sx, e.clientY - down.sy) < 6) return;
+    if (!exploring) { if (e.pointerType !== 'mouse') return; setExplore(true); down.x = e.clientX; down.y = e.clientY; try { glEl.setPointerCapture(e.pointerId); } catch (err) {} }
+    const dx = e.clientX - down.x, dy = e.clientY - down.y; down.x = p.x = e.clientX; down.y = p.y = e.clientY; down.drag = true;
+    if (down.turn) Sc.nav.rotate(dx, dy); else Sc.nav.pan(dx, dy);
+  });
+  const ptrEnd = e => {
+    const moved = down && (down.drag || Math.hypot(e.clientX - down.sx, e.clientY - down.sy) > 6); ptrs.delete(e.pointerId); pinch = null; if (!ptrs.size) down = null;
+    if (moved || e.type === 'pointercancel' || e.button !== 0) return;
     const ll = Sc.pick(e.clientX, e.clientY); if (ll && active === 'evac' && window.GTEvac) return GTEvac.pick(ll[0], ll[1]);
     if (ll) select(ll[0], ll[1]);
-  });
-  $('#gl').addEventListener('wheel', e => { if (!exploring) { if (getComputedStyle(document.body).overflowY !== 'hidden') return; setExplore(true); } e.preventDefault(); Sc.orbit.dist = Math.max(3, Math.min(28, Sc.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+  };
+  glEl.addEventListener('pointerup', ptrEnd); glEl.addEventListener('pointercancel', ptrEnd);
+  glEl.addEventListener('dblclick', e => { if (exploring) Sc.nav.zoom(0.5, e.clientX, e.clientY); });
+  glEl.addEventListener('wheel', e => { if (!exploring) { if (getComputedStyle(document.body).overflowY !== 'hidden') return; setExplore(true); } e.preventDefault();
+    const dy = e.deltaY * (e.deltaMode === 1 ? 33 : 1) * (e.ctrlKey ? 5 : 1); Sc.nav.zoom(Math.exp(Math.max(-0.5, Math.min(0.5, dy * 0.0017))), e.clientX, e.clientY); }, { passive: false });
   $('#jumpFast').addEventListener('click', () => {
     if (!samplePts.length) { const rk = Mo.rankStreets(currentSc(), 1).top[0]; if (rk) { const [lo, la] = Mo.lonlatOf(rk.worst); select(lo, la); flyTo(lo, la, 4.4); } return; }   // no motion points in this area: open the most exposed street cell
     const p = samplePts.map(s => s.p).filter(p => p.kind === 'creep').sort((a, b) => a.disp_mm[a.disp_mm.length - 1] - b.disp_mm[b.disp_mm.length - 1])[0];
@@ -554,10 +575,10 @@
   function syncExplore() {
     const on = id => $(id).getAttribute('aria-pressed') === 'true';
     gsap.to(U.uRisk, { value: on('#exRisk') ? 1 : 0, duration: .4 }); gsap.to(U.uMotion, { value: on('#exMotion') ? 1 : 0, duration: .4 });
-    gsap.to(U.uRoads, { value: on('#exRoads') ? 1 : 0, duration: .4 }); gsap.to(U.uBld, { value: on('#exBld') ? 1 : 0, duration: .4 }); gsap.to(U.uSplitVis, { value: on('#exSat') ? 1 : 0, duration: .4 }); U.uSplit.value = 0; gsap.to(U.uDim, { value: 0, duration: .4 });
+    gsap.to(U.uRoads, { value: on('#exRoads') ? 1 : 0, duration: .4 }); gsap.to(U.uBld, { value: on('#exBld') ? 1 : 0, duration: .4 }); Sc.setLayer('roads', on('#exRoads')); Sc.setLayer('buildings', on('#exBld')); Sc.setLayer('labels', on('#exLabels')); gsap.to(U.uSplitVis, { value: on('#exSat') ? 1 : 0, duration: .4 }); U.uSplit.value = 0; gsap.to(U.uDim, { value: 0, duration: .4 });
   }
   exBtn.addEventListener('click', () => setExplore(!exploring));
-  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
+  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exLabels', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
   window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
 
   /* ------------------------------------------------ street agent */
