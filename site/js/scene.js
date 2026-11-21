@@ -204,5 +204,6 @@
   }
 
   window.GTScene = { build, cam, orbit, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
-    setReduced(v) { reduced = v; }, resize, setShift };
+    setReduced(v) { reduced = v; }, resize, setShift,
+    project(lon, lat, lift) { const p = worldOf(lon, lat, lift || 0.05).project(camera); return p.z < 1 ? [(p.x + 1) / 2 * canvas.clientWidth, (1 - p.y) / 2 * canvas.clientHeight] : null; } };   // screen position of a place, for 2D overlays
 })();
