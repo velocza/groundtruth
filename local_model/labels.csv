@@ -1,0 +1,5 @@
+date,lon,lat,radius_m,source,location,precision
+2016-03-13,-122.1383,37.83495,150,https://lamorindaweekly.com/archive/issue1002/Hillside-Slides-Threaten-Country-Club-Houses.html,Augusta Drive,approximate street geometry; not a mapped source
+2017-02-09,-122.1892,37.9141,150,https://abc7news.com/post/orinda-home-severely-damaged-by-mudslide/1746348/,Van Tassel Lane,approximate street geometry; not a mapped source
+2017-04-18,-122.1322,37.8255,150,https://lamorindaweekly.com/archive/issue1105/Canyon-bridge-closed-indefinitely.html,Canyon Road bridge,approximate street geometry; not a mapped source
+2019-02-13,-122.1322,37.8255,150,https://lamorindaweekly.com/archive/issue1301/Recent-land-movement-results-in-closure-of-Canyon-Bridge-pedestrian-access.html,Canyon Road bridge,approximate street geometry; not a mapped source

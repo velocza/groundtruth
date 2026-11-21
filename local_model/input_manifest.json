@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/velocza/groundtruth",
+  "source_commit": "73ede4be2e3eb2b81526bb3ae4fac453bb60d4eb",
+  "git_blobs": {
+    "dataset/grid_480x456_all_layers.npz": "5627bb1df16551ef55c529f295a1e8ade87bc8ef",
+    "dataset/landslide_events_other_winters.csv": "bb6a430ed6d82a2b6646582e9fa61ccbf48ce1e5",
+    "dataset/rainfall_daily_lamorinda.csv": "806097fead0effa9f88eb6982a217f697f7fd841",
+    "site/data/data.js": "fc709b003e241243950a8b7fb2943cfa815d7e07"
+  },
+  "sha256": {
+    "dataset/grid_480x456_all_layers.npz": "c77c0fcd78b6764ffccbd4ab9c957f64fc63a806525d354e2551acddda0f09af",
+    "dataset/landslide_events_other_winters.csv": "5098ca3f3eec889b6a4f4b6f1421499d3e7a0204908ee9896f1a88aca235af31",
+    "dataset/rainfall_daily_lamorinda.csv": "9aba415ad825fada55b074d9eca8d6fe2042458d5a4378a2a4123c04fdce6b4a",
+    "site/data/data.js": "9314eea63865f7e00bdd0f69dae3960e1767063af38c29dd388208decba2b695"
+  },
+  "external_downloads": false
+}

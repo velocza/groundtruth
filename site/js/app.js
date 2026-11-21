@@ -15,6 +15,7 @@
 
   /* ------------------------------------------------ scenario state */
   const S = { r72: 60, api: 120, era: 0, amt: 0 };                 // what the storm panel is set to (used by the agent too)
+  let localSimulation = null;
   const view = { r72: 60, api: 120 };                              // tweened copy that feeds the shader
   function pushScenario(sc, fast) {
     U.uEra.value = sc.era; U.uAmt.value = sc.amt;
@@ -464,7 +465,7 @@
 
   /* ------------------------------------------------ storm briefing + exports */
   async function saveFile(filename, text, mime) {
-    try { const dl = window.claude && window.claude.use ? await Promise.race([window.claude.use('downloads'), new Promise(r => setTimeout(() => r(null), 2500))]) : null; if (dl) { await dl.save({ filename, data: text }); return true; } } catch (e) { if (e && e.code === 'declined') return false; }
+
     try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: mime })); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); return true; } catch (e) { return false; }
   }
   $('#csvBtn').addEventListener('click', () => {
@@ -577,7 +578,7 @@
     if (!reduce) gsap.from(d, { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out' });
     return d;
   }
-  let sampler; const getSampler = () => sampler !== undefined ? Promise.resolve(sampler) : (window.claude && window.claude.use ? Promise.race([window.claude.use('sample'), new Promise(r => setTimeout(() => r(null), 4000))]).catch(() => null) : Promise.resolve(null)).then(s => (sampler = s || null));
+  let sampler = null; const getSampler = () => Promise.resolve(null);
   /* Agent path: when Claude is available, it answers open questions by calling these page functions. Every number it can say comes from one of them. */
   const exactStreet = name => { const ks = findStreet(String(name || '')); return ks.length === 1 ? ks[0] : -1; };
   const pubRecord = (k, r72) => { const rec = record(k, r72); if (!rec) throw new Error('That street has no cells to score.'); const p = { ...rec }; delete p._spot; return p; };
@@ -627,50 +628,63 @@ End with one sentence saying what the tool results say about the ground motion i
   function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
 
   async function ask(q) {
-    q = q.trim(); if (!q) return; bubble('me', q); $('#askIn').value = ''; hideSugg();
-    if (/\b(briefing|brief me)\b/i.test(q)) { bubble('', 'Here is the briefing for the storm set on this page.'); openBrief(); return; }
-    const mmQ = q.match(/(\d+(?:\.\d+)?)\s*(mm|millimet|inch|in\b|")/i), askR = mmQ ? Math.max(0, Math.min(400, Math.round(parseFloat(mmQ[1]) * (/^(mm|millimet)/i.test(mmQ[2]) ? 1 : 25.4)))) : null;
-    if (/\b(worst|most (exposed|at risk|dangerous)|which streets|top streets|highest)\b/i.test(q)) {
-      const rk = Mo.rankStreets({ r72: S.r72, api: S.api, era: 0, amt: 0 }, 5);
-      bubble('', [`Highest scores under the storm set on this page (${S.r72} mm in 72 hours, soil wetness ${S.api} mm):`, rk.top.map((s, n) => `${n + 1}. ${s.name}, ${s.town}: ${Math.round(s.score)} (${Mo.tier(s.score)})`).join('   '), `${rk.elevated} of ${rk.total} streets are at Elevated or High. These come from sample data with simulated ground motion.`], 'From the placeholder score on this page');
-      flyToStreet(rk.top[0].k); return;
+    q = q.trim(); if (!q) return;
+    bubble('me', q); $('#askIn').value = ''; hideSugg();
+    const ml = window.GTLocalModel;
+    if (!ml) { bubble('', 'The local model did not load. Run model/train_local.py and reload this page.'); return; }
+    const rainMatch = q.match(/(\d+(?:\.\d+)?)\s*(mm|millimet(?:ers|res)?|inches|inch|in\b|")/i);
+    const followSim = $('#simFollow').checked && localSimulation;
+    const r72 = rainMatch ? Math.max(0,Math.min(400,parseFloat(rainMatch[1]) * (/^(mm|millimet)/i.test(rainMatch[2]) ? 1 : 25.4))) : followSim ? localSimulation.rain_72h_mm : S.r72;
+    const apiMatch = q.match(/(?:wetness|api)\s*(?:of|=|:)?\s*(\d+(?:\.\d+)?)/i);
+    const api = apiMatch ? Math.max(0,Math.min(280,+apiMatch[1])) : followSim ? localSimulation.api_mm : S.api;
+    const source = 'Local trained GBM · experimental score, not probability · no cloud calls';
+    const limit = 'Trained on four pre-2022 reports at three approximate locations. Scores are uncalibrated, and do not establish that a property is safe. The map and other dashboard tools still use the original placeholder formula. For site concerns contact city engineering staff or a licensed geotechnical engineer.';
+    if (/\b(model|trained|training|accuracy|validation|backtest)\b/i.test(q) && !findStreet(q).length) {
+      const rp=ml.report;
+      bubble('', [`Local model: ${rp.params.n_trees} depth-${rp.params.max_depth} gradient-boosted trees, trained on ${rp.training_events} older reports at ${rp.unique_training_locations} locations. No simulated motion or later vegetation is used.`,
+        `The exploratory held-out 2023 check beat ${(rp.heldout_mean_share_random_street_spots_beaten*100).toFixed(1)}% of 100 randomly sampled street spots on average, using the same 300 m search radius. This is a ranking statistic, not accuracy or a failure probability. Future observed gauge rain was used as a perfect-rain scenario.`, limit],source); return;
     }
-    const ks = findStreet(q);
-    const open = ks.length !== 1 || /\b(compare|versus|vs|and|or|why|where|which|how many|how often|debris|runout|path|flow|reach|buildings?|homes?|houses?|history|backtest|worst day|safer|town|area|overall)\b/i.test(q);
-    if (open) { const s0 = await getSampler(); if (s0 && await agentAnswer(q, s0)) return; }
-    { const nq = ' ' + norm(q).replace(/\bstreet\b/g, 'st') + ' ', named = sIndex.filter(x => nq.includes(' ' + x.key + ' ')).filter((x, _, all) => !all.some(y => y !== x && y.key.length > x.key.length && y.key.includes(x.key)));
-      const uniq = [...new Map(named.map(x => [G.streets[x.k].n, x.k])).values()].slice(0, 4);
-      if (uniq.length >= 2) {
-        const recs = uniq.map(k => record(k, askR)).filter(Boolean).sort((x, y) => y.score - x.score);
-        bubble('', [`Under ${recs[0].storm.rain_next_72h_mm} mm of rain in 72 hours on soil at a wetness index of ${recs[0].storm.soil_wetness_index_mm} mm, highest first:`,
-          ...recs.map(r => `${r.street}, ${r.town}: ${r.tier}, ${r.score} out of 100. ${tipText(r.rain_in_72h_that_makes_it_elevated_mm, r.rain_in_72h_that_makes_it_high_mm)}. ${r.buildings_along_street.on_ground_scored_elevated_or_high} of ${r.buildings_along_street.total} buildings on flagged ground. Worst day since 2015: ${r.history_from_real_rain_since_oct_2015.worst_day} at ${r.history_from_real_rain_since_oct_2015.worst_day_score}.`),
-          (Mo.opts.motion ? 'Ground motion in these scores is simulated sample data' : 'These scores leave ground motion out') + ' and the score is a placeholder, so treat this as a demonstration.'], 'Template answer from the model record');
-        flyToStreet(uniq[0]); return;
+    let ks;
+    const nq = ' '+norm(q).replace(/\bstreet\b/g,'st')+' ';
+    const named = sIndex.filter(x=>nq.includes(' '+x.key+' ')).filter((x,_,all)=>!all.some(y=>y!==x && y.key.length>x.key.length && y.key.includes(x.key)));
+    ks = [...new Set(named.map(x=>x.k))];
+    if (/\b(worst|highest|top streets|which streets|briefing|brief me)\b/i.test(q)) {
+      const wait = bubble('wait','Scoring streets locally...');
+      await new Promise(resolve=>setTimeout(resolve,30));
+      let scores=[];
+      for (let k=0;k<G.streets.length;k++) {
+        const v=ml.street(k,r72,api); if(v && v.cells>=12) scores.push({k,...v});
+        if (k%100===0) await new Promise(resolve=>setTimeout(resolve,0));
+      }
+      const town = ['Lafayette','Orinda','Moraga'].find(t=>new RegExp('\\b'+t+'\\b','i').test(q));
+      if (town) scores=scores.filter(v=>G.streets[v.k].t===town);
+      scores.sort((a,b)=>b.score-a.score); wait.remove();
+      bubble('', [`Local experimental ranking${town?' for '+town:''}: ${r72.toFixed(1)} mm in 72 hours; antecedent wetness ${api} mm.`,
+        ...scores.slice(0,5).map((v,n)=>`${n+1}. ${G.streets[v.k].n}, ${G.streets[v.k].t}: ${v.score.toFixed(1)} / 100 classification score.`), limit],source);
+      if(scores.length) flyToStreet(scores[0].k); return;
+    }
+    if (!ks.length) ks=findStreet(q);
+    if (ks.length!==1 && named.length<2) {
+      bubble('',ks.length ? ['Please choose a street:',...ks.map(k=>G.streets[k].n+', '+G.streets[k].t)] : 'Name a street in Lafayette, Orinda or Moraga, compare two streets, ask for the top streets, or ask about model validation. Example: Miner Road with 100 mm rain.'); return;
+    }
+    const paras=[`Local model scenario${followSim ? ' (historical playback '+localSimulation.simulation_date+')' : ''}: ${r72.toFixed(1)} mm rain in 72 hours, antecedent wetness ${api} mm.`];
+    let first=null;
+    for (const k of ks.slice(0,4)) {
+      const st=G.streets[k], v=ml.street(k,r72,api); if(!v) {paras.push(st.n+': no cells inside the study grid.');continue;}
+      if(!first) first={k,v};
+      const lo=ml.street(k,r72*.5,api), hi=ml.street(k,r72*1.5,api);
+      paras.push(`${st.n}, ${st.t}: ${v.score.toFixed(1)} / 100 experimental classification score (not a percent chance). Half the rain: ${lo.score.toFixed(1)}; 1.5 times the rain: ${hi.score.toFixed(1)}. No validated alert tier is assigned.`);
+      const changes=ml.explain(k,r72,api).filter(x=>x.change>0.1).slice(0,3);
+      if(changes.length) paras.push('Sensitivity at the highest-scoring cell: '+changes.map(x=>`${x.name} (${x.change.toFixed(1)} score points versus its reference)`).join(', ')+'. These are counterfactual comparisons, not causal explanations.');
+      if (/\b(debris|runout|path|downhill)\b/i.test(q)) {
+        const ro=Mo.runout(v.worst); Sc.showPath(ro.path.map(Mo.lonlatOf));
+        paras.push(`Terrain-only screening path: ${ro.length} m long, ${ro.drop} m elevation drop. This is not an ML runout prediction.`);
       }
     }
-    if (ks.length === 1 && /\b(debris|runout|run out|path|flow|downhill)\b/i.test(q)) {
-      const r = TOOLS.find(t => t.name === 'debris_path').execute({ street: G.streets[ks[0]].n }), st = r.streets_in_the_way.map(x => `${x.street} after ${fmt(x.metres_along_path)} m`);
-      watchButton(bubble('', [`From the highest scoring spot along ${G.streets[ks[0]].n}, debris would head downhill for about ${fmt(r.path_length_m)} m, dropping ${fmt(r.height_drop_m)} m and ending ${r.ends}.`,
-        (st.length ? `In the way: ${st.join(', ')}. ` : 'No other mapped street lies on the path. ') + (r.joins_creek_after_m != null ? `It joins a creek line after ${fmt(r.joins_creek_after_m)} m. ` : '') + `${fmt(r.buildings_within_30m_of_path)} buildings stand within about 30 m of it.`,
-        'The path is drawn on the map in blue. It is a screening estimate from the terrain, not a flow simulation.'], 'Template answer from the model record'), G.streets[ks[0]].n);
-      return;
-    }
-    if (ks.length !== 1) {
-      bubble('', ks.length ? ['I found more than one street that could match. Which one do you mean?', ks.map(k => `${G.streets[k].n} (${G.streets[k].t})`).join(', ')] : ['I could not find that street in Lafayette, Orinda or Moraga. Try the street name on its own, for example Miner Road or Rheem Boulevard.']);
-      return;
-    }
-    const rec = record(ks[0], askR); if (!rec) { bubble('', 'That street sits at the edge of the map and has no cells to score.'); return; }
-    flyToStreet(ks[0]); Sc.highlight(rec._spot[0], rec._spot[1], true);
-    const tpl = templateAnswer(rec), s = await getSampler();
-    const addWatch = d => watchButton(d, rec.street);
-    if (!s) { const d = bubble('', tpl, 'Template answer from the model record'); addWatch(d); reportButton(d, rec.street, tpl); return; }
-    const wait = bubble('wait', 'Reading the model record for ' + rec.street + '...');
-    const pub = { ...rec }; delete pub._spot;
-    const prompt = `You are the GroundTruth street risk assistant for Lafayette, Orinda and Moraga, California. Answer the resident's question using ONLY the JSON record below. Do not add facts, numbers, places or history that are not in the record. Plain sentences, no markdown, no lists, no dashes, under 150 words. Start with the street, its tier and score out of 100. Say which storm the score assumes. Give the top reasons in everyday words. Give the range for half and one and a half times the rain. Say how many of the buildings along it stand on Elevated or High ground. Say how many days since October 2015 it would have scored Elevated or High and name its worst day. Give the rain amounts that would make it Elevated and High if the record has them (null means not reachable within 400 mm, 0 means already there). Mention reported 2023 slides only if the record lists any. End by stating what the record says about the ground motion input and that the score is a placeholder, so this is a demonstration and not a reading of the real street, and that real concerns go to city engineering staff or a licensed geotechnical engineer. Never say a property is safe.\n\nRecord: ${JSON.stringify(pub)}\n\nResident's question: ${q}`;
-    try {
-      const res = await s(prompt, { modelTier: 'quick', cache: false, onText: ({ text }) => { wait.classList.remove('wait'); wait.firstChild.textContent = text; msgs.scrollTop = msgs.scrollHeight; } });
-      wait.classList.remove('wait'); wait.firstChild.textContent = res.text; const sp = document.createElement('span'); sp.className = 'src'; sp.textContent = 'Written by Claude from the model record'; wait.appendChild(sp); addWatch(wait); reportButton(wait, rec.street, tpl);
-    } catch (e) { wait.remove(); const d = bubble('', tpl, 'Template answer from the model record'); addWatch(d); reportButton(d, rec.street, tpl); if (e && e.code === 'not_granted') sampler = null; }
+    if (/\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('Historical alert counts, exposure tiers and tipping points are not validated for this experimental model. Those tools elsewhere on the dashboard use the placeholder score.');
+    paras.push(limit);
+    const d=bubble('',paras,source);
+    if(first) {flyToStreet(first.k); Sc.highlight(...Mo.lonlatOf(first.v.worst),true); watchButton(d,G.streets[first.k].n); reportButton(d,G.streets[first.k].n,paras);}
   }
   $('#askForm').addEventListener('submit', e => { e.preventDefault(); const a = $('#sugg .act'); if (a && !$('#sugg').hidden) { ask(a.dataset.n); return; } ask($('#askIn').value); });
   $$('#askChips [data-q]').forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
@@ -685,7 +699,7 @@ End with one sentence saying what the tool results say about the ground motion i
     if (sugg.hidden || !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return; e.preventDefault(); if (e.key === 'Escape') return hideSugg();
     const bs = $$('#sugg button'), i = bs.findIndex(b => b.classList.contains('act')), n = (i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach(b => b.classList.remove('act')); bs[n].classList.add('act');
   });
-  bubble('', 'Ask about any street in Lafayette, Orinda or Moraga. I look up its score under the storm you set, say what drives it, and show it on the map. You can also name a rain amount, ask where debris would go, or ask for a briefing.');
+  bubble('', 'Local ML is ready. Ask about a street, compare streets, or enter a rain amount such as Miner Road with 100 mm rain. Answers run on this computer using an experimental trained tree model. Scores are not calibrated failure probabilities. Ask about model validation to see the results.');
 
   /* ------------------------------------------------ guided tour: drives the real controls so a viewer sees every tool in about a minute */
   let tour = null;
@@ -712,7 +726,7 @@ End with one sentence saying what the tool results say about the ground motion i
   window.addEventListener('keydown', e => { if (tour && e.key === 'Escape') stopTour(); });
 
   /* ------------------------------------------------ first paint + entrances */
-  setStorm(92, 156); setReplay(D0, true); enter('top'); drawSeries(null);
+  setStorm(92, 156); setReplay(D0, true); enter(ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'top'); drawSeries(null);
   setTimeout(renderBacktest, 900);
   { const p = PRESETS.today(), sc = { r72: p.r72, api: p.api, era: 0, amt: 0 }, rk = Mo.rankStreets(sc, 1), ld = addDays(RNOW.start, lastNow);
     $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The map in this view shows a 140 mm storm on wet soil.`; }
@@ -739,6 +753,36 @@ End with one sentence saying what the tool results say about the ground motion i
   { let t = null; try { t = localStorage.getItem('gt-theme'); } catch (err) {} setTheme(t === 'light' || t === 'dark' ? t : 'dark'); }
 
   $('#loading').classList.add('off');
+  function renderSimulation(v) {
+    localSimulation = v;
+    $('#simStatus').textContent = `${v.running ? 'Running' : 'Paused'}: ${v.simulation_date} · step ${v.step} · ${v.rain_72h_mm.toFixed(1)} mm rain / 72 h · wetness ${v.api_mm.toFixed(1)} mm`;
+    $('#simScores').textContent = v.streets.map(s=>`${s.street}: ${s.score.toFixed(1)}/100`).join(' · ');
+    $('#simToggle').textContent = v.running ? 'Pause simulation' : 'Resume simulation';
+    $('#simToggle').disabled = false;
+  }
+  async function pollSimulation() {
+    try {
+      const res = await fetch('/api/simulation', {cache:'no-store'});
+      if(!res.ok) throw new Error('Simulation unavailable');
+      renderSimulation(await res.json());
+    } catch (_) {
+      localSimulation = null;
+      $('#simStatus').textContent = 'Simulation is offline. Run START_LOCAL.cmd to start it. Browser-local Ask is still available.';
+      $('#simScores').textContent = '';
+      $('#simToggle').disabled = true;
+    }
+  }
+  $('#simToggle').addEventListener('click', async () => {
+    if(!localSimulation) return;
+    $('#simToggle').disabled = true;
+    try {
+      const action=localSimulation.running ? 'pause':'resume';
+      const res=await fetch('/api/simulation/'+action, {method:'POST'});
+      if(!res.ok) throw new Error('Simulation control failed');
+      renderSimulation(await res.json());
+    } catch (_) { await pollSimulation(); }
+  });
+  pollSimulation(); setInterval(pollSimulation, 2000);
   if (!reduce) {
     gsap.from(Sc.cam, { py: '+=4', pz: '+=6', duration: 2.2, ease: 'power3.out' });
     gsap.from('.bar, .rail, .kpis, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });

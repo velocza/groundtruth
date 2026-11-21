@@ -1,7 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>GroundTruth Lamorinda</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* GroundTruth dashboard. Glass UI system: one token block per theme, capsule controls, one 31px radius for every panel.
    Layout: header, a navigation rail, the 3D terrain stage with a KPI strip above it, and one opaque view panel.
@@ -646,6 +644,16 @@ dialog .ol-wrap{margin:0;padding:0}
 
   <section id="ask">
     <h2>Is my street at risk?</h2>
+    <div id="localSim" style="flex:none;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;font-size:14px">
+      <strong>Local simulation</strong>
+      <p id="simStatus" role="status">Connecting to the local simulation...</p>
+      <p id="simScores"></p>
+      <div class="row">
+        <button class="btn sm" id="simToggle" type="button" disabled>Pause simulation</button>
+        <label style="display:flex;align-items:center;gap:8px"><input id="simFollow" type="checkbox" checked>Use simulation rain for Ask</label>
+      </div>
+      <p class="note">Historical playback, one day every 10 seconds. Observed rain is a scenario input, not a forecast. The model keeps running while this laptop is awake.</p>
+    </div>
     <div class="msgs" id="msgs" aria-live="polite"></div>
     <div class="ask-dock">
       <div class="chips" id="askChips">
@@ -660,7 +668,7 @@ dialog .ol-wrap{margin:0;padding:0}
         <input class="field" id="askIn" type="text" placeholder="El Toyonal, Rheem Boulevard, Happy Valley Road" aria-describedby="askHelp">
         <button class="btn accent" type="submit">Ask</button>
       </form>
-      <p class="note" id="askHelp">Answers use the storm that is set and the sample data on this page. They show how the tool will work. They are not a reading of the real street.</p>
+      <p class="note" id="askHelp">Local trained ML · no API key or cloud service. Experimental classification scores from four older reports, not calibrated probabilities. Ask uses the trained model; the dashboard map uses the original placeholder.</p>
     </div>
   </section>
 
@@ -739,5 +747,7 @@ dialog .ol-wrap{margin:0;padding:0}
 <script src="vendor/gsap.min.js"></script>
 <script src="js/model.js"></script>
 <script src="js/scene.js"></script>
+<script src="data/local-model.js"></script>
+<script src="js/local-model.js"></script>
 <script src="js/app.js"></script>
 </body></html>

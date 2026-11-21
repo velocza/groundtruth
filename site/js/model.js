@@ -202,5 +202,5 @@
     return mx;
   }
 
-  window.GTModel = { load, L, images, NX, NY, N, bbox: M.bbox, index, terms, tier, areaStats, cellOf, lonlatOf, streetScore, rankStreets, analyseSeries, recentV, opts, Tof, buildingsAt, buildingsNear, streetBuildings, tipCell, tipStreet, runout, sortedField, shareAbove, maxNear, cellM: [CW, CH] };
+  window.GTModel = { cellsForStreet: k => streetCells[k] || new Int32Array(0), load, L, images, NX, NY, N, bbox: M.bbox, index, terms, tier, areaStats, cellOf, lonlatOf, streetScore, rankStreets, analyseSeries, recentV, opts, Tof, buildingsAt, buildingsNear, streetBuildings, tipCell, tipStreet, runout, sortedField, shareAbove, maxNear, cellM: [CW, CH] };
 })();

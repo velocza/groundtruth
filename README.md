@@ -2,6 +2,36 @@
 
 Satellite landslide early warning for Lafayette, Orinda and Moraga, California.
 
+## Local experimental model and simulation
+
+Run `python -m pip install -r requirements-local.txt`, then `python serve_local.py`
+(or double-click `START_LOCAL.cmd` on Windows). Open http://127.0.0.1:8765/#ask.
+The Ask section uses a trained 60-tree GBM locally without Claude or an API key.
+The other dashboard views retain their original placeholder scores and metrics.
+
+The server continuously replays Dec 26, 2022 through Mar 31, 2023, advancing one
+historical day per ten seconds, and scores Miner Road, El Toyonal and Rheem
+Boulevard. It continues with the browser closed while the process and laptop
+remain running. Pause/resume controls are in Ask; closing the server stops it.
+Observed future gauge rainfall is a scenario input, **not a live forecast**.
+Runtime status is saved locally in `runtime/simulation.json` and excluded from Git.
+
+Training uses only unchanged files supplied by this repository: terrain, gauge
+rain, the four older news reports, and the bundled street geometry. No URLs in
+source columns are fetched. `local_model/input_manifest.json` records the exact
+source commit, Git blob IDs and input SHA-256 hashes; the trainer rejects changed
+inputs. To rebuild, run `python model/train_local.py`. The 2023 events are held
+out, simulated InSAR is excluded, and 2023/2026 vegetation is excluded.
+
+**Experimental:** four reports represent only three approximate locations, with
+unlabeled background negatives. Scores are classification scores, not calibrated
+failure probabilities or validated warning tiers. Location holdouts performed
+weakly; see `local_model/report.json` for all results, including the exploratory
+2023 ranking test. This does not establish property safety.
+
+Checks: `node tests/local_model_test.cjs` and
+`python -m unittest discover -s tests -p "test_*.py"`.
+
 ## What is in this folder
 
 | Folder | What it is |

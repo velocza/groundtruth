@@ -1,0 +1,131 @@
+{
+  "status": "experimental; uncalibrated; insufficient labels for real-world decisions",
+  "holdout_from": "2022-10-01",
+  "training_events": 4,
+  "unique_training_locations": 3,
+  "rows": 10680,
+  "positive_rows": 1068,
+  "params": {
+    "n_trees": 60,
+    "max_depth": 2,
+    "eta": 0.05,
+    "min_leaf": 25,
+    "subsample": 1.0,
+    "colsample": 1.0,
+    "lam": 5.0,
+    "max_bins": 32
+  },
+  "features": [
+    "slope_deg",
+    "northness",
+    "eastness",
+    "plan_curv",
+    "twi",
+    "dist_stream_m",
+    "rain_72h_mm",
+    "api_mm",
+    "trigger_T"
+  ],
+  "inputs": "real terrain and observed gauge rainfall; no simulated motion or post-event vegetation",
+  "rainfall_mode": "perfect-rain scenario; not an archived-forecast evaluation",
+  "provenance": {
+    "repository": "https://github.com/velocza/groundtruth",
+    "source_commit": "73ede4be2e3eb2b81526bb3ae4fac453bb60d4eb",
+    "git_blobs": {
+      "dataset/grid_480x456_all_layers.npz": "5627bb1df16551ef55c529f295a1e8ade87bc8ef",
+      "dataset/landslide_events_other_winters.csv": "bb6a430ed6d82a2b6646582e9fa61ccbf48ce1e5",
+      "dataset/rainfall_daily_lamorinda.csv": "806097fead0effa9f88eb6982a217f697f7fd841",
+      "site/data/data.js": "fc709b003e241243950a8b7fb2943cfa815d7e07"
+    },
+    "sha256": {
+      "dataset/grid_480x456_all_layers.npz": "c77c0fcd78b6764ffccbd4ab9c957f64fc63a806525d354e2551acddda0f09af",
+      "dataset/landslide_events_other_winters.csv": "5098ca3f3eec889b6a4f4b6f1421499d3e7a0204908ee9896f1a88aca235af31",
+      "dataset/rainfall_daily_lamorinda.csv": "9aba415ad825fada55b074d9eca8d6fe2042458d5a4378a2a4123c04fdce6b4a",
+      "site/data/data.js": "9314eea63865f7e00bdd0f69dae3960e1767063af38c29dd388208decba2b695"
+    },
+    "external_downloads": false
+  },
+  "cv": [
+    {
+      "location": "Augusta Drive",
+      "roc_auc": 0.5709716786601018,
+      "slope_roc_auc": 0.5050919496696545,
+      "train_rows": 9299,
+      "test_rows": 534
+    },
+    {
+      "location": "Canyon Road bridge",
+      "roc_auc": 0.48219921727054665,
+      "slope_roc_auc": 0.5165383158692084,
+      "train_rows": 9151,
+      "test_rows": 1068
+    },
+    {
+      "location": "Van Tassel Lane",
+      "roc_auc": 0.24359298068425703,
+      "slope_roc_auc": 0.4983167108530068,
+      "train_rows": 9904,
+      "test_rows": 534
+    }
+  ],
+  "heldout_2023": [
+    {
+      "location": "Cedar Lane",
+      "date": "2023-01-19",
+      "share_random_street_spots_beaten": 0.01
+    },
+    {
+      "location": "Pleasant Hill Road between Springhill Road and Deer Hill Road",
+      "date": "2022-12-31",
+      "share_random_street_spots_beaten": 0.9249999999999999
+    },
+    {
+      "location": "Lafayette Ridge Trail",
+      "date": "2023-01-01",
+      "share_random_street_spots_beaten": 0.9249999999999999
+    },
+    {
+      "location": "St. Mary's Road, about 300 ft south of Driftwood Drive",
+      "date": "2023-01-10",
+      "share_random_street_spots_beaten": 0.6699999999999999
+    },
+    {
+      "location": "Miner Road",
+      "date": "2023-01-10",
+      "share_random_street_spots_beaten": 0.6699999999999999
+    },
+    {
+      "location": "Wilder",
+      "date": "2023-01-10",
+      "share_random_street_spots_beaten": 0.9249999999999999
+    },
+    {
+      "location": "57 Tarry Lane",
+      "date": "2023-02-07",
+      "share_random_street_spots_beaten": 0.7899999999999999
+    },
+    {
+      "location": "Bollinger Canyon Road",
+      "date": "2023-01-11",
+      "share_random_street_spots_beaten": 0.9249999999999999
+    },
+    {
+      "location": "Rheem Boulevard",
+      "date": "2023-01-11",
+      "share_random_street_spots_beaten": 0.555
+    },
+    {
+      "location": "Mulholland Ridge above Camino Ricardo and Ashbrook Place",
+      "date": "2023-01-11",
+      "share_random_street_spots_beaten": 0.6699999999999999
+    }
+  ],
+  "heldout_mean_share_random_street_spots_beaten": 0.7064999999999999,
+  "limitations": [
+    "Four weak reports at three approximate locations; two events share Canyon Road.",
+    "Background negatives are unlabeled, not confirmed absence.",
+    "0-100 classification score is not a calibrated probability or validated alert tier.",
+    "Terrain is treated as static; historical terrain changes are not reconstructed.",
+    "2023 reports were excluded from training; this is a small exploratory test, not validation."
+  ]
+}
