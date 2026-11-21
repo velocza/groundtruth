@@ -145,6 +145,8 @@ svg.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;str
 svg.ck{width:13px;height:13px;stroke-width:2.2}
 .seg-track.sm>button{height:calc(var(--ctl) - 6px);padding:0 12px;font-size:12px}
 .seg-l{font-size:12px;color:var(--text-3)}
+[data-only][hidden]{display:none!important}
+#regionPick{max-width:100%;font-weight:var(--w-med);padding-right:8px}
 
 .field,.pick{height:var(--ctl);border:0;border-radius:999px;padding:0 12px;background:var(--track);box-shadow:inset 0 0 0 1px var(--border-1);color:var(--text-1);font-size:13px;min-width:0;transition:box-shadow var(--d-fast) var(--e-out)}
 .field::placeholder{color:var(--text-3)}
@@ -482,7 +484,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
   <a class="brand" href="#top" data-go="top" aria-label="GroundTruth, back to the overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 1.5 20.5h21L12 2.5zm0 6.6 5.1 8.4H6.9L12 9.1z"/></svg></a>
   <hr>
   <a class="nav" href="#top" data-go="top" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span>Overview</span></a>
-  <a class="nav" href="#motion" data-go="motion"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span>Ground motion</span></a>
+  <a class="nav" href="#motion" data-go="motion" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span>Ground motion</span></a>
   <a class="nav" href="#storm" data-go="storm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 16a4 4 0 0 1 .4-8 5.5 5.5 0 0 1 10.5 1.6A3.3 3.3 0 0 1 17.5 16"/><path d="M9 18.5l-.8 2M12.5 18.5l-.8 2M16 18.5l-.8 2"/></svg><span>Storm</span></a>
   <a class="nav" href="#replay" data-go="replay"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5"/><path d="M4.5 4.5v4h4"/><path d="M12 8v4l2.8 1.8"/></svg><span>2023 replay</span></a>
   <a class="nav" href="#backtest" data-go="backtest"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg><span>Backtest</span></a>
@@ -493,7 +495,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 </nav>
 
 <header class="topbar">
-  <h1 class="vh">GroundTruth, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
+  <h1 class="vh" data-t="h1">GroundTruth, a landslide risk dashboard for Lafayette, Orinda and Moraga</h1>
   <div class="stats" role="group" aria-label="Exposure for the storm that is set">
     <a class="chip" href="#storm" data-go="storm" title="Change the storm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c3 3.8 5.5 6.6 5.5 10a5.5 5.5 0 0 1-11 0c0-3.4 2.5-6.2 5.5-10z"/></svg>Storm <b><span id="kpR72">92</span> mm</b> on soil <b><span id="kpApi">156</span> mm</b></a>
     <span class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7.5 4.300v8.400L12 20.5l-7.5-4.300V7.800z"/></svg>High tier <b><span id="stHigh">0</span> km²</b></span>
@@ -511,6 +513,8 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 <div class="head" role="region" aria-label="View title and alert sensitivity">
   <div><h2 id="viewTitle">GroundTruth</h2><p id="viewSub">Landslide watch for Lafayette, Orinda and Moraga</p></div>
   <div class="head-r">
+    <label class="seg-l" for="regionPick">Area</label>
+    <select id="regionPick" class="pick" title="Switch between Lamorinda and San Francisco"><option>Lamorinda, Contra Costa County</option></select>
     <span class="seg-l" id="sensL">Alert sensitivity</span>
     <div class="seg-track" role="group" aria-labelledby="sensL"><button data-bias="-6.5" aria-pressed="true">Fewer alerts</button><button data-bias="-5.7" aria-pressed="false">Balanced</button><button data-bias="-4.9" aria-pressed="false">More alerts</button></div>
   </div>
@@ -518,7 +522,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
 <div class="filt" role="region" aria-label="Map layers and data">
   <div class="seg-track multi" role="toolbar" aria-label="Map layers" id="exploreBar">
-    <button id="exRisk" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Risk</button><button id="exMotion" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Motion</button><button id="exRoads" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Streets</button><button id="exBld" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Buildings</button><button id="exSat" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daylight</button>
+    <button id="exRisk" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Risk</button><button id="exMotion" aria-pressed="true" data-only="lamorinda"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Motion</button><button id="exRoads" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Streets</button><button id="exBld" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Buildings</button><button id="exSat" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daylight</button>
   </div>
   <input type="checkbox" id="realOnly" checked hidden><button id="exReal" aria-pressed="true" hidden></button>
 </div>
@@ -557,19 +561,19 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
   <main class="view"><div class="view-scroll" id="viewScroll">
   <section id="top" class="on">
-    <div class="card-h"><h3>The hills are moving.</h3><span class="badge warn">Sample data</span></div>
-    <p class="lede">GroundTruth pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
+    <div class="card-h"><h3 data-t="topH">The hills are moving.</h3><span class="badge warn" data-t="topBadge">Sample data</span></div>
+    <p class="lede" data-t="lede">GroundTruth pairs millimeter ground motion from radar satellites with storm rain to rank Lamorinda's slopes by landslide risk.</p>
     <div class="row">
       <a class="btn solid" href="#ask" data-go="ask">Check your street</a>
       <a class="btn" href="#replay" data-go="replay">Replay winter 2023</a>
     </div>
     <div class="tile"><h3 style="font-size:12px;color:var(--text-3);font-weight:var(--w-med);margin-bottom:4px">Latest gauge reading</h3><p class="body" id="nowLine"></p></div>
     <div class="row"><a class="btn sm" href="#storm" data-go="storm">Set a storm</a><a class="btn sm" href="#backtest" data-go="backtest">See the backtest</a><a class="btn sm ghost" href="#method" data-go="method">What is real here</a></div>
-    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span><b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. The ground motion view is a simulated sample and does not feed the score.</span></div>
-    <p class="foot"><span>A hackathon prototype. It shows relative risk on sample data. For safety decisions, follow the National Weather Service and your city.</span></p>
+    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span data-t="topNotice"><b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. The ground motion view is a simulated sample and does not feed the score.</span></div>
+    <p class="foot"><span data-t="topFoot">A hackathon prototype. It shows relative risk on sample data. For safety decisions, follow the National Weather Service and your city.</span></p>
   </section>
 
-  <section id="motion">
+  <section id="motion" data-only="lamorinda">
     <div class="card-h"><h3>Radar sees a slope creep before anyone feels it.</h3><span class="badge warn">Simulated</span></div>
     <p class="body">Sentinel-1 radar measures the ground to the millimeter every 12 days. Bands run downhill where a slope is creeping. Faster bands mean faster ground.</p>
     <label class="ctl" for="split">
@@ -608,12 +612,12 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
   <section id="replay">
     <div class="card-h"><h3>Winter 2023, replayed day by day.</h3><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real gauge rain</span></div>
-    <p class="body">Real gauge rain from Lafayette and Moraga drives the map. Beacons mark slides reported at the time.</p>
+    <p class="body" data-t="rpBody">Real gauge rain from Lafayette and Moraga drives the map. Beacons mark slides reported at the time.</p>
     <div class="date"><span id="rpDate">Dec 20, 2022</span><small><span class="num" id="rpRain">0</span> mm fell in the next 72 hours. Soil wetness <span class="num" id="rpApi">0</span> mm. Season total <span class="num" id="rpSeason">0</span> mm.</small></div>
     <label class="ctl" for="rpScrub"><span class="vh">Day of the winter</span><input type="range" id="rpScrub" min="0" max="100" value="0" step="1"><span class="ends"><span>Dec 20, 2022</span><span>April 2023</span></span></label>
     <div class="row"><button class="btn solid" id="playBtn">Play the winter</button></div>
     <div class="group">
-      <div class="chart-cap"><span><span class="key rain"><i></i>Daily rain, mm</span><span class="key api"><i></i>Soil wetness index</span></span><span>6 NOAA gauges, area mean</span></div>
+      <div class="chart-cap"><span><span class="key rain"><i></i>Daily rain, mm</span><span class="key api"><i></i>Soil wetness index</span></span><span data-t="rpGauges">6 NOAA gauges, area mean</span></div>
       <canvas id="rainChart" role="img" aria-label="Daily rainfall and soil wetness index for winter 2022 to 2023"></canvas>
     </div>
     <div class="group"><h3>Slides reported so far</h3><ul class="log" id="rpLog" aria-label="Slides reported so far"></ul></div>
@@ -621,9 +625,9 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
   <section id="backtest">
     <h3 style="font-size:16px">Scored against what actually slid.</h3>
-    <p class="body">Ten slides were reported that winter. Reports name a street, not a spot, so each one is checked against the ground within 300 m during the three days before.</p>
+    <p class="body" data-t="btBody">Ten slides were reported that winter. Reports name a street, not a spot, so each one is checked against the ground within 300 m during the three days before.</p>
     <div class="readout" id="btStats">
-      <div class="stat"><b id="btHit">...</b><span>of 10 sat near Elevated or High ground beforehand</span></div>
+      <div class="stat"><b id="btHit">...</b><span data-t="btOf">of 10 sat near Elevated or High ground beforehand</span></div>
       <div class="stat"><b id="btTop">...</b><span>median rank of a slide site: top share of the map. A random street spot ranks top <span id="btNull">...</span></span></div>
       <div class="stat"><b id="btAuc">...</b><span>times in 10 a slide site outscores a random street spot. 5 is a coin flip</span></div>
     </div>
@@ -635,11 +639,11 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
       </table></div>
     </div>
     <div class="group">
-      <h3>The ten reported slides</h3>
+      <h3 data-t="btListH">The ten reported slides</h3>
       <ol class="bt-list" id="btList" aria-label="Reported slides and their scores beforehand"></ol>
       <p class="note" id="btNote"></p>
     </div>
-    <div class="group">
+    <div class="group" data-only="lamorinda">
       <h3>Spot check: slides from other winters</h3>
       <ol class="bt-list" id="btOther" aria-label="Slides reported in other winters and their scores beforehand"></ol>
       <p class="note" id="btOtherNote"></p>
@@ -653,18 +657,20 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
   <section id="inspect">
     <div class="card-h"><h3>Open any slope.</h3><span class="badge quiet">30 m cells</span></div>
-    <p class="body">Click the terrain to read one 30 m cell: its slope, how it moves, and what is pushing its score up.</p>
+    <p class="body" data-t="inBody">Click the terrain to read one 30 m cell: its slope, how it moves, and what is pushing its score up.</p>
     <p class="body">The slope panel also solves for the rain that would tip the cell into the next tier, and traces where debris from it would travel and which streets sit in the way.</p>
-    <p class="body">Rings mark the 52 points that carry a full ten year motion record in the sample. The fit, the recent speed and the acceleration are computed in your browser with the same math the model plan specifies.</p>
-    <div class="row"><button class="btn solid" id="jumpFast">Show the fastest sample point</button></div>
+    <p class="body" data-only="lamorinda">Rings mark the 52 points that carry a full ten year motion record in the sample. The fit, the recent speed and the acceleration are computed in your browser with the same math the model plan specifies.</p>
+    <div class="row"><button class="btn solid" id="jumpFast" data-t="jump">Show the fastest sample point</button></div>
   </section>
 
   <section id="ask">
     <h3 style="font-size:16px">Is my street at risk?</h3>
-    <div id="localSim" class="tile" style="flex:none;display:grid;gap:6px">
+    <div id="localSim" class="tile" data-only="lamorinda" style="flex:none;display:grid;gap:6px">
       <div class="card-h"><h3 style="font-size:13px">Local simulation</h3><label class="switch" for="simFollow" style="font-size:12px"><span>Use simulation rain for Ask</span><input id="simFollow" type="checkbox" checked></label></div>
       <p class="body" id="simStatus" role="status">Connecting to the local simulation...</p>
       <p class="note" id="simScores"></p>
+      <p class="note" id="backendStatus" role="status">Connecting to prediction backend...</p>
+      <p class="note" id="predictionHistory"></p>
       <div class="row"><button class="btn sm" id="simToggle" type="button" disabled>Pause simulation</button></div>
       <p class="note">Historical playback, one day every 10 seconds. Observed rain is a scenario input, not a forecast. The model keeps running while this laptop is awake.</p>
     </div>
@@ -677,35 +683,37 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
         <button class="btn sm" data-q="Where would debris from Miner Road go, and how many buildings are near the path?">Debris path from Miner Road</button>
       </div>
       <form class="ask-form" id="askForm" autocomplete="off">
-        <label for="askIn">Name a street in Lafayette, Orinda or Moraga</label>
+        <label for="askIn" data-t="askLabel">Name a street in Lafayette, Orinda or Moraga</label>
         <ul class="sugg" id="sugg" hidden></ul>
         <input class="field" id="askIn" type="text" placeholder="El Toyonal, Rheem Boulevard, Happy Valley Road" aria-describedby="askHelp">
         <button class="btn accent" type="submit">Ask</button>
       </form>
-      <p class="note" id="askHelp">Local trained ML · no API key or cloud service. Experimental classification scores from four older reports, not calibrated probabilities. Ask uses the trained model; the dashboard map uses the original placeholder.</p>
+      <p class="note" id="askHelp" data-t="askHelp">Ask uses the Python prediction backend with browser-local fallback. Supabase stores history when connected. Experimental scores from four older reports are not calibrated probabilities; the dashboard map uses the original placeholder.</p>
     </div>
   </section>
 
   <section id="method">
     <h3 style="font-size:16px">Real terrain, real rain. The model comes next.</h3>
-    <p class="body">Everything on this map except ground motion was pulled from public data for this exact box of hills. The risk score is a hand-set placeholder that marks where the trained model will plug in.</p>
+    <p class="body" data-t="methodBody">Everything on this map except ground motion was pulled from public data for this exact box of hills. The risk score is a hand-set placeholder that marks where the trained model will plug in.</p>
     <div class="group">
       <h3>Where each layer comes from</h3>
       <ul class="src-list">
         <li><b>Elevation</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">USGS 3DEP through AWS Terrain Tiles, 29 m grid</span></li>
         <li><b>Satellite imagery</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Sentinel-2 scenes of 2023-04-19 and 2026-11-04</span></li>
-        <li><b>Rainfall</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">NOAA GHCN-Daily, 6 gauges, 2015 to 2026-11-14</span></li>
-        <li><b>Streets</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Overture Maps, 1,625 named streets</span></li>
-        <li><b>Buildings</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Overture Maps, 41,494 footprints</span></li>
-        <li><b>Reported slides</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">10 from city and local news reports, street-level positions</span></li>
-        <li><b>Ground motion</b><span class="badge warn">simulated</span><span class="what">Stand-in for OPERA DISP-S1 InSAR. Shown on the map, not used in the score</span></li>
+        <li><b>Rainfall</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what" data-t="srcRain">NOAA GHCN-Daily, 6 gauges, 2015 to 2026-11-14</span></li>
+        <li><b>Streets</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what" data-t="srcStreets">Overture Maps, 1,625 named streets</span></li>
+        <li><b>Buildings</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what" data-t="srcBld">Overture Maps, 41,494 footprints</span></li>
+        <li><b>Reported slides</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what" data-t="srcSlides">10 from city and local news reports, street-level positions</span></li>
+        <li data-only="sf"><b>Ground motion</b><span class="badge quiet">not included</span><span class="what">OPERA DISP-S1 InSAR needs a NASA Earthdata login. Nothing is simulated in its place</span></li>
+        <li data-only="lamorinda"><b>Ground motion</b><span class="badge warn">simulated</span><span class="what">Stand-in for OPERA DISP-S1 InSAR. Shown on the map, not used in the score</span></li>
         <li><b>Risk score</b><span class="badge quiet">placeholder</span><span class="what">Fixed formula until the model is trained</span></li>
       </ul>
     </div>
     <div class="group">
       <h3>The model</h3>
       <p class="body">The model itself is a gradient-boosted tree ensemble the team writes by hand. It trains on mapped landslides up to 2022 and is then tested on winter 2023, using only what was known each morning.</p>
-      <p class="body">A first trial on real labels is in the package: the hand-built model trained on nine of the reported slides and was asked to find the tenth. It scored 5.1 in 10, a coin flip, and plain steepness scored 5.9. Ten street-level reports are too few to learn from, which is why the labels come next.</p>
+      <p class="body" data-only="sf">For San Francisco the package also holds 16,658 rain-linked street flooding cells from the city's 311 records. In a first check, the hand-built trees trained on reports before October 2022 ranked the cells that flooded in the November 2026 storm above the rest about 9 times in 10: 8.3 in 10 on where alone and 9.6 in 10 on which days. That is a flooding model, separate from the landslide score on this map.</p>
+      <p class="body" data-only="lamorinda">A first trial on real labels is in the package: the hand-built model trained on nine of the reported slides and was asked to find the tenth. It scored 5.1 in 10, a coin flip, and plain steepness scored 5.9. Ten street-level reports are too few to learn from, which is why the labels come next.</p>
       <div class="row"><a class="btn" href="https://claude.ai/artifact/TfBUtdaM77hQaFJraNHKLW" target="_blank" rel="noopener">Read the model plan</a></div>
     </div>
     <div class="group">
@@ -754,14 +762,11 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
   </div>
 </dialog>
 
-<script src="data/assets.js"></script>
-<script src="data/buildings.js"></script>
-<script src="data/data.js"></script>
-<script src="data/rainlong.js"></script>
+<script src="js/region.js"></script>
+<script>GT_applyRegion()</script>
 <script src="vendor/three.min.js"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="js/model.js"></script>
-<script src="data/local-model.js"></script>
 <script src="js/local-model.js"></script>
 <script src="js/scene.js"></script>
 <script src="js/app.js"></script>

@@ -1,0 +1,7 @@
+date,record,why
+2016-03-07,NASA Global Landslide Catalog event 191003,"Left out: the text describes a train derailed by a mudslide east of the city (Niles Canyon), not a slide in San Francisco. The catalog point falls in the box only because it was placed on the city name."
+2022-12-31,"NWS storm report 18:02 UTC, 'mud slide behind house', 3 SW San Francisco","Left out as a duplicate: same hour and neighbourhood as the USGS record for 452 Ulloa Street, which has the exact address."
+1997-12-01,USGS Open-File Report 97-745 E (debris-flow sources of the January 1982 storm),"No San Francisco County file exists in that report, so there is nothing to add."
+2026-11-18,November 2026 storm,No landslide inside the city is confirmed in the sources pulled (NWS storm reports and news through 20 November list flooding only).
+,SF 311 service requests,Not usable: the public 311 data has no landslide category and the free text of each case is not published.
+,California Geological Survey deep-seated landslide inventory (DC3 layer),Checked: no features inside the box.
