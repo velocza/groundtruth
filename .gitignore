@@ -6,3 +6,7 @@ __pycache__/
 model/submission/
 .DS_Store
 runtime/
+.env
+.env.*
+!.env.example
+supabase/.temp/

@@ -16,6 +16,13 @@
   /* ------------------------------------------------ scenario state */
   const S = { r72: 60, api: 120, era: 0, amt: 0 };                 // what the storm panel is set to (used by the agent too)
   let localSimulation = null;
+  let backendState = null;
+  async function backendStreet(k, r72, api) {
+    if (!backendState) return null;
+    const res = await fetch('/api/predict', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({street_id:k, rain_72h_mm:Math.max(0,Math.min(400,r72)), api_mm:Math.max(0,Math.min(280,api))})});
+    if (!res.ok) throw new Error('Server prediction failed.');
+    return (await res.json()).prediction;
+  }
   const view = { r72: 60, api: 120 };                              // tweened copy that feeds the shader
   function pushScenario(sc, fast) {
     U.uEra.value = sc.era; U.uAmt.value = sc.amt;
@@ -655,7 +662,7 @@ End with one sentence saying what the tool results say about the ground motion i
     const r72 = rainMatch ? Math.max(0,Math.min(400,parseFloat(rainMatch[1]) * (/^(mm|millimet)/i.test(rainMatch[2]) ? 1 : 25.4))) : followSim ? localSimulation.rain_72h_mm : S.r72;
     const apiMatch = q.match(/(?:wetness|api)\s*(?:of|=|:)?\s*(\d+(?:\.\d+)?)/i);
     const api = apiMatch ? Math.max(0,Math.min(280,+apiMatch[1])) : followSim ? localSimulation.api_mm : S.api;
-    const source = 'Local trained GBM · experimental score, not probability · no cloud calls';
+    let source = 'Browser-local trained GBM · experimental score, not probability';
     const limit = 'Trained on four pre-2022 reports at three approximate locations. Scores are uncalibrated, and do not establish that a property is safe. The map and other dashboard tools still use the original placeholder formula. For site concerns contact city engineering staff or a licensed geotechnical engineer.';
     if (/\b(model|trained|training|accuracy|validation|backtest)\b/i.test(q) && !findStreet(q).length) {
       const rp=ml.report;
@@ -688,11 +695,14 @@ End with one sentence saying what the tool results say about the ground motion i
     const paras=[`Local model scenario${followSim ? ' (historical playback '+localSimulation.simulation_date+')' : ''}: ${r72.toFixed(1)} mm rain in 72 hours, antecedent wetness ${api} mm.`];
     let first=null;
     for (const k of ks.slice(0,4)) {
-      const st=G.streets[k], v=ml.street(k,r72,api); if(!v) {paras.push(st.n+': no cells inside the study grid.');continue;}
+      let serverPrediction = null;
+      try { serverPrediction = await backendStreet(k,r72,api); } catch (_) { paras.push('The server could not score this request; using browser-local inference. This result was not saved to history.'); }
+      const st=G.streets[k], v=serverPrediction || ml.street(k,r72,api); if(!v) {paras.push(st.n+': no cells inside the study grid.');continue;}
+      if (serverPrediction) source = 'Python backend · trained GBM · prediction saved to history';
       if(!first) first={k,v};
-      const lo=ml.street(k,r72*.5,api), hi=ml.street(k,r72*1.5,api);
+      const lo=serverPrediction ? {score:serverPrediction.half_rain_score} : ml.street(k,r72*.5,api), hi=serverPrediction ? {score:serverPrediction.more_rain_score} : ml.street(k,r72*1.5,api);
       paras.push(`${st.n}, ${st.t}: ${v.score.toFixed(1)} / 100 experimental classification score (not a percent chance). Half the rain: ${lo.score.toFixed(1)}; 1.5 times the rain: ${hi.score.toFixed(1)}. No validated alert tier is assigned.`);
-      const changes=ml.explain(k,r72,api).filter(x=>x.change>0.1).slice(0,3);
+      const changes=(serverPrediction ? serverPrediction.explanation : ml.explain(k,r72,api)).filter(x=>x.change>0.1).slice(0,3);
       if(changes.length) paras.push('Sensitivity at the highest-scoring cell: '+changes.map(x=>`${x.name} (${x.change.toFixed(1)} score points versus its reference)`).join(', ')+'. These are counterfactual comparisons, not causal explanations.');
       if (/\b(debris|runout|path|downhill)\b/i.test(q)) {
         const ro=Mo.runout(v.worst); Sc.showPath(ro.path.map(Mo.lonlatOf));
@@ -788,6 +798,21 @@ End with one sentence saying what the tool results say about the ground motion i
       $('#simToggle').disabled = true;
     }
   }
+  async function pollBackend() {
+    try {
+      const response=await fetch('/api/backend', {cache:'no-store'});
+      if(!response.ok) throw new Error('Backend unavailable');
+      backendState=await response.json();
+      $('#backendStatus').textContent = backendState.persistence === 'supabase'
+        ? `Python backend connected · Supabase history · ${backendState.pending_sync} queued writes${backendState.last_error ? ' · sync needs attention' : ''}`
+        : `Python backend connected · local history · ${backendState.supabase_configured ? 'Supabase sync pending' : 'Supabase not connected'}`;
+      const history=await fetch('/api/predictions?limit=3', {cache:'no-store'});
+      if(history.ok) {
+        const runs=await history.json();
+        $('#predictionHistory').textContent = runs.length ? 'Recent predictions: '+runs.map(v=>`${v.run.source}, ${v.predictions[0]?.street || 'street'}: ${v.predictions[0]?.score.toFixed(1)}/100`).join(' · ') : 'No predictions saved yet.';
+      }
+    } catch (_) { backendState=null; $('#backendStatus').textContent='Backend offline · browser-local inference available'; }
+  }
   $('#simToggle').addEventListener('click', async () => {
     if(!localSimulation) return;
     $('#simToggle').disabled = true;
@@ -799,6 +824,7 @@ End with one sentence saying what the tool results say about the ground motion i
     } catch (_) { await pollSimulation(); }
   });
   pollSimulation(); setInterval(pollSimulation, 2000);
+  pollBackend(); setInterval(pollBackend, 5000);
   if (!reduce) {
     gsap.from(Sc.cam, { py: '+=4', pz: '+=6', duration: 2.2, ease: 'power3.out' });
     gsap.from('.rail, .top, .head, .filt, .stage, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });

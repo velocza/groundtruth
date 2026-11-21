@@ -4,6 +4,12 @@ Satellite landslide early warning for Lafayette, Orinda and Moraga, California.
 
 ## Local experimental model and simulation
 
+The local server now also provides street scoring, saved prediction history and
+optional Supabase synchronization. Ask prefers the Python API with browser-local
+fallback. See [Supabase backend setup](supabase/README.md) for the database
+migration, server-only configuration and API endpoints. Until Supabase is
+configured, history is stored locally and the UI reports that connection state.
+
 Run `python -m pip install -r requirements-local.txt`, then `python serve_local.py`
 (or double-click `START_LOCAL.cmd` on Windows). Open http://127.0.0.1:8765/#ask.
 The Ask section uses a trained 60-tree GBM locally without Claude or an API key.

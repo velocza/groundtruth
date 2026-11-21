@@ -665,6 +665,8 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
       <div class="card-h"><h3 style="font-size:13px">Local simulation</h3><label class="switch" for="simFollow" style="font-size:12px"><span>Use simulation rain for Ask</span><input id="simFollow" type="checkbox" checked></label></div>
       <p class="body" id="simStatus" role="status">Connecting to the local simulation...</p>
       <p class="note" id="simScores"></p>
+      <p class="note" id="backendStatus" role="status">Connecting to prediction backend...</p>
+      <p class="note" id="predictionHistory"></p>
       <div class="row"><button class="btn sm" id="simToggle" type="button" disabled>Pause simulation</button></div>
       <p class="note">Historical playback, one day every 10 seconds. Observed rain is a scenario input, not a forecast. The model keeps running while this laptop is awake.</p>
     </div>
@@ -682,7 +684,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
         <input class="field" id="askIn" type="text" placeholder="El Toyonal, Rheem Boulevard, Happy Valley Road" aria-describedby="askHelp">
         <button class="btn accent" type="submit">Ask</button>
       </form>
-      <p class="note" id="askHelp">Local trained ML · no API key or cloud service. Experimental classification scores from four older reports, not calibrated probabilities. Ask uses the trained model; the dashboard map uses the original placeholder.</p>
+      <p class="note" id="askHelp">Ask uses the Python prediction backend with browser-local fallback. Supabase stores history when connected. Experimental scores from four older reports are not calibrated probabilities; the dashboard map uses the original placeholder.</p>
     </div>
   </section>
 

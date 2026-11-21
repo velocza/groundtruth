@@ -37,6 +37,16 @@ class LocalSimulationTests(unittest.TestCase):
                     if time.monotonic() > deadline: raise
                     time.sleep(.1)
             self.assertTrue(state['running'])
+            self.assertEqual(request('/api/backend')['inference'], 'python')
+            with urllib.request.urlopen(origin+'/api/streets?q=Miner%20Road') as response:
+                streets = json.load(response)
+            data = json.dumps(dict(street_id=streets[0]['id'], rain_72h_mm=60, api_mm=120)).encode()
+            req = urllib.request.Request(origin+'/api/predict', data=data,
+                headers={'Origin':origin, 'Content-Type':'application/json'}, method='POST')
+            with urllib.request.urlopen(req) as response: result = json.load(response)
+            self.assertIn('run_id', result)
+            history = request('/api/predictions?street_id='+str(streets[0]['id']))
+            self.assertIn(result['run_id'], [item['run']['id'] for item in history])
             with self.assertRaises(urllib.error.HTTPError) as denied:
                 request('/api/simulation/pause', 'https://example.com')
             self.assertEqual(denied.exception.code, 403)
@@ -53,7 +63,7 @@ class LocalSimulationTests(unittest.TestCase):
         np.testing.assert_allclose(predict(artifact, np.array(fixture['X'])), fixture['scores'], atol=1e-9)
 
     def test_inputs_are_repository_only(self):
-        result = provenance()
+        result = provenance(write=False)
         self.assertFalse(result['external_downloads'])
         self.assertEqual(len(result['git_blobs']), 4)
         self.assertEqual(result['repository'], 'https://github.com/velocza/groundtruth')
