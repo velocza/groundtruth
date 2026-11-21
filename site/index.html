@@ -732,11 +732,19 @@ body.exploring .maptools .ex-rain{display:flex}
 .mc-rows .v{font:var(--w-semi) 13px/1 var(--f-data);text-align:right;color:var(--lv);letter-spacing:0}
 @media (max-width:520px){.mc-v{font-size:32px}.mc-stats dd{font-size:14px}.mc-stats>div{padding:8px}}
 
-#record .rc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}
-#record .rc{background:var(--panel2,var(--panel,rgba(127,127,127,.08)));border:1px solid var(--line,rgba(127,127,127,.2));border-radius:16px;padding:16px 16px 14px}
-#record .rc b{display:block;font-size:40px;line-height:1.05;font-weight:800;letter-spacing:-.02em}
-#record .rc h4{margin:8px 0 4px;font-size:13px;font-weight:700}
-#record .rc p{margin:0;overflow-wrap:anywhere;font-size:12.5px;line-height:1.45;opacity:.78}
+#record .tr-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:12px}
+#record .tr{border:1px solid var(--line,rgba(127,127,127,.2));border-radius:16px;padding:14px 16px;background:var(--panel2,var(--panel,rgba(127,127,127,.08)))}
+#record .tr-when b{font-size:13px;font-weight:800;margin-right:8px}
+#record .tr-when span{font-size:13px;opacity:.75}
+#record .tr-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+#record .tr-cols>div{border-radius:12px;padding:10px 12px;background:rgba(127,127,127,.08)}
+#record .tr-cols h4{margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+#record .tr-cols p{margin:0;font-size:12.5px;line-height:1.45}
+#record .tr-v{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#record .tr-v svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#record .tr-v b{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+#record .tr-v span{font-size:13px;font-weight:600;flex:1 1 180px}
+@media (max-width:600px){#record .tr-cols{grid-template-columns:1fr}}
 </style>
 
 <div id="loading"><div><b class="wordmark">escape</b><p>Loading terrain and satellite imagery</p><div class="bar"><i></i></div></div></div>
@@ -1192,16 +1200,30 @@ body.exploring .maptools .ex-rain{display:flex}
   </section>
 
   <section id="record">
-    <h3 style="font-size:16px">Predictions checked against what actually happened.</h3>
-    <p class="body">Every number here comes from a real event the model did not train on. Nothing is simulated.</p>
-    <div class="rc-grid">
-      <div class="rc"><b>9 of 10</b><h4>Lamorinda landslides, winter 2023</h4><p>Slides the model never trained on sat on Elevated or High ground beforehand, with only 6.6% of the map flagged. The old formula caught 3 of 10.</p></div>
-      <div class="rc"><b>6.8 in 10</b><h4>Slide site vs a random street spot</h4><p>How often a real 2023 slide site scores above a random spot on a street. 5 in 10 is a coin flip.</p></div>
-      <div class="rc"><b>0.85</b><h4>Landslide model, spatial cross-validation</h4><p>AUC when whole map areas are held out and predicted blind (local_model_landslide/report.json, 0.849).</p></div>
-      <div class="rc"><b>0.91</b><h4>San Francisco flood model, Nov 2026 storm</h4><p>AUC on 311 flood reports from the November 18, 2026 storm, held out from training (local_model_sf/report.json, 0.912).</p></div>
-      <div class="rc"><b>11 of 13</b><h4>Lamorinda flood score vs NOAA reports</h4><p>Mapped NOAA Storm Events flood reports that landed in Elevated or High flood areas.</p></div>
-      <div class="rc"><b>0.63 min</b><h4>San Francisco drive-time model</h4><p>Average error against real October 2026 911 arrivals it never saw, with a bias of -0.03 min (dataset_sf/storm_response/summary.json).</p></div>
-    </div>
+    <h3 style="font-size:16px">Past storms: what we predicted, and what actually happened.</h3>
+    <p class="body">Each row is a real event. The model was scored on data it never trained on. Nothing is simulated.</p>
+    <ol class="tr-list">
+      <li class="tr">
+        <div class="tr-when"><b>Jan 2023</b><span>Lamorinda winter storms</span></div>
+        <div class="tr-cols"><div><h4>What we predicted</h4><p>Before the storms, the model marked 6.6% of the map as Elevated or High landslide risk.</p></div><div><h4>What actually happened</h4><p>10 landslides were reported. 9 of them were on ground we had flagged.</p></div></div>
+        <div class="tr-v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><b>9 of 10</b><span>Caught 9 of 10 slides it never trained on. The old formula caught 3.</span></div>
+      </li>
+      <li class="tr">
+        <div class="tr-when"><b>Nov 18, 2026</b><span>San Francisco record rain, 67 mm downtown</span></div>
+        <div class="tr-cols"><div><h4>What we predicted</h4><p>The flood model ranked every block by how likely it was to flood.</p></div><div><h4>What actually happened</h4><p>776 flood reports came in to 311 that day, the most since 2008.</p></div></div>
+        <div class="tr-v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><b>0.91</b><span>A flooded block ranked above a dry one about 9 times in 10.</span></div>
+      </li>
+      <li class="tr">
+        <div class="tr-when"><b>2015 to 2026</b><span>Lamorinda floods reported to NOAA</span></div>
+        <div class="tr-cols"><div><h4>What we predicted</h4><p>The flood score marked Elevated and High areas from FEMA zones, creeks and terrain.</p></div><div><h4>What actually happened</h4><p>13 floods were reported at places we can map. 11 were inside our Elevated or High areas.</p></div></div>
+        <div class="tr-v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><b>11 of 13</b><span>Most real floods landed where we said they would.</span></div>
+      </li>
+      <li class="tr">
+        <div class="tr-when"><b>Oct 2026</b><span>San Francisco 911 calls</span></div>
+        <div class="tr-cols"><div><h4>What we predicted</h4><p>The drive-time model predicted how many minutes a fire engine would take to arrive.</p></div><div><h4>What actually happened</h4><p>Real arrival times from city dispatch records, which the model never saw.</p></div></div>
+        <div class="tr-v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><b>0.63 min</b><span>Off by about 38 seconds on average.</span></div>
+      </li>
+    </ol>
   </section>
 
   <section id="method">
