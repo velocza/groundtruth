@@ -2,7 +2,7 @@
    Lamorinda text is the page default. Elements marked data-only="<area>" show for that area only, and elements marked data-t="<key>" take the text below. */
 (function () {
   var REGIONS = {
-    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: false, landslideModel: true,
+    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: false, landslideModel: true, files: ['flood_lamorinda'],
       towns: [['Lafayette', -122.118, 37.886], ['Orinda', -122.183, 37.877], ['Moraga', -122.130, 37.835]], tourQ: 'Where would debris from Miner Road go, and how many buildings are near the path?', example: 'Miner Road with 100 mm rain' },
     sf: { id: 'sf', dir: 'data_sf', files: ['flood_model', 'storm_response'], label: 'San Francisco, San Francisco County', sub: 'City of San Francisco', short: 'San Francisco', places: 'San Francisco', placesOr: 'San Francisco', motion: false,
       tourQ: 'Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', example: 'Twin Peaks Boulevard with 100 mm rain',
