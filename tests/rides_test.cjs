@@ -2,7 +2,8 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const root=path.resolve(__dirname,'..');
 const ctx={atob:s=>Buffer.from(s,'base64').toString('binary')}; ctx.window=ctx;
 vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(path.join(root,'site/data/census_bg.js'),'utf8'),ctx);
+const AREA=process.argv[2]==='sf'?'data_sf':'data';   // node tests/rides_test.cjs sf  checks the San Francisco file
+vm.runInContext(fs.readFileSync(path.join(root,'site',AREA,'census_bg.js'),'utf8'),ctx);
 vm.runInContext(fs.readFileSync(path.join(root,'site/js/rides.js'),'utf8'),ctx);
 const R=ctx.GTRides,C=ctx.GT_CENSUS,D=R.decode(C);
 const J=x=>JSON.parse(JSON.stringify(x));   // results come from another realm

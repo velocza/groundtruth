@@ -10,6 +10,7 @@ Reads the named street centrelines the site already ships (site/data/data.js, Ov
           then to the nearer end of that piece of road. Over MAX_BLD_M from any road counts as "no road found".
 
 Usage:  python3 scripts/08_road_graph.py                 (real data, writes site/data/roads_graph.js)
+        python3 scripts/08_road_graph.py --region sf     (San Francisco: site/data_sf/data.js, dataset_sf/ buildings and freeways, writes site/data_sf/roads_graph.js)
         python3 scripts/08_road_graph.py --json in out   (tests: {"bbox","nx","ny","lines":[[[lon,lat],..],..],"buildings":[[lon,lat],..]})
 Standard library + numpy only.
 """
@@ -32,8 +33,10 @@ class UF:
     def union(s, a, b): s.p[s.find(a)] = s.find(b)
 
 
-def build(lines, bbox, nx, ny, buildings, tol=TOL_M, exit_m=EXIT_M, max_bld=MAX_BLD_M, never_exit=(), far_exit=()):
-    """lines: list of polylines [[lon, lat], ...]. Returns a dict of plain lists (see the module docstring)."""
+def build(lines, bbox, nx, ny, buildings, tol=TOL_M, exit_m=EXIT_M, max_bld=MAX_BLD_M, never_exit=(), far_exit=(), raised=(), exit_sides=(0, 1, 2, 3)):
+    """lines: list of polylines [[lon, lat], ...]. Returns a dict of plain lists (see the module docstring).
+    raised: ids of grade-separated lines (freeway main lanes). They join other lines only end to end, never at a vertex in their middle,
+    so a street passing under a freeway is not taken for an on-ramp."""
     W, S, E, N = bbox
     X = lambda lo: (lo - W) * KX
     Y = lambda la: (la - S) * KY
@@ -55,20 +58,22 @@ def build(lines, bbox, nx, ny, buildings, tol=TOL_M, exit_m=EXIT_M, max_bld=MAX_
             for dy in (-1, 0, 1):
                 for j in grid.get((cx + dx, cy + dy), ()):
                     if j != i and math.hypot(P[i, 0] - P[j, 0], P[i, 1] - P[j, 1]) <= tol: yield j
+    up = np.zeros(len(lines), bool); up[list(raised)] = True
     for i in np.flatnonzero(is_end):
         for j in near(i):
             if line_of[j] == line_of[i] and not is_end[j]: continue     # do not weld a line to its own next vertex
+            if not is_end[j] and (up[line_of[i]] or up[line_of[j]]): continue   # a freeway lane meets other roads only at its ends
             uf.union(i, j)
             if not is_node[j]: is_node[j] = True; n_tjoin += 1
     # 2. interior vertices that two different lines share exactly are crossings
     seen = {}
     for i in np.flatnonzero(~is_end):
         k = (round(P[i, 0], 2), round(P[i, 1], 2)); j = seen.setdefault(k, i)
-        if j != i and line_of[j] != line_of[i]: uf.union(i, j); is_node[i] = is_node[j] = True
+        if j != i and line_of[j] != line_of[i] and not (up[line_of[i]] or up[line_of[j]]): uf.union(i, j); is_node[i] = is_node[j] = True
     # 3. a still-loose endpoint lying on the middle of another line's segment (no vertex there): join it to the segment's nearer end
     roots = {}
     for i in np.flatnonzero(is_node): roots.setdefault(uf.find(i), []).append(i)
-    loose = [g[0] for g in roots.values() if len(g) == 1 and is_end[g[0]]]
+    loose = [g[0] for g in roots.values() if len(g) == 1 and is_end[g[0]] and not up[line_of[g[0]]]]
     if loose:
         A, B = [], []                                          # all segments, as vertex id pairs
         for l, ln in enumerate(lines):
@@ -76,7 +81,7 @@ def build(lines, bbox, nx, ny, buildings, tol=TOL_M, exit_m=EXIT_M, max_bld=MAX_
         A, B = np.array(A), np.array(B); a, d = P[A], P[B] - P[A]; dd = np.maximum((d * d).sum(1), 1e-9)
         for i in loose:
             t = np.clip(((P[i] - a) * d).sum(1) / dd, 0, 1); dist = np.hypot(*(a + d * t[:, None] - P[i]).T)
-            dist[line_of[A] == line_of[i]] = 1e9; s = int(dist.argmin())
+            dist[line_of[A] == line_of[i]] = 1e9; dist[up[line_of[A]]] = 1e9; s = int(dist.argmin())
             if dist[s] <= tol:
                 j = int(A[s] if t[s] < 0.5 else B[s]); uf.union(i, j); is_node[j] = True; n_proj += 1
 
@@ -112,10 +117,13 @@ def build(lines, bbox, nx, ny, buildings, tol=TOL_M, exit_m=EXIT_M, max_bld=MAX_
     # exits: a dead end close to the map edge whose last stretch points out of the box (the source data is clipped at the box)
     Wm, Hm, exits = X(E), Y(N), []
     for n in range(nn):
-        if deg[n] != 1: continue
+        inc = [k for k in range(ne) if EU[k] == n or EV[k] == n]
+        # a dead end, or where the two carriageways of a freeway meet at the map edge (the Golden Gate Bridge)
+        if deg[n] != 1 and not (deg[n] == 2 and len(inc) == 2 and all(up[EL[k]] for k in inc) and EL[inc[0]] != EL[inc[1]]): continue
         x, y = NP[n]; dm, side = min((x, 0), (Wm - x, 1), (y, 2), (Hm - y, 3))
-        e = next(k for k in range(ne) if EU[k] == n or EV[k] == n); s = SAMP[e][1]
+        e = inc[0]; s = SAMP[e][1]
         if EL[e] in never_exit or dm > (FAR_EXIT_M if EL[e] in far_exit else exit_m): continue
+        if side not in exit_sides and not up[EL[e]]: continue             # a street that only stops at the water's edge of the map is no way out
         if EU[e] != n: s = s[::-1]
         back = s[min(len(s) - 1, 3)]; out = (back[0] - x, x - back[0], back[1] - y, y - back[1])[side]   # > 0 when the road was heading for that edge
         if out > 0 or len(s) < 2: exits.append(n)
@@ -172,19 +180,34 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == '--json':
         j = json.load(open(sys.argv[2])); g = build(j['lines'], j['bbox'], j['nx'], j['ny'], j.get('buildings', []), j.get('tol', TOL_M), j.get('exit_m', EXIT_M), j.get('max_bld', MAX_BLD_M))
         json.dump(g, open(sys.argv[3], 'w')); return
-    src = open(os.path.join(ROOT, 'site', 'data', 'data.js')).read(); G = json.loads(src[src.index('{'):src.rindex('}') + 1])
-    lines, ref = [], []                                        # ref: which street and which of its polylines each line is
-    for k, st in enumerate(G['streets']):
-        for s, pl in enumerate(st['g']): lines.append(pl); ref.append((k, s))
-    with open(os.path.join(ROOT, 'dataset', 'buildings_lamorinda.csv')) as fh: bld = [(float(r['lon']), float(r['lat'])) for r in csv.DictReader(fh)]
-    name = lambda l: G['streets'][ref[l][0]]['n']
+    sf = '--region' in sys.argv and sys.argv[sys.argv.index('--region') + 1] == 'sf'
+    site, ds, bfile = ('data_sf', 'dataset_sf', 'buildings_san_francisco.csv') if sf else ('data', 'dataset', 'buildings_lamorinda.csv')
+    src = open(os.path.join(ROOT, 'site', site, 'data.js')).read(); G = json.loads(src[src.index('{'):src.rindex('}') + 1])
+    streets = list(G['streets']); extra = []
+    if sf:
+        # San Francisco: the named street list leaves freeways out, but the bridges, US 101 and I-280 are the city's main ways out.
+        # dataset_sf/roads_motorway_overture.json (scripts/sf/07_fetch_motorways.py) adds them. They get their own entries after GT.streets.
+        mw = json.load(open(os.path.join(ROOT, ds, 'roads_motorway_overture.json')))['lines']; by = {}
+        for r in mw: by.setdefault((r['name'] or 'Freeway ramp') if not r['link'] else 'Freeway ramp' if not r['name'] else r['name'] + ' ramp', []).append(r)
+        for nm in sorted(by): extra.append(dict(n=nm, t='Freeway', g=[r['coords'] for r in by[nm]], ramp=[int(r['link']) for r in by[nm]]))
+        streets += extra
+    lines, ref, raised = [], [], set()                        # ref: which street and which of its polylines each line is
+    for k, st in enumerate(streets):
+        for s, pl in enumerate(st['g']):
+            if 'ramp' in st and not st['ramp'][s]: raised.add(len(lines))
+            lines.append(pl); ref.append((k, s))
+    with open(os.path.join(ROOT, ds, bfile)) as fh: bld = [(float(r['lon']), float(r['lat'])) for r in csv.DictReader(fh)]
+    name = lambda l: streets[ref[l][0]]['n']
+    far = () if sf else FAR_EXITS
     g = build(lines, G['meta']['bbox'], G['meta']['nx'], G['meta']['ny'], bld, never_exit={l for l in range(len(lines)) if name(l).endswith(' Court')},
-              far_exit={l for l in range(len(lines)) if name(l) in FAR_EXITS}); m = g['meta']; m['far_exits'] = list(FAR_EXITS)
-    m.update(built=datetime.date.today().isoformat(), streets=len(G['streets']), polylines=len(lines))
+              far_exit={l for l in range(len(lines)) if name(l) in far}, raised=raised,
+              exit_sides=(2,) if sf else (0, 1, 2, 3))   # San Francisco: only the county line to the south, plus the freeway bridges; the other edges are water
+    m = g['meta']; m['far_exits'] = list(far)
+    m.update(built=datetime.date.today().isoformat(), streets=len(G['streets']), polylines=len(lines), region='sf' if sf else 'lamorinda', freeway_entries=len(extra), freeway_lines=len(raised))
     print(json.dumps(m, indent=1))
     print(f"endpoints joined to another line: {m['endpoints_joined'] / m['endpoints']:.1%}")
     print(f"buildings with no road within {MAX_BLD_M:.0f} m: {m['buildings_no_road']} ({m['buildings_no_road'] / m['buildings']:.1%}); on roads with no link to an exit even when dry: {m['buildings_unlinked']} ({m['buildings_unlinked'] / m['buildings']:.1%})")
-    names = sorted({G['streets'][ref[g['el'][e]][0]]['n'] for n in g['exits'] for e in range(len(g['eu'])) if g['eu'][e] == n or g['ev'][e] == n})
+    names = sorted({streets[ref[g['el'][e]][0]]['n'] for n in g['exits'] for e in range(len(g['eu'])) if g['eu'][e] == n or g['ev'][e] == n})
     print(len(g['exits']), 'exits on', len(names), 'streets:', ', '.join(names))
     # compact form for the browser: flat arrays; edge geometry is a (street, polyline, first vertex, last vertex) reference into GT.streets
     flat = lambda rows: [v for r in rows for v in r]
@@ -193,8 +216,9 @@ def main():
     js = dict(meta=m, nodes=flat(g['nodes']), exits=g['exits'], base=g['base'],
               edges=flat([g['eu'][e], g['ev'][e], ref[g['el'][e]][0], ref[g['el'][e]][1], g['ea'][e], g['eb'][e], g['elen'][e], g['b0'][e], g['b1'][e]] for e in range(len(g['eu']))),
               cellOff=off, cells=cells)
-    out = os.path.join(ROOT, 'site', 'data', 'roads_graph.js')
-    open(out, 'w').write('/* Generated by scripts/08_road_graph.py from site/data/data.js and dataset/buildings_lamorinda.csv. Do not edit. */\nwindow.GT_ROADS=' + json.dumps(js, separators=(',', ':')) + ';\n')
+    if extra: js['extra'] = [dict(n=x['n'], t=x['t'], g=x['g']) for x in extra]      # street ids from len(GT.streets) on refer to these
+    out = os.path.join(ROOT, 'site', site, 'roads_graph.js')
+    open(out, 'w').write(f'/* Generated by scripts/08_road_graph.py from site/{site}/data.js and {ds}/{bfile}' + (' plus freeways from {ds}/roads_motorway_overture.json'.format(ds=ds) if extra else '') + '. Do not edit. */\nwindow.GT_ROADS=' + json.dumps(js, separators=(',', ':')) + ';\n')
     print('wrote', out, os.path.getsize(out), 'bytes')
 
 

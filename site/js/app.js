@@ -670,6 +670,22 @@ End with one sentence saying what the tool results say about the ground motion i
     if (rk.top.length) { flyToStreet(rk.top[0].k); }
     return d;
   }
+  /* San Francisco flood model: trees trained on SF 311 rain-linked flood reports (model/train_sf_flood.py). The page shows its saved street predictions for the
+     November 18, 2026 storm (site/data_sf/flood_model.js); it does not change with the storm sliders, and the landslide map does not use it. */
+  function floodAbout() {
+    const m = window.GT_FLOOD.meta;
+    return `Flood model (separate from the landslide score): ${m.trees} gradient-boosted trees of depth ${m.depth}, picked from ${fmt(m.configs_tried)} settings by spatial cross-validation on SF 311 flood reports filed before October 2022 (area under the curve ${m.cv_auc.toFixed(2)}). Scored once afterwards on data it never saw: winter 2023 ${m.test_winter2023.toFixed(2)}, the November 2026 storm ${m.test_nov2026.toFixed(2)} (${m.test_nov2026_where.toFixed(2)} on where alone). 0.5 is a coin flip. ${m.caveat}`;
+  }
+  function floodAnswer() {
+    const F = window.GT_FLOOD, m = F.meta, top = Object.entries(F.streets).sort((a, b) => a[1][1] - b[1][1]).slice(0, 8);
+    const town = n => { const k = G.streets.findIndex(s => s.n === n); return k >= 0 ? G.streets[k].t : ''; };
+    const d = bubble('', [`Flood model for San Francisco, the November 18, 2026 storm (${m.rain_72h_mm.toFixed(0)} mm in 72 hours from the morning of November 16, a record day downtown). Streets most likely to flood, by the model:`,
+      ...top.map(([n, v]) => `${v[1]}. ${n}${town(n) ? ', ' + town(n) : ''}: ${v[0].toFixed(1)} / 100`),
+      `Each street score is the mean of its top 10% of 29 m cells within 150 m. Across the city map, cells with a 311 flood report that day outscored the rest ${(m.map_auc * 10).toFixed(1)} times in 10.`, floodAbout()],
+      'San Francisco flood model · trained on SF 311 reports · saved predictions');
+    const k = G.streets.findIndex(s => s.n === top[0][0]); if (k >= 0) flyToStreet(k);
+    return d;
+  }
   async function ask(q) {
     q = q.trim(); if (!q) return;
     bubble('me', q); $('#askIn').value = ''; hideSugg();
@@ -682,10 +698,12 @@ End with one sentence saying what the tool results say about the ground motion i
     const api = apiMatch ? Math.max(0,Math.min(280,+apiMatch[1])) : followSim ? localSimulation.api_mm : S.api;
     let source = 'Browser-local trained GBM · experimental score, not probability';
     const limit = (REG.id === 'lamorinda' ? '' : 'These trees were trained in Lamorinda and are read against ' + REG.short + ' terrain without retraining. ') + 'Trained on four pre-2022 reports at three approximate locations. Scores are uncalibrated, and do not establish that a property is safe. The map and other dashboard tools still use the original placeholder formula. For site concerns contact city engineering staff or a licensed geotechnical engineer.';
+    const FL = REG.id === 'sf' && window.GT_FLOOD;          // San Francisco flood model (local_model_sf), saved predictions for the November 2026 storm
+    if (FL && /\bflood\w*\b/i.test(q) && !findStreet(q.replace(/\bflood\w*\b/gi, ' ')).length) { floodAnswer(); return; }
     if (/\b(model|trained|training|accuracy|validation|backtest)\b/i.test(q) && !findStreet(q).length) {
       const rp=ml.report;
       bubble('', [`Local model: ${rp.params.n_trees} depth-${rp.params.max_depth} gradient-boosted trees, trained on ${rp.training_events} older reports at ${rp.unique_training_locations} locations. No simulated motion or later vegetation is used.`,
-        `The exploratory held-out 2023 check beat ${(rp.heldout_mean_share_random_street_spots_beaten*100).toFixed(1)}% of 100 randomly sampled street spots on average, using the same 300 m search radius. This is a ranking statistic, not accuracy or a failure probability. Future observed gauge rain was used as a perfect-rain scenario.`, limit],source); return;
+        `The exploratory held-out 2023 check beat ${(rp.heldout_mean_share_random_street_spots_beaten*100).toFixed(1)}% of 100 randomly sampled street spots on average, using the same 300 m search radius. This is a ranking statistic, not accuracy or a failure probability. Future observed gauge rain was used as a perfect-rain scenario.`, limit].concat(FL ? [floodAbout()] : []),source); return;
     }
     let ks;
     const nq = ' '+norm(q).replace(/\bstreet\b/g,'st')+' ';
@@ -730,6 +748,7 @@ End with one sentence saying what the tool results say about the ground motion i
         paras.push(`Terrain-only screening path: ${ro.length} m long, ${ro.drop} m elevation drop. This is not an ML runout prediction.`);
       }
     }
+    if (FL) for (const k of ks.slice(0, 4)) { const f = FL.streets[G.streets[k].n]; if (f) paras.push(`Flood model, a separate model for street flooding: on the ${FL.meta.rain_72h_mm.toFixed(0)} mm storm of November 18, 2026, ${G.streets[k].n} scored ${f[0].toFixed(1)} / 100 and ranked ${fmt(f[1])} of ${fmt(FL.meta.n_streets)} streets (1 is the most flood-prone). A ranking, not a chance of flooding.`); }
     if (/\b(history|buildings|homes|houses|tipping|how often)\b/i.test(q)) paras.push('Historical alert counts, exposure tiers and tipping points are not validated for this experimental model. Those tools elsewhere on the dashboard use the placeholder score.');
     paras.push(limit);
     const d=bubble('',paras,source);

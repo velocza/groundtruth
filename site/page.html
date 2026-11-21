@@ -592,8 +592,8 @@ body.exploring .maptools .ex-rain{display:flex}
   <a class="nav" href="#inspect" data-go="inspect"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6-11 4 6 2.2-3L21 19z"/></svg><span>Slopes</span></a>
   <div class="sp"></div>
   <a class="nav" href="#ask" data-go="ask"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7.5L7 20.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><span>Ask</span></a>
-  <a class="nav" href="#evac" data-go="evac" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
-  <a class="nav" href="#rides" data-go="rides" data-only="lamorinda"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M2.5 19.5c.5-3.4 2.7-5.2 5.5-5.2s5 1.8 5.5 5.2M15 14.6c.6-.2 1.3-.3 2-.3 2.3 0 4 1.5 4.5 4.200"/></svg><span>Neighbor rides</span></a>
+  <a class="nav" href="#evac" data-go="evac"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
+  <a class="nav" href="#rides" data-go="rides"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M2.5 19.5c.5-3.4 2.7-5.2 5.5-5.2s5 1.8 5.5 5.2M15 14.6c.6-.2 1.3-.3 2-.3 2.3 0 4 1.5 4.5 4.200"/></svg><span>Neighbor rides</span></a>
   <a class="nav" href="#method" data-go="method"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><span>Data and method</span></a>
 </nav>
 
@@ -857,7 +857,7 @@ body.exploring .maptools .ex-rain{display:flex}
     </div>
   </section>
 
-  <section id="evac" data-only="lamorinda">
+  <section id="evac">
     <style>
       #evac .opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12px;color:var(--text-2)}
       #evac .opts label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -883,7 +883,7 @@ body.exploring .maptools .ex-rain{display:flex}
     <div class="opts">
       <span>Block a road when it scores</span>
       <div class="seg-track multi sm" role="group" aria-label="Score that blocks a road" id="evThr"><button data-thr="50" aria-pressed="true">Elevated, 50</button><button data-thr="75" aria-pressed="false">High, 75</button></div>
-      <label><input type="checkbox" id="evLocal" checked> Count the ten local reports with the USGS point</label>
+      <label data-only="lamorinda"><input type="checkbox" id="evLocal" checked> Count the ten local reports with the USGS point</label>
       <label><input type="checkbox" id="evFlood"> Creek flooding (screening proxy, not validated)</label>
     </div>
     <div class="readout">
@@ -892,7 +892,7 @@ body.exploring .maptools .ex-rain{display:flex}
       <div class="stat"><b id="evBlocked">...</b><span>road segments blocked</span></div>
     </div>
     <p class="note" id="evHaz"></p>
-    <p class="note" id="evNote">Bright lines on the map are blocked road segments. Markers labelled USGS mapped are slides the U.S. Geological Survey recorded; round markers are local reports.</p>
+    <p class="note" id="evNote" data-t="evNote">Bright lines on the map are blocked road segments. Markers labelled USGS mapped are slides the U.S. Geological Survey recorded; round markers are local reports.</p>
     <div class="group">
       <h3>Find a way out</h3>
       <form class="find" id="evFindF" role="search"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.6-4.6"/></svg><label class="vh" for="evFind">Street to leave from</label><input class="field" id="evFind" list="exStreets" placeholder="Type a street, or press a house or road on the map" autocomplete="off" spellcheck="false"><button class="vh" type="submit" tabindex="-1">Go</button></form>
@@ -949,7 +949,7 @@ body.exploring .maptools .ex-rain{display:flex}
     <div class="group">
       <h3>The model</h3>
       <p class="body">The model itself is a gradient-boosted tree ensemble the team writes by hand. It trains on mapped landslides up to 2022 and is then tested on winter 2023, using only what was known each morning.</p>
-      <p class="body" data-only="sf">For San Francisco the package also holds 16,658 rain-linked street flooding cells from the city's 311 records. In a first check, the hand-built trees trained on reports before October 2022 ranked the cells that flooded in the November 2026 storm above the rest about 9 times in 10: 8.3 in 10 on where alone and 9.6 in 10 on which days. That is a flooding model, separate from the landslide score on this map.</p>
+      <p class="body" data-only="sf">For San Francisco the package also holds 16,658 rain-linked street flooding cells from the city's 311 records. In a first check, the hand-built trees trained on reports before October 2022 ranked the cells that flooded in the November 2026 storm above the rest about 9 times in 10: 8.3 in 10 on where alone and 9.6 in 10 on which days. That is a flooding model, separate from the landslide score on this map. A tuned version (300 trees, chosen from 1,303 settings using only reports before October 2022) scored 9.1 in 10 on the November 2026 storm and 8.9 in 10 on winter 2023. Ask shows its street ranking for that storm when you ask about flooding.</p>
       <p class="body" data-only="lamorinda">A first trial on real labels is in the package: the hand-built model trained on nine of the reported slides and was asked to find the tenth. It scored 5.1 in 10, a coin flip, and plain steepness scored 5.9. Ten street-level reports are too few to learn from, which is why the labels come next.</p>
       <div class="row"><a class="btn" href="https://claude.ai/artifact/TfBUtdaM77hQaFJraNHKLW" target="_blank" rel="noopener">Read the model plan</a></div>
     </div>
@@ -1006,9 +1006,6 @@ body.exploring .maptools .ex-rain{display:flex}
 <script src="js/model.js"></script>
 <script src="js/local-model.js"></script>
 <script src="js/scene.js"></script>
-<script src="data/roads_graph.js"></script>
-<script src="data/usgs_inventory.js"></script>
 <script src="js/evac.js"></script>
-<script src="data/census_bg.js"></script>
 <script src="js/rides.js"></script>
 <script src="js/app.js"></script>

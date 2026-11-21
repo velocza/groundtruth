@@ -12,15 +12,17 @@
   /* ------------------------------------------------ Census block groups and buildings (site/data/census_bg.js, built by scripts/09_census.py) */
   function bytes(b64) { const s = atob(b64), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
   function decode(C) {
-    const [W, S, E, N] = C.meta.bbox, raw = bytes(C.bld), n = raw.length / 7, u16 = o => new Uint16Array(raw.buffer.slice(o, o + 2 * n));
-    const qx = u16(0), qy = u16(2 * n), area = u16(4 * n), bg = raw.slice(6 * n), lon = new Float64Array(n), lat = new Float64Array(n);
+    const [W, S, E, N] = C.meta.bbox, raw = bytes(C.bld); let n = raw.length / 7; const u16 = o => new Uint16Array(raw.buffer.slice(o, o + 2 * n));
+    const wide = C.meta.bg_bytes === 2, NONE = wide ? 65535 : 255;             // San Francisco has about 680 block groups, so its ids take two bytes
+    if (wide) n = raw.length / 8;
+    const qx = u16(0), qy = u16(2 * n), area = u16(4 * n), bg = wide ? u16(6 * n) : raw.slice(6 * n), lon = new Float64Array(n), lat = new Float64Array(n);
     for (let i = 0; i < n; i++) { lon[i] = W + qx[i] / 65535 * (E - W); lat[i] = S + qy[i] / 65535 * (N - S); }
-    const [NX, NY] = C.meta.grid, cells = new Uint8Array(NX * NY), runs = bytes(C.cells); let p = 0;
-    for (let i = 0; i < runs.length; i += 3) { const len = runs[i + 1] | runs[i + 2] << 8; cells.fill(runs[i], p, p + len); p += len; }
-    return { meta: C.meta, bg: C.bg, n, lon, lat, area, bldBg: bg, cells, NX, NY, bbox: C.meta.bbox };
+    const [NX, NY] = C.meta.grid, cells = wide ? new Uint16Array(NX * NY) : new Uint8Array(NX * NY), runs = bytes(C.cells), w = wide ? 4 : 3; let p = 0;
+    for (let i = 0; i < runs.length; i += w) { const v = wide ? runs[i] | runs[i + 1] << 8 : runs[i], len = runs[i + w - 2] | runs[i + w - 1] << 8; cells.fill(v, p, p + len); p += len; }
+    return { meta: C.meta, bg: C.bg, n, lon, lat, area, bldBg: bg, cells, NX, NY, bbox: C.meta.bbox, none: NONE };
   }
   const cellOf = (D, lon, lat) => { const [W, S, E, N] = D.bbox, c = Math.floor((lon - W) / (E - W) * D.NX), r = Math.floor((N - lat) / (N - S) * D.NY); return r < 0 || c < 0 || r >= D.NY || c >= D.NX ? -1 : r * D.NX + c; };
-  const bgAt = (D, lon, lat) => { const i = cellOf(D, lon, lat), k = i < 0 ? 255 : D.cells[i]; return k === 255 ? -1 : k; };
+  const bgAt = (D, lon, lat) => { const none = D.none == null ? 255 : D.none, i = cellOf(D, lon, lat), k = i < 0 ? none : D.cells[i]; return k === none ? -1 : k; };
 
   /* Step 2. Spread each block group's counts over its residential-sized buildings in proportion to footprint area.
      A block group that reaches past the edge of the map only brings the share of its households that matches its share of area inside the map.
@@ -152,6 +154,7 @@
 
   /* ------------------------------------------------ page */
   const $ = s => document.querySelector(s), sec = $('#rides'), Mo = window.GTModel, Sc = window.GTScene, G = window.GT; if (!sec || !Mo || !G) return;
+  const SF = !!(window.GT_REGION && window.GT_REGION.id === 'sf');
   const D = decode(window.GT_CENSUS), hh = households(D), fmt = v => Math.round(v).toLocaleString('en-US');
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const R23 = G.rain.wy2023, D0 = 80, D1 = 181, mm = d => R23.mm[d] || 0;        // Dec 20, 2022 to Mar 31, 2023, as in the replay view
@@ -205,7 +208,7 @@
     $('#rdStorm').textContent = mode === 'model'
       ? `Storm: ${sc.r72} mm of rain in 72 hours on soil wetness ${sc.api} mm. A home must leave when the ground under it scores ${r && r.env.thr >= 75 ? 'High' : 'Elevated or High'}, or it sits in the path debris would take.`
       : `Slides recorded in winter 2023: ${slideText(r)}. A home must leave when it is within ${NEAR_SLIDE_M} m of one. This is observed, not forecast, and the USGS inventory is incomplete, so these counts are a floor. The storm sliders do not change this view.`;
-    $('#rdRule').textContent = `A pickup counts when the rider is within ${DETOUR_M / 1000} km, there and back, of the driver's own route out, the car has a free seat (${SEATS} seats, the driver's household rides first), and both routes are clear. Ranges come from the Census margins of error and the luck of the simulated draw. Only homes in Contra Costa County are counted, so these numbers are smaller than the building counts elsewhere on the site, which include the Oakland side of the map.`
+    $('#rdRule').textContent = `A pickup counts when the rider is within ${DETOUR_M / 1000} km, there and back, of the driver's own route out, the car has a free seat (${SEATS} seats, the driver's household rides first), and both routes are clear. Ranges come from the Census margins of error and the luck of the simulated draw. ${SF ? 'Only homes in San Francisco County are counted: the strip of Daly City and Brisbane at the bottom of the map has no simulated households.' : 'Only homes in Contra Costa County are counted, so these numbers are smaller than the building counts elsewhere on the site, which include the Oakland side of the map.'}`
       + (r && !r.env.routes ? ' Road routes are not loaded here, so nobody can be matched and everyone who needs a ride is counted for the city.' : '') + (r ? '' : ' This view needs the evacuation routes, which are not loaded.');
     drawMap(r);
   }
@@ -246,9 +249,8 @@
     const dots = (list, c, ring) => { x.fillStyle = x.strokeStyle = c; x.lineWidth = 2; for (const q of list) { const p = P(q); if (!p) continue; x.beginPath(); x.arc(p[0], p[1], ring ? 4 : 3.5, 0, 6.2832); ring ? x.stroke() : x.fill(); } };
     dots(marks.drv, col('--rd-drv')); dots(marks.rid, col('--rd-rid')); dots(marks.cty, col('--rd-cty'), true); dots(marks.cut, css(sec, '--t-high'), true);
   }
-  /* app.js calls this once: the view adds itself to the view tables. Census, roads and slides here are for the Lamorinda box only. */
+  /* app.js calls this once: the view adds itself to the view tables. Census, roads and slides come from the area's own data folder (data/ or data_sf/). */
   api.register = a => {
-    if (window.GT_REGION && window.GT_REGION.id !== 'lamorinda') return;
     a.POSES.rides = { px: -0.4, py: 11.4, pz: 10.8, tx: 0, ty: 0, tz: 0 }; a.LOOKS.rides = { risk: 0.8, motion: 0, roads: 1, splitVis: 0, dim: 0.1, bld: 0.4 };
     a.ORDER.splice(Math.max(0, a.ORDER.indexOf('method')), 0, 'rides'); a.NAMES.rides = 'Neighbor rides'; a.SUBS.rides = 'Who needs a ride out, and who could give one · simulated households'; a.SPLIT.rides = 1;
   };
@@ -309,7 +311,7 @@
   { const gl = $('#gl'); let down = null; if (gl && Sc) { gl.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
     gl.addEventListener('pointerup', e => { if (!visible() || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return; const ll = Sc.pick(e.clientX, e.clientY), k = ll ? bgAt(D, ll[0], ll[1]) : -1; if (k >= 0) showBg(k); }); } }
 
-  $('#rdSrc').textContent = `Census: ${D.meta.vintage}, tables ${Object.keys(D.meta.tables).join(', ')}, by block group. ${fmt(hh.n)} simulated households on ${fmt(D.n)} residential-sized buildings (footprints of ${D.meta.res_m2[0]} to ${fmt(D.meta.res_m2[1])} m²), always drawn with the same seed. The Census pull covers Contra Costa County only, so the ${fmt(D.meta.buildings.no_block_group)} buildings on the Alameda County side of the map (the Oakland hills) hold no simulated households and are not counted here.`;
+  $('#rdSrc').textContent = `Census: ${D.meta.vintage}, tables ${Object.keys(D.meta.tables).join(', ')}, by block group. ${fmt(hh.n)} simulated households on ${fmt(D.n)} residential-sized buildings (footprints of ${D.meta.res_m2[0]} to ${fmt(D.meta.res_m2[1])} m²), always drawn with the same seed. ` + (SF ? `The Census pull covers San Francisco County only, so the ${fmt(D.meta.buildings.no_block_group)} buildings south of the county line (Daly City and Brisbane) hold no simulated households. Buildings over ${fmt(D.meta.res_m2[1])} m² are left out as likely not homes, so the households of a block group are spread over its smaller buildings.` : `The Census pull covers Contra Costa County only, so the ${fmt(D.meta.buildings.no_block_group)} buildings on the Alameda County side of the map (the Oakland hills) hold no simulated households and are not counted here.`);
 
   /* ---- wake up when the view opens */
   function open() { lastSig = sig(); paint(); chart(); peakTable(); dayOut(); if (!queue) queue = setTimeout(nextDay, 30); requestAnimationFrame(frame); }

@@ -11,6 +11,7 @@ Files already in raw_dir are reused, so the script also runs where ScienceBase i
 FILES there by hand. Every file is checked against the MD5 that ScienceBase publishes before it is read.
 
 Writes dataset/usgs_landslides_2023.csv, dataset/usgs_landslides_2016_17.csv and site/data/usgs_inventory.js.
+With --region sf it clips to the San Francisco box and writes the same files under dataset_sf/ and site/data_sf/.
 Standard library + numpy only. Shapefiles are read with a small struct reader; the .prj decides the coordinates:
 lon/lat on WGS84 or NAD83 is used as is, Transverse Mercator is inverted with its own parameters, anything else stops.
 """
@@ -18,9 +19,18 @@ import sys, os, io, re, csv, json, math, struct, zipfile, hashlib, urllib.reques
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'work', 'usgs_raw')
-W, S, E, N = -122.215, 37.805, -122.055, 37.925               # same box as scripts/03_build.py
-KX, KY = 87800.0, 110950.0                                     # metres per degree here, as in site/js/model.js
+# "--region sf" clips to the San Francisco box and writes dataset_sf/ and site/data_sf/; the default is Lamorinda.
+REGION = sys.argv[sys.argv.index('--region') + 1] if '--region' in sys.argv else 'lamorinda'
+ARGS = [a for i, a in enumerate(sys.argv[1:], 1) if a != '--region' and sys.argv[i - 1] != '--region']
+RAW = ARGS[0] if ARGS else os.path.join(ROOT, 'work', 'usgs_raw')
+if REGION == 'sf':
+    W, S, E, N = -122.520, 37.705, -122.360, 37.825            # same box as scripts/sf/region.py
+    KX, KY = 88000.0, 110950.0
+    DS, SITE = 'dataset_sf', 'data_sf'
+else:
+    W, S, E, N = -122.215, 37.805, -122.055, 37.925           # same box as scripts/03_build.py
+    KX, KY = 87800.0, 110950.0                                 # metres per degree here, as in site/js/model.js
+    DS, SITE = 'dataset', 'data'
 SB = 'https://www.sciencebase.gov/catalog/file/get/'
 FILES = {                                                      # name: (url, md5 published by ScienceBase)
     'San_Francisco_Bay_Area_Reconnaissance_Landslide_Inventory_January_2023.csv': (SB + '64c2df9cd34e70357a32fd0f?f=__disk__96%2F40%2F59%2F9640596d47fa71472c638717426c5366eddb680d', 'd621ab37f06bf4982a9ce9cbe87b866e'),
@@ -186,7 +196,7 @@ def main():
                         info_source=r['Info_Source'].strip(), description=r['Observer_Description'].strip()))
     print(f'2023 inventory: {len(rows)} points in the whole Bay Area, {len(p23)} inside the box')
     if len(p23) < 20: print('  -> under 20 inside the box: a spot check, not a validation')
-    with open(os.path.join(ROOT, 'dataset', 'usgs_landslides_2023.csv'), 'w', newline='') as fh:
+    with open(os.path.join(ROOT, DS, 'usgs_landslides_2023.csv'), 'w', newline='') as fh:
         w = csv.DictWriter(fh, fieldnames=['id', 'lon', 'lat', 'type', 'impact', 'reported_pst', 'info_source', 'description']); w.writeheader(); w.writerows(p23)
 
     # ---------------- January 2023: routes the USGS crews travelled (where they could have seen a slide)
@@ -220,8 +230,9 @@ def main():
         assert abs(abs(a) - float(r['Area_m2'])) < max(2.0, 0.02 * abs(a)) or len(parts) > 1, ('area mismatch', r['LS_ID'], a, r['Area_m2'])   # the projected coordinates give the published areas, so the units are metres
     print(f'2016-17 inventory: {len(rows)} polygons in the whole map area, {len(s17)} with their centroid inside the box')
     if len(s17) < 20: print('  -> under 20 inside the box: a spot check, not a validation')
-    with open(os.path.join(ROOT, 'dataset', 'usgs_landslides_2016_17.csv'), 'w', newline='') as fh:
-        w = csv.DictWriter(fh, fieldnames=list(s17[0])); w.writeheader(); w.writerows(s17)
+    with open(os.path.join(ROOT, DS, 'usgs_landslides_2016_17.csv'), 'w', newline='') as fh:
+        w = csv.DictWriter(fh, fieldnames=['ls_id', 'lon', 'lat', 'area_m2', 'perimeter_m', 'length_m', 'axis_lon0', 'axis_lat0', 'axis_lon1', 'axis_lat1',
+                                           'source_area_m2', 'has_source_polygon', 'affects_infrastructure']); w.writeheader(); w.writerows(s17)   # San Francisco lies outside the 2016-17 map: header only
 
     # ---------------- 2016-17: the boundary of what was mapped, so roads outside it are never counted as "no slide"
     shapes, brows, inv, _ = layer(list(FILES)[4]); bound = []
@@ -243,7 +254,7 @@ def main():
               # per 2016-17 slide: centroid lon, lat, area m2, length m, the two ends of its long axis, affects infrastructure 0/1
               s17=[[s['lon'], s['lat'], round(s['area_m2']), round(s['length_m']), s['axis_lon0'], s['axis_lat0'], s['axis_lon1'], s['axis_lat1'], s['affects_infrastructure']] for s in s17],
               bound17=bound)
-    out = os.path.join(ROOT, 'site', 'data', 'usgs_inventory.js')
+    out = os.path.join(ROOT, 'site', SITE, 'usgs_inventory.js')
     open(out, 'w').write('/* Generated by scripts/10_usgs_inventory.py from USGS data releases 10.5066/P9NJ3KMG and 10.5066/P98MVEGI (public domain). Do not edit. */\nwindow.GT_USGS=' + json.dumps(js, separators=(',', ':')) + ';\n')
     print('wrote', out, os.path.getsize(out), 'bytes')
 
