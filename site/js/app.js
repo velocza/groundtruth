@@ -183,6 +183,7 @@
   const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
   if (window.GTEvac && GTEvac.register) GTEvac.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT, S, setStorm, flyTo, replaySc, replayBefore: typeof replayBefore === 'function' ? replayBefore : null });   // the Getting out view adds itself
   if (window.GTRides && GTRides.register) GTRides.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Neighbor rides view adds itself
+  if (window.GTStormResp && GTStormResp.register) GTStormResp.register({ POSES, LOOKS, ORDER, NAMES, SUBS, SPLIT });   // the Storm response view adds itself (San Francisco only)
   const shiftO = { v: 0 };
   function updShift(now) {
     const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;

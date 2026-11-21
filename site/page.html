@@ -354,6 +354,33 @@ body.exploring .ex-rain{display:flex}
 #rides{--rd-drv:var(--accent-text);--rd-rid:var(--text-1);--rd-lnk:var(--rain);--rd-cty:var(--warning);--rd-usgs:var(--t-high)}
 #rides .readout .stat b{font-size:19px}
 #rdMap{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#response{--sr-call:#f2efe8;--sr-slow:var(--danger);--sr-fast:var(--info);--sr-line:rgb(214 222 238 / 0.5);--sr-sel:#ffffff;--sr-none:#9aa3b5;--sr-bar:var(--text-2)}   /* the map panel is dark in both themes, so its marks use fixed light colours */
+#response .readout{grid-template-columns:repeat(2,minmax(0,1fr))}
+#response .readout .stat b{font-size:19px}
+#srMap{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#srChart{display:block;width:100%;height:150px;cursor:pointer}
+.sr-now{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.sr-now b{font:var(--w-semi) 26px/1.15 var(--f-ui);font-variation-settings:"ROND" 3;letter-spacing:-0.012em;font-variant-numeric:tabular-nums;color:var(--text-1)}
+.sr-now>span{font-size:13px;color:var(--text-2)}
+.sr-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sr-t th[scope=row]{text-align:left;font-weight:var(--w-reg);color:var(--text-2);font-size:12px;white-space:normal}
+.sr-t td.few{color:var(--text-3);font-style:italic}
+.sr-t th[scope=row] button{all:unset;cursor:pointer;color:var(--text-1);font-weight:var(--w-med)}
+@media (hover:hover){.sr-t th[scope=row] button:hover{text-decoration:underline}}
+.sr-t th[scope=row] button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.sr-t tr[aria-selected=true] th,.sr-t tr[aria-selected=true] td{background:var(--selected)}
+.sr-wrap{max-height:320px;overflow:auto}
+.sr-key{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;font-size:12px;color:var(--text-2)}
+.sr-key li{display:flex;align-items:center;gap:8px}
+.sr-key i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--sr-call);box-shadow:0 0 0 1px var(--border-2)}
+.sr-key i.mid{background:var(--warning)}.sr-key i.long{background:var(--danger)}.sr-key i.none{background:none;box-shadow:inset 0 0 0 1.5px var(--sr-none)}
+.sr-key i.fl{border-radius:1px;width:7px;height:7px;background:var(--rain)}.sr-key i.slow{border-radius:2px;width:14px;background:var(--danger);opacity:.5}.sr-key i.fast{border-radius:2px;width:14px;background:var(--info);opacity:.5}
+.sr-key i.dash{border-radius:0;width:14px;height:0;background:none;box-shadow:none;border-top:1.5px dashed var(--text-3)}
+.sr-rules{margin:0;padding-left:18px;display:grid;gap:6px;font-size:12px;color:var(--text-3)}
+.pin-label.sr-lb{font-weight:var(--w-med)}
+.sr-check{display:flex;gap:8px;align-items:flex-start}
+.sr-check svg{flex:none;width:14px;height:14px;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2.2}
+@media (max-width:520px){.sr-key{grid-template-columns:1fr}}
 .ol-wrap{overflow-x:auto}
 .ol-t{width:100%;border-collapse:collapse;font-size:12px}
 .ol-t th{font-weight:var(--w-reg);font-size:11px;color:var(--text-3);text-align:right;padding:6px 6px;border-bottom:1px solid var(--border-1);vertical-align:bottom;line-height:1.25}
@@ -594,6 +621,7 @@ body.exploring .maptools .ex-rain{display:flex}
   <a class="nav" href="#ask" data-go="ask"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7.5L7 20.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><span>Ask</span></a>
   <a class="nav" href="#evac" data-go="evac"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6.5A1.5 1.5 0 0 1 5.5 5H12v14"/><path d="M12 12h8m0 0-3-3m3 3-3 3"/></svg><span>Getting out</span></a>
   <a class="nav" href="#rides" data-go="rides"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M2.5 19.5c.5-3.4 2.7-5.2 5.5-5.2s5 1.8 5.5 5.2M15 14.6c.6-.2 1.3-.3 2-.3 2.3 0 4 1.5 4.5 4.200"/></svg><span>Neighbor rides</span></a>
+  <a class="nav" href="#response" data-go="response" data-only="sf"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5"/><path d="M12 7.5V12l3 2"/><path d="M17 3.5h3.5V7"/><path d="M20.5 3.5 16 8"/></svg><span>Storm response</span></a>
   <a class="nav" href="#method" data-go="method"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/></svg><span>Data and method</span></a>
 </nav>
 
@@ -828,6 +856,104 @@ body.exploring .maptools .ex-rain{display:flex}
     <p class="note" id="rdSrc"></p>
   </section>
 
+  <section id="response" data-only="sf">
+    <div class="card-h"><h3 style="font-size:16px">How fast help arrived in the storm.</h3><span class="badge">Real dispatch records</span></div>
+    <p class="body">Replay the November 18, 2026 storm hour by hour: the rain at the gauge, the flood reports people filed, and how long fire and EMS units took to reach each call. Then compare the storm with ordinary dry days.</p>
+    <div class="tile" style="display:grid;gap:10px">
+      <div class="sr-now" role="status" aria-live="polite"><b><span id="srDay">Wed Nov 18</span>, <span id="srTime">11 a.m.</span></b><span id="srSpan"></span></div>
+      <label class="ctl" for="srHour"><span class="vh">Hour of the storm</span><input type="range" id="srHour" min="0" max="95" value="58" step="1"><span class="ends"><span>Tue Nov 17</span><span>Sat Nov 21</span></span></label>
+      <div class="sr-row">
+        <button class="btn sm" id="srPlay" type="button" aria-pressed="false">Play the storm</button>
+        <button class="btn sm" id="srJump" type="button">Wettest hour</button>
+        <div class="seg-track sm multi" role="group" aria-label="How many hours of calls to show">
+          <button type="button" data-span="180" aria-pressed="false">3 h</button><button type="button" data-span="360" aria-pressed="true">6 h</button><button type="button" data-span="1440" aria-pressed="false">24 h</button>
+        </div>
+      </div>
+      <canvas id="srChart" role="img" aria-label="Hourly rain at SFO, flood reports and fire and EMS calls, November 17 to 20, 2026. The shaded band is the storm window. Click to move the scrubber."></canvas>
+      <p class="note">Rain this hour at SFO: <b id="srRain">...</b>. <span id="srDayRain"></span></p>
+    </div>
+    <div class="group">
+      <div class="card-h"><h3 id="srWhere">All of San Francisco</h3><button class="btn sm ghost" id="srCity" type="button">Whole city</button></div>
+      <label class="vh" for="srPick">Neighborhood</label>
+      <select id="srPick" class="pick"><option value="-1">All of San Francisco</option></select>
+      <div class="readout" aria-live="polite">
+        <div class="stat"><b id="srCalls">...</b><span>calls received in the window</span></div>
+        <div class="stat"><b id="srMed">...</b><span>median minutes, receipt to first unit on scene</span></div>
+        <div class="stat"><b id="srP90">...</b><span>90th percentile, minutes</span></div>
+        <div class="stat"><b id="srFlood">...</b><span>311 flood reports in the window</span></div>
+      </div>
+      <p class="note" id="srStatNote"></p>
+    </div>
+    <div class="group">
+      <h3>On the map</h3>
+      <ul class="sr-key" aria-label="Map key">
+        <li><i></i>Call, first unit within 10 min</li>
+        <li><i class="mid"></i>10 to 20 min</li>
+        <li><i class="long"></i>Over 20 min</li>
+        <li><i class="none"></i>No unit recorded on scene</li>
+        <li><i class="fl"></i>311 flood report</li>
+        <li><i class="slow"></i>Median slower in the storm</li>
+        <li><i class="fast"></i>Median faster in the storm</li>
+        <li><i class="slow" style="opacity:.2"></i>Faint fill: change within the 90% interval of zero</li>
+        <li><i class="dash"></i>Too few calls to compare</li>
+      </ul>
+      <p class="note">Click a neighborhood on the map to select it. Call positions are DataSF's public block-level points, not exact addresses.</p>
+    </div>
+    <div class="group">
+      <h3>Storm window against matched dry days: <span id="srCmpWhere">All of San Francisco</span></h3>
+      <div class="ol-wrap"><table class="ol-t sr-t" aria-label="Response minutes in the storm window and on matched dry days">
+        <thead><tr><th scope="col">Minutes</th><th scope="col">Storm</th><th scope="col">Dry days</th><th scope="col">Change</th><th scope="col">90% interval</th></tr></thead>
+        <tbody id="srCmp"></tbody>
+      </table></div>
+      <div class="notice" id="srFew" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10.5v4M12 17.2v.1"/></svg><span></span></div>
+      <p class="note" id="srCmpNote"></p>
+      <p class="body" id="srCityLine"></p>
+    </div>
+    <div class="group">
+      <h3>Every neighborhood</h3>
+      <div class="ol-wrap sr-wrap"><table class="ol-t sr-t" aria-label="Storm against dry days by neighborhood">
+        <thead><tr><th scope="col">Neighborhood</th><th scope="col">Storm calls</th><th scope="col">Median, storm / dry</th><th scope="col">Change</th><th scope="col">Flood reports</th></tr></thead>
+        <tbody id="srNbRows"></tbody>
+      </table></div>
+      <p class="note">Storm calls are the matched calls with a valid time. Change is storm minus dry median, in minutes.</p>
+    </div>
+    <div class="group">
+      <h3>By call type, whole city</h3>
+      <div class="ol-wrap"><table class="ol-t sr-t" aria-label="Storm against dry days by call type">
+        <thead><tr><th scope="col">Call type</th><th scope="col">Storm calls</th><th scope="col">Median, storm / dry</th><th scope="col">Change, median</th><th scope="col">Change, 90th</th></tr></thead>
+        <tbody id="srTyRows"></tbody>
+      </table></div>
+    </div>
+    <div class="group">
+      <h3>Flood reports and waits</h3>
+      <p class="body" id="srObs"></p>
+    </div>
+    <div class="group" id="srScn">
+      <div class="card-h"><h3>Planning scenario: one extra ambulance</h3><span class="badge quiet">Estimate</span></div>
+      <p class="body">What if one more ambulance had waited at a fire station through the storm window? Pick a station to replay the storm's medical calls with it.</p>
+      <p class="note sr-check" id="srScnCheck"></p>
+      <div id="srScnBody">
+        <label class="vh" for="srStation">Fire station</label>
+        <select id="srStation" class="pick"><option value="">Pick a station</option></select>
+        <p class="body" id="srScnCity"></p>
+        <div class="ol-wrap"><table class="ol-t sr-t" aria-label="Estimated change by neighborhood with one extra ambulance">
+          <thead><tr><th scope="col">Neighborhood</th><th scope="col">Medical calls</th><th scope="col">Calls it reaches first</th><th scope="col">Median, now / with it</th><th scope="col">90th, now / with it</th></tr></thead>
+          <tbody id="srScnRows"></tbody>
+        </table></div>
+      </div>
+      <ul class="sr-rules" id="srScnRules"></ul>
+    </div>
+    <div class="group">
+      <h3>How the numbers are made</h3>
+      <ul class="sr-rules" id="srRules"></ul>
+      <p class="note" id="srMissing"></p>
+    </div>
+    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10.5v4M12 17.2v.1"/></svg><div>
+      <b>What this is and is not.</b> A look back at one storm from public dispatch records. Response time here is from the moment the call was received to the first unit on scene, so it includes call handling as well as driving. It does not say why any call took as long as it did, and it is not a measure of any crew.
+    </div></div>
+    <p class="note" id="srSrc"></p>
+  </section>
+
   <section id="ask">
     <h3 style="font-size:16px">Is my street at risk?</h3>
     <div id="localSim" class="tile" data-only="lamorinda" style="flex:none;display:grid;gap:6px">
@@ -1008,4 +1134,5 @@ body.exploring .maptools .ex-rain{display:flex}
 <script src="js/scene.js"></script>
 <script src="js/evac.js"></script>
 <script src="js/rides.js"></script>
+<script src="js/stormresp.js"></script>
 <script src="js/app.js"></script>

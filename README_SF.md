@@ -111,3 +111,10 @@ First results with real inputs only (Fewer alerts, Elevated 50, default storm 92
 no road out. On the worst day of January 2023 the score cuts off 210 buildings; the six recorded slides alone cut off 1.
 Two of the six are within 30 m of a named street, and the score blocked neither (slope alone reaches 1 of 2). Six points are
 a spot check, not a validation.
+
+## Storm response (added 2026-11-21)
+
+`scripts/sf/09_storm_response_sf.py` builds the **Storm response** view's data from DataSF fire and EMS dispatch records
+(dataset nuek-vuh3): response times from call receipt to the first unit on scene during the November 18, 2026 storm, against
+dry days matched on weekday, hour and call type, by neighborhood, with gauge rain and 311 flood reports, plus a checked
+one-extra-ambulance planning scenario. Sources, rules and results are in `dataset_sf/storm_response/README.md`.
