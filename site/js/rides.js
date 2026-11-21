@@ -161,20 +161,35 @@
   let peakDay = D0; { let best = -1; for (let d = D0; d <= D1; d++) { const T = 0.55 * Math.min(1.5, (mm(d + 1) + mm(d + 2) + mm(d + 3)) / 200) + 0.45 * Math.min(1.3, R23.api[d] / 200); if (T > best) { best = T; peakDay = d; } } }
   const peakSc = round({ r72: mm(peakDay + 1) + mm(peakDay + 2) + mm(peakDay + 3), api: R23.api[peakDay] });
   /* Day by day, only rain already logged: the rain of that day and the two before it, on the soil wetness from three days earlier. */
-  const loggedSc = d => round({ r72: mm(d - 2) + mm(d - 1) + mm(d), api: R23.api[d - 3] });
+  const loggedSc = d => round(window.GTEvac && GTEvac.rainBefore && GTEvac.ensure && GTEvac.ensure() ? GTEvac.rainBefore(d - 3, d) : { r72: mm(d - 2) + mm(d - 1) + mm(d), api: R23.api[d - 3] });   // the Getting out view's own rule, started three days back
 
-  /* ---- everything taken from evac.js comes through envOf, so the rest of this file does not care how routes are worked out */
-  let bldCell = null;
+  /* ---- everything taken from evac.js comes through envOf, so the rest of this file does not care how routes are worked out.
+     Read-only: GTEvac.graph(), .scenario(sc, mode), .nodeAt(lon, lat), .usgs(), .rainBefore(d, rep) and .state().st (its threshold and which reports count). */
+  let bldCell = null, nodeOf = null;
+  const evSt = () => { const E = window.GTEvac; return E && E.state ? E.state().st : null; };
+  const sig = () => { const t = evSt(); return `${t ? t.thr + '|' + t.local : ''}|${Mo.opts.bias}|${Mo.opts.motion}`; };   // settings that live in other views and change the answer
   function envOf(sc, mode) {
     if (!bldCell) bldCell = Int32Array.from(D.lon, (x, i) => Mo.cellOf(x, D.lat[i]));
-    if (mode !== 'model') return null;
-    const zone = new Uint8Array(D.n), clear = new Uint8Array(D.n).fill(1);
-    for (let b = 0; b < D.n; b++) if (bldCell[b] >= 0 && Mo.index(bldCell[b], sc) >= 50) zone[b] = 1;
-    return { zone, clear, net: null, routes: false };
+    const E = window.GTEvac, g = E && E.graph ? E.graph() : null, zone = new Uint8Array(D.n);
+    if (!g) {                                              // no road network: the model's danger zone only, nobody can be matched
+      if (mode !== 'model') return null;
+      for (let b = 0; b < D.n; b++) if (bldCell[b] >= 0 && Mo.index(bldCell[b], sc) >= 50) zone[b] = 1;
+      return { zone, clear: new Uint8Array(D.n).fill(1), net: null, routes: false, thr: 50 };
+    }
+    if (!nodeOf) nodeOf = Int32Array.from(D.lon, (x, i) => { const n = E.nodeAt(x, D.lat[i]); return n >= 0 && g.base[n] ? n : -1; });   // homes with no road to an exit even in dry weather stay off the network
+    const ev = E.scenario(sc, mode === 'model' ? 'model' : 'mapped'), thr = ev.threshold, t = evSt();
+    const slides = E.usgs().recorded2023.filter(f => f.source === 'usgs' || !t || t.local);
+    if (mode === 'model') { const dz = new Uint8Array(Mo.N); for (const c of ev.dangerCells) dz[c] = 1; for (let b = 0; b < D.n; b++) { const c = bldCell[b]; if (c >= 0 && (dz[c] || Mo.index(c, sc) >= thr)) zone[b] = 1; } }
+    else zone.set(nearSlides(D, slides.map(f => f.lonlat), null, NEAR_SLIDE_M));
+    const next = new Int32Array(g.nn), clear = new Uint8Array(D.n);
+    for (let n = 0; n < g.nn; n++) { const e = ev.next[n]; next[n] = e >= 0 ? (g.eu[e] === n ? g.ev[e] : g.eu[e]) : e; }
+    for (let b = 0; b < D.n; b++) clear[b] = nodeOf[b] < 0 || ev.reach[nodeOf[b]] ? 1 : 0;
+    const adj = n => { const out = []; for (let j = g.adjOff[n]; j < g.adjOff[n + 1]; j++) { const e = g.adjE[j]; if (!ev.blocked[e]) out.push([g.eu[e] === n ? g.ev[e] : g.eu[e], g.elen[e]]); } return out; };
+    return { zone, clear, net: { nodeOf, next, dist: ev.metres, adj }, routes: true, thr, slides };
   }
   const cache = new Map();
   function result(sc, mode) {
-    const key = mode === 'model' ? `m|${sc.r72}|${sc.api}` : 'usgs'; if (cache.has(key)) return cache.get(key);
+    const key = mode === 'model' ? `m|${sc.r72}|${sc.api}` : 'mapped'; if (cache.has(key)) return cache.get(key);
     const env = envOf(sc, mode), r = env ? Object.assign(run(D, hh, env), { env }) : null;
     if (cache.size > 160) cache.delete(cache.keys().next().value); cache.set(key, r); return r;
   }
@@ -188,11 +203,15 @@
     const r = shown = result(sc, mode);
     for (const [id, k] of STATS) $(id).textContent = r ? show(r[k]) : 'n/a';
     $('#rdStorm').textContent = mode === 'model'
-      ? `Storm: ${sc.r72} mm of rain in 72 hours on soil wetness ${sc.api} mm. A home must leave when the ground under it scores Elevated or High, or it sits in the path debris would take.`
-      : `Slides the USGS mapped after the January 2023 storms. A home must leave when it is within ${NEAR_SLIDE_M} m of a mapped slide or its travel path. This is observed, not forecast, and the inventory is incomplete, so these counts are a floor. The storm sliders do not change this view.`;
+      ? `Storm: ${sc.r72} mm of rain in 72 hours on soil wetness ${sc.api} mm. A home must leave when the ground under it scores ${r && r.env.thr >= 75 ? 'High' : 'Elevated or High'}, or it sits in the path debris would take.`
+      : `Slides recorded in winter 2023: ${slideText(r)}. A home must leave when it is within ${NEAR_SLIDE_M} m of one. This is observed, not forecast, and the USGS inventory is incomplete, so these counts are a floor. The storm sliders do not change this view.`;
     $('#rdRule').textContent = `A pickup counts when the rider is within ${DETOUR_M / 1000} km, there and back, of the driver's own route out, the car has a free seat (${SEATS} seats, the driver's household rides first), and both routes are clear. Ranges come from the Census margins of error and the luck of the simulated draw. Only homes in Contra Costa County are counted, so these numbers are smaller than the building counts elsewhere on the site, which include the Oakland side of the map.`
       + (r && !r.env.routes ? ' Road routes are not loaded here, so nobody can be matched and everyone who needs a ride is counted for the city.' : '') + (r ? '' : ' This view needs the evacuation routes, which are not loaded.');
     drawMap(r);
+  }
+  function slideText(r) {
+    const U = window.GT_USGS, sl = r && r.env.slides || [], nu = sl.filter(f => f.source === 'usgs').length, nl = sl.length - nu;
+    return `${nu} of the ${U && U.meta.y2023 ? U.meta.y2023.total : 'many'} slides the USGS mapped around the Bay falls inside this map` + (nl ? `, plus the ${nl} local reports the site already carries, placed by street name` : '') + '. The USGS files hold no slide travel paths, only the roads its crews drove, so none are used';
   }
   const schedule = ms => { clearTimeout(timer); timer = setTimeout(paint, ms); };
   api.storm = (r72, a) => { sc = round({ r72, api: a }); if (visible()) schedule(120); };   // sliders fire fast: wait for a pause, then recount
@@ -200,8 +219,39 @@
   $('#rdModel').addEventListener('click', () => setMode('model')); $('#rdMapped').addEventListener('click', () => setMode('mapped'));
   $('#rdPeakBtn').textContent = dayStr(peakDay);
 
-  /* ---- map layer: drawn once the evacuation routes are wired in */
-  function drawMap(r) {}
+  /* ---- map layer: a flat canvas over the 3D map, redrawn every frame from GTScene.project. Dots sit on building footprints; who lives there is simulated. */
+  const cv = document.createElement('canvas'); cv.id = 'rdMap'; cv.setAttribute('aria-hidden', 'true'); let marks = null, pins = [], pinsFor = '';
+  function drawMap(r) {
+    marks = null; if (!r) return;
+    const at = h => [D.lon[hh.bld[h]], D.lat[hh.bld[h]]], drv = new Set(), rid = [], cty = [], cut = [], links = [];
+    for (const p of r.pairs) { drv.add(p.driver); rid.push(at(p.rider)); links.push([at(p.rider), at(p.driver)]); }
+    for (const h of r.left) cty.push(at(h)); for (let h = 0; h < hh.n; h++) if (r.groups[h] === 4) cut.push(at(h));
+    const cap = a => a.length > 1500 ? a.filter((_, k) => k % Math.ceil(a.length / 1500) === 0) : a;      // keep the frame light in a very large storm
+    marks = { drv: cap([...drv].map(at)), rid: cap(rid), cty: cap(cty), cut: cap(cut), links: cap(links) };
+    const want = mode === 'mapped' && r.env.slides ? r.env.slides.map(f => f.label).join('|') : '';
+    if (want !== pinsFor) { pins.forEach(p => p.lb.show(false)); pins = []; pinsFor = want;
+      if (want && Sc.addLabel) for (const f of r.env.slides) { const el = document.createElement('div'); el.className = 'pin-label evac-mk ' + f.source; el.textContent = f.label; el.hidden = true; $('#labels').appendChild(el); pins.push({ lb: Sc.addLabel(f.lonlat[0], f.lonlat[1], el, 0.07) }); } }
+    pins.forEach(p => p.lb.show(true));
+  }
+  let lastSig = '', tick = 0;
+  function frame() {
+    if (!visible()) { cv.remove(); pins.forEach(p => p.lb.show(false)); return; }
+    requestAnimationFrame(frame);
+    if (++tick % 30 === 0 && sig() !== lastSig) { lastSig = sig(); cache.clear(); days.clear(); paint(); peakTable(); if (!queue) queue = setTimeout(nextDay, 30); }   // alert sensitivity and the Getting out settings have no event
+    const gl = $('#gl'); if (!marks || !Sc.project || !gl) return; if (!cv.parentNode) gl.parentNode.insertBefore(cv, $('#labels'));
+    const w = gl.clientWidth, h = gl.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1); if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h);
+    const P = q => Sc.project(q[0], q[1], 0.05), col = n => css(sec, n);
+    x.strokeStyle = col('--rd-lnk'); x.lineWidth = 1.5; for (const [a, b] of marks.links) { const p = P(a), q = P(b); if (p && q) { x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(q[0], q[1]); x.stroke(); } }
+    const dots = (list, c, ring) => { x.fillStyle = x.strokeStyle = c; x.lineWidth = 2; for (const q of list) { const p = P(q); if (!p) continue; x.beginPath(); x.arc(p[0], p[1], ring ? 4 : 3.5, 0, 6.2832); ring ? x.stroke() : x.fill(); } };
+    dots(marks.drv, col('--rd-drv')); dots(marks.rid, col('--rd-rid')); dots(marks.cty, col('--rd-cty'), true); dots(marks.cut, css(sec, '--t-high'), true);
+  }
+  /* app.js calls this once: the view adds itself to the view tables. Census, roads and slides here are for the Lamorinda box only. */
+  api.register = a => {
+    if (window.GT_REGION && window.GT_REGION.id !== 'lamorinda') return;
+    a.POSES.rides = { px: -0.4, py: 11.4, pz: 10.8, tx: 0, ty: 0, tz: 0 }; a.LOOKS.rides = { risk: 0.8, motion: 0, roads: 1, splitVis: 0, dim: 0.1, bld: 0.4 };
+    a.ORDER.splice(Math.max(0, a.ORDER.indexOf('method')), 0, 'rides'); a.NAMES.rides = 'Neighbor rides'; a.SUBS.rides = 'Who needs a ride out, and who could give one · simulated households'; a.SPLIT.rides = 1;
+  };
 
   /* ---- the two views side by side at the January 2023 peak */
   const ROWS = [['Must leave', 'leave'], ['Need a ride', 'ride'], ['Could ride with a neighbor', 'matched'], ['Need the city or volunteers', 'city'], ['Cannot leave by road', 'cut']];
@@ -209,10 +259,10 @@
     const a = result(peakSc, 'model'), b = result(peakSc, 'mapped'), tb = $('#rdPeak'); tb.textContent = '';
     for (const [name, k] of ROWS) { const tr = document.createElement('tr'); for (const v of [name, a ? show(a[k]) : 'n/a', b ? show(b[k]) : 'n/a']) { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); } tb.appendChild(tr); }
     const out = $('#rdOverlap'), head = `Model column: the ${dayStr(peakDay)} storm preset, ${peakSc.r72} mm in 72 hours on soil wetness ${peakSc.api} mm. `;
-    if (!a || !b) { out.textContent = head + 'The mapped-slides column needs the USGS inventory from the evacuation view.'; return; }
+    if (!a || !b) { out.textContent = head + 'The mapped-slides column needs the Getting out view, which is not loaded.'; return; }
     let both = 0, onlyB = 0, onlyA = 0; for (let h = 0; h < hh.n; h++) { const x = a.groups[h] !== 1, y = b.groups[h] !== 1; if (x && y) both++; else if (y) onlyB++; else if (x) onlyA++; }
     const nb = both + onlyB;
-    out.textContent = head + (nb ? `Overlap: of the ${fmt(nb)} simulated households near a mapped slide, ${fmt(both)} (${fmt(both / nb * 100)}%) are also in the model's danger zone, and ${fmt(onlyB)} are not. The model flags ${fmt(onlyA)} more that are near no mapped slide. ` : 'No simulated household is near a mapped slide, so there is no overlap to count. ')
+    out.textContent = head + (nb ? `Overlap: of the ${fmt(nb)} simulated households within ${NEAR_SLIDE_M} m of a recorded slide, ${fmt(both)} (${fmt(both / nb * 100)}%) are also in the model's danger zone, and ${fmt(onlyB)} are not. The model flags ${fmt(onlyA)} more that are near no recorded slide. ` : 'No simulated household is within reach of a recorded slide, so there is no overlap to count. ')
       + 'The model score is a fixed formula that was not fitted to this inventory, so this is not an in-sample check.';
   }
 
@@ -262,7 +312,7 @@
   $('#rdSrc').textContent = `Census: ${D.meta.vintage}, tables ${Object.keys(D.meta.tables).join(', ')}, by block group. ${fmt(hh.n)} simulated households on ${fmt(D.n)} residential-sized buildings (footprints of ${D.meta.res_m2[0]} to ${fmt(D.meta.res_m2[1])} m²), always drawn with the same seed. The Census pull covers Contra Costa County only, so the ${fmt(D.meta.buildings.no_block_group)} buildings on the Alameda County side of the map (the Oakland hills) hold no simulated households and are not counted here.`;
 
   /* ---- wake up when the view opens */
-  function open() { paint(); chart(); peakTable(); dayOut(); if (!queue) queue = setTimeout(nextDay, 30); }
+  function open() { lastSig = sig(); paint(); chart(); peakTable(); dayOut(); if (!queue) queue = setTimeout(nextDay, 30); requestAnimationFrame(frame); }
   new MutationObserver(() => { if (visible()) requestAnimationFrame(open); }).observe(sec, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('resize', () => { if (visible()) chart(); });
   api.state = () => ({ mode, sc, shown, peakDay, peakSc, days, D, hh });

@@ -57,3 +57,13 @@ Built by `scripts/10_usgs_inventory.py`, clipped to the map box. Both sources ar
 - `usgs_landslides_2016_17.csv`: 1,398 of the 8,928 polygons mapped for USGS SIM 3503 (doi 10.5066/P98MVEGI) from a March 11, 2017 satellite image. One row per slide: centroid, area, the length and end points of its long axis, the source area where one was mapped, and whether it affected infrastructure. No dates. Converted from NAD83 UTM zone 10N as read from the `.prj`.
 
 Neither file was used to build or tune the score. `site/data/roads_graph.js` comes from `scripts/08_road_graph.py`.
+
+## Census block groups (added for the Neighbor rides view)
+
+Built by `scripts/09_census.py` from the American Community Survey 2020 to 2024 5-year estimates (vintage 2024), Contra Costa County, block group level, clipped to the map box. Census data is public domain.
+
+- `census_block_groups_lamorinda.csv`: one row per block group (81) with each estimate and its published 90% margin of error. Tables: B25044 vehicles available, B01001 age, B11007 households with a person 65 or over, B25009 household size, C21007 adults with a disability. Every variable ID is checked against the Census labels before use.
+- `buildings_block_group.csv`: the block group of every building in `buildings_lamorinda.csv`. 9,102 buildings on the Alameda County side of the box have none.
+- `census_raw/`: the raw pulls (ACS rows, variable labels, TIGERweb ACS 2024 shapes), so the script rebuilds offline. `--refresh` downloads again. The Census API now needs a key, read only from the `CENSUS_API_KEY` environment variable; without one the script reads the keyless ACS table-based Summary File, which holds the same numbers.
+
+These are estimates for whole neighborhoods. The households the site draws from them are simulated, with a fixed seed, and describe no real person or home.
