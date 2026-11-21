@@ -1,6 +1,6 @@
-# scree
+# escape
 
-scree (the project folder and repo keep the old name, GroundTruth) is satellite landslide early warning for Lafayette, Orinda and Moraga, California.
+escape (the project folder and repo keep the old name, GroundTruth) is satellite landslide early warning for Lafayette, Orinda and Moraga, California.
 
 ## Local experimental model and simulation
 

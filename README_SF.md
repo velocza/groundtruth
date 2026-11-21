@@ -92,3 +92,29 @@ are stored here as gzipped CSV files in `dataset_sf/training/`, with the same co
 `slides`, `training_rows`, `training_rows_flood`, `flood_days` and `cells` (all 218,880 cells). Read one with
 `pandas.read_csv("dataset_sf/training/training_rows_flood.csv.gz")`. To rebuild the workbook, run
 `python3 scripts/sf/04_export_training_data_sf.py . groundtruth_sf_training_data.xlsx`.
+
+## Getting out, Neighbor rides and the flood model (added 2026-11-21)
+
+The Getting out and Neighbor rides views now work for San Francisco too, and switch with the Area menu. Everything is real
+except the Neighbor rides households, which are simulated from Census estimates and labelled that way, as in Lamorinda.
+
+| File | What it is | Built by |
+|---|---|---|
+| `dataset_sf/roads_motorway_overture.json` | Freeways, bridges and ramps (Overture class motorway), clipped to the box. The named street list leaves them out. | `scripts/sf/07_fetch_motorways.py` |
+| `site/data_sf/roads_graph.js` | Road graph: 1,817 named streets plus the freeways, 166,518 buildings placed on their nearest road. Ways out are the county line to the south and the Golden Gate and Bay bridges (40 points); streets that stop at the water's edge of the box do not count. Freeway main lanes join other roads only at their ends, so a street under a freeway is not an on-ramp. | `python3 scripts/08_road_graph.py --region sf` |
+| `dataset_sf/usgs_landslides_2023.csv`, `site/data_sf/usgs_inventory.js` | The 6 USGS January 2023 points in the box. No USGS crew route crosses the city, and the 2016-17 USGS map covers the eastern Bay hills only, so there is no 2016-17 check here. | `python3 scripts/10_usgs_inventory.py <raw> --region sf` |
+| `dataset_sf/census_raw/`, `dataset_sf/census_block_groups_san_francisco.csv`, `site/data_sf/census_bg.js` | ACS 2020 to 2024 5-year estimates for the 680 San Francisco County (06075) block groups in the box, from the keyless Summary File, fetched through a browser because Census hosts are blocked from the build machine. Block group ids take two bytes here. | `python3 scripts/09_census.py --region sf` |
+| `local_model_sf/`, `model/train_sf_flood.py`, `model/predict_sf_flood.py` | The tuned flood model (from the `sf-flood-model` branch, files only). | |
+| `site/data_sf/flood_model.js` | Its saved street predictions for the November 18, 2026 storm, shown in Ask when you ask about flooding. | `python3 scripts/sf/08_flood_site_sf.py` |
+
+First results with real inputs only (Fewer alerts, Elevated 50, default storm 92 mm on 156 mm wetness): 125 buildings with
+no road out. On the worst day of January 2023 the score cuts off 210 buildings; the six recorded slides alone cut off 1.
+Two of the six are within 30 m of a named street, and the score blocked neither (slope alone reaches 1 of 2). Six points are
+a spot check, not a validation.
+
+## Storm response (added 2026-11-21)
+
+`scripts/sf/09_storm_response_sf.py` builds the **Storm response** view's data from DataSF fire and EMS dispatch records
+(dataset nuek-vuh3): response times from call receipt to the first unit on scene during the November 18, 2026 storm, against
+dry days matched on weekday, hour and call type, by neighborhood, with gauge rain and 311 flood reports, plus a checked
+one-extra-ambulance planning scenario. Sources, rules and results are in `dataset_sf/storm_response/README.md`.

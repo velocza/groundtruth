@@ -7,6 +7,7 @@ written to site/data/census_bg.js.
 
   python3 scripts/09_census.py            build from the raw files kept in dataset/census_raw (no network needed)
   python3 scripts/09_census.py --refresh  download everything again, then build
+  add --region sf for San Francisco County (06075): reads dataset_sf/census_raw, writes site/data_sf/census_bg.js
 
 Estimates come from one of two places, and both hold the same published numbers:
   1. api.census.gov, when the environment variable CENSUS_API_KEY is set. The API refuses data requests without a key.
@@ -19,11 +20,20 @@ import base64, csv, json, math, os, sys, time, urllib.parse, urllib.request
 import numpy as np
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = f"{root}/dataset/census_raw"
 VINTAGE = 2024                                            # ACS 5-year release covering 2020 to 2024, the latest on api.census.gov
-STATE, COUNTY = "06", "013"                               # California, Contra Costa County
-W, S, E, N, NX, NY = -122.215, 37.805, -122.055, 37.925, 480, 456
-MX, MY = 87800.0, 110950.0                                # metres per degree of longitude and latitude at this latitude, as in 06_fetch_buildings.py
+# Two areas share this script. "--region sf" builds San Francisco; the default is Lamorinda.
+REGIONS = {
+    "lamorinda": dict(state="06", county="013", county_name="Contra Costa County, California (06013)", box=(-122.215, 37.805, -122.055, 37.925),
+                      ds="dataset", site="data", buildings="buildings_lamorinda.csv", table="census_block_groups_lamorinda.csv", mx=87800.0),
+    "sf": dict(state="06", county="075", county_name="San Francisco County, California (06075)", box=(-122.520, 37.705, -122.360, 37.825),
+               ds="dataset_sf", site="data_sf", buildings="buildings_san_francisco.csv", table="census_block_groups_san_francisco.csv", mx=88000.0),
+}
+REGION = sys.argv[sys.argv.index("--region") + 1] if "--region" in sys.argv else "lamorinda"
+RG = REGIONS[REGION]
+RAW = f"{root}/{RG['ds']}/census_raw"
+STATE, COUNTY = RG["state"], RG["county"]
+W, S, E, N = RG["box"]; NX, NY = 480, 456
+MX, MY = RG["mx"], 110950.0                               # metres per degree of longitude and latitude at this latitude, as in 06_fetch_buildings.py
 RES_MIN, RES_MAX = 60, 1500                               # footprint m2 counted as residential-sized: smaller is a shed or garage, larger a school, store or church
 SNAP_M = 25                                               # a building in no shape (simplified shared edges leave slivers) joins the nearest one within this distance
 API = f"https://api.census.gov/data/{VINTAGE}/acs/acs5"
@@ -216,9 +226,11 @@ def clip_box(ring):
 
 
 def share_in_box(rings):
-    """Share of the shape's area that lies inside the study box. Ring 0 is the outline; any others are holes (true for every shape here)."""
-    full = ring_area(rings[0]) - sum(ring_area(r) for r in rings[1:])
-    part = sum((1 if k == 0 else -1) * (ring_area(c) if (c := clip_box(r)) else 0) for k, r in enumerate(rings))
+    """Share of the shape's area that lies inside the study box. A ring that lies inside another ring is a hole; any other ring is an outline
+    (a block group made of several islands, such as Treasure Island and Yerba Buena Island, has several outlines)."""
+    sign = [-1 if any(k != j and inside([rings[j]], np.array([r[0][0]]), np.array([r[0][1]]))[0] for j in range(len(rings))) else 1 for k, r in enumerate(rings)]
+    full = sum(sg * ring_area(r) for sg, r in zip(sign, rings))
+    part = sum(sg * (ring_area(c) if (c := clip_box(r)) else 0) for sg, r in zip(sign, rings))
     return max(0.0, min(1.0, part / full)) if full > 0 else 0.0
 
 
@@ -239,10 +251,10 @@ def main():
                 "adults": val("C21007", geo, (1,)), "dis18": val("C21007", geo, (5, 8, 12, 15, 20, 23, 27, 30)), "sizes": sizes}
 
     # buildings -> block group
-    b = np.array([[float(r["lon"]), float(r["lat"]), float(r["footprint_m2"])] for r in csv.DictReader(open(f"{root}/dataset/buildings_lamorinda.csv"))])
+    b = np.array([[float(r["lon"]), float(r["lat"]), float(r["footprint_m2"])] for r in csv.DictReader(open(f"{root}/{RG['ds']}/{RG['buildings']}"))])
     x, y, area = b[:, 0], b[:, 1], b[:, 2]
     bg = np.full(len(b), -1, np.int32)
-    boxes = [np.asarray(shapes[g]["rings"][0]) for g in ids]
+    boxes = [np.concatenate([np.asarray(r) for r in shapes[g]["rings"]]) for g in ids]      # bounding box over every ring, so islands count
     for k, g in enumerate(ids):
         r = boxes[k]; m = (bg < 0) & (x >= r[:, 0].min()) & (x <= r[:, 0].max()) & (y >= r[:, 1].min()) & (y <= r[:, 1].max())
         idx = np.flatnonzero(m); bg[idx[inside(shapes[g]["rings"], x[idx], y[idx])]] = k
@@ -254,15 +266,17 @@ def main():
 
     # grid cell -> block group, for clicks on the map
     cx = W + (np.arange(NX) + 0.5) * (E - W) / NX; cy = N - (np.arange(NY) + 0.5) * (N - S) / NY
-    gx, gy = np.meshgrid(cx, cy); gx, gy = gx.ravel(), gy.ravel(); cell = np.full(NX * NY, 255, np.uint8)
+    # Lamorinda has under 255 block groups and keeps the original one-byte ids (255 = none). San Francisco has about 680, so it uses two bytes (65535 = none).
+    wide = len(ids) >= 255; NONE = 65535 if wide else 255
+    gx, gy = np.meshgrid(cx, cy); gx, gy = gx.ravel(), gy.ravel(); cell = np.full(NX * NY, NONE, np.uint16)
     for k, g in enumerate(ids):
-        r = boxes[k]; idx = np.flatnonzero((cell == 255) & (gx >= r[:, 0].min()) & (gx <= r[:, 0].max()) & (gy >= r[:, 1].min()) & (gy <= r[:, 1].max()))
+        r = boxes[k]; idx = np.flatnonzero((cell == NONE) & (gx >= r[:, 0].min()) & (gx <= r[:, 0].max()) & (gy >= r[:, 1].min()) & (gy <= r[:, 1].max()))
         cell[idx[inside(shapes[g]["rings"], gx[idx], gy[idx])]] = k
     runs = bytearray(); i = 0
     while i < len(cell):
         j = i
         while j < len(cell) and cell[j] == cell[i] and j - i < 65535: j += 1
-        runs += bytes([int(cell[i]), (j - i) & 255, (j - i) >> 8]); i = j
+        runs += (bytes([int(cell[i]) & 255, int(cell[i]) >> 8]) if wide else bytes([int(cell[i])])) + bytes([(j - i) & 255, (j - i) >> 8]); i = j
 
     rows = []
     for k, g in enumerate(ids):
@@ -274,33 +288,33 @@ def main():
     # packed residential-sized buildings: uint16 x, y (box = 0..65535), uint16 footprint m2, uint8 block group
     keep = np.flatnonzero(res)
     qx = np.round((x[keep] - W) / (E - W) * 65535).astype("<u2"); qy = np.round((y[keep] - S) / (N - S) * 65535).astype("<u2")
-    pack = qx.tobytes() + qy.tobytes() + np.round(area[keep]).astype("<u2").tobytes() + bg[keep].astype(np.uint8).tobytes()
+    pack = qx.tobytes() + qy.tobytes() + np.round(np.minimum(area[keep], 65535)).astype("<u2").tobytes() + bg[keep].astype("<u2" if wide else np.uint8).tobytes()
 
     meta = {"vintage": f"American Community Survey {VINTAGE - 4} to {VINTAGE} 5-year estimates", "year": VINTAGE, "source": acs["source"], "fetched": acs["fetched"],
-            "shapes": f"TIGERweb ACS {VINTAGE} block groups (boundaries of January 1, {VINTAGE}), simplified to about 2 m", "county": "Contra Costa County, California (06013)",
+            "shapes": f"TIGERweb ACS {VINTAGE} block groups (boundaries of January 1, {VINTAGE}), simplified to about 2 m", "county": RG["county_name"], "region": REGION, "bg_bytes": 2 if wide else 1,
             "moe": "margins of error are the published 90% margins; sums use the root sum of squares", "res_m2": [RES_MIN, RES_MAX], "bbox": [W, S, E, N], "grid": [NX, NY],
             "tables": {t: {"concept": lab[t]["concept"], "vars": [var(t, n) for n in TABLES[t]]} for t in TABLES},
             "buildings": {"all": int(len(b)), "packed": int(len(keep)), "no_block_group": int((bg < 0).sum()), "outside_size_range": int(((bg >= 0) & ~res).sum())},
             "county_totals": {"hh": county["hh"], "nocar": county["nocar"], "alone65": county["alone65"]}}
     out = {"meta": meta, "bg": rows, "cells": base64.b64encode(bytes(runs)).decode(), "bld": base64.b64encode(pack).decode()}
-    open(f"{root}/site/data/census_bg.js", "w").write("window.GT_CENSUS=" + json.dumps(out, separators=(",", ":")) + ";\n")
+    open(f"{root}/site/{RG['site']}/census_bg.js", "w").write("window.GT_CENSUS=" + json.dumps(out, separators=(",", ":")) + ";\n")
 
-    with open(f"{root}/dataset/census_block_groups_lamorinda.csv", "w", newline="") as fh:
+    with open(f"{root}/{RG['ds']}/{RG['table']}", "w", newline="") as fh:
         w = csv.writer(fh); keys = ["hh", "nocar", "with65", "alone65", "pop", "age65", "age75", "adults", "dis18"]
         w.writerow(["geoid", "tract", "block_group", "share_of_area_in_box", "residential_sized_buildings_in_box"] + [c for k in keys for c in (k, k + "_moe")] + [f"hh_size_{n}" for n in "1234567"])
         for r in rows: w.writerow([r["id"], r["tract"], r["group"], r["frac"], r["n"]] + [v for k in keys for v in r[k]] + r["sizes"])
-    with open(f"{root}/dataset/buildings_block_group.csv", "w", newline="") as fh:
+    with open(f"{root}/{RG['ds']}/buildings_block_group.csv", "w", newline="") as fh:
         w = csv.writer(fh); w.writerow(["lon", "lat", "footprint_m2", "block_group_geoid", "residential_sized"])
         for k in range(len(b)): w.writerow([f"{x[k]:.5f}", f"{y[k]:.5f}", int(area[k]), ids[bg[k]] if bg[k] >= 0 else "", int(res[k])])
 
     # sanity checks
     hh_box = sum(r["hh"][0] * r["frac"] for r in rows if r["n"]); nocar_box = sum(r["nocar"][0] * r["frac"] for r in rows if r["n"])
-    print(len(ids), "block groups;", int((bg >= 0).sum()), "of", len(b), "buildings assigned,", snapped, "by snapping,", int((bg < 0).sum()), "in no Contra Costa block group;", len(keep), "residential-sized")
+    print(len(ids), "block groups;", int((bg >= 0).sum()), "of", len(b), "buildings assigned,", snapped, "by snapping,", int((bg < 0).sum()), f"in no {RG['county_name'].split(',')[0]} block group;", len(keep), "residential-sized")
     print(f"households in the box (estimate x share of area in the box): {hh_box:,.0f}; residential-sized buildings: {len(keep):,}; households per building {hh_box / len(keep):.2f}")
     print(f"no-vehicle households, box {nocar_box / hh_box:.1%}; county {county['nocar'][0] / county['hh'][0]:.1%} ({county['nocar'][0]:,} of {county['hh'][0]:,}, margin {county['nocar'][1]:,})")
     for r in rows:
         if r["n"] == 0 and r["hh"][0] * r["frac"] >= 20: print("  note:", r["id"], "has no residential-sized building in the box but about", round(r["hh"][0] * r["frac"]), "households by area share")
-    print("census_bg.js bytes", os.path.getsize(f"{root}/site/data/census_bg.js"))
+    print("census_bg.js bytes", os.path.getsize(f"{root}/site/{RG['site']}/census_bg.js"))
 
 
 if __name__ == "__main__":

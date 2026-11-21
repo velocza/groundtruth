@@ -1,0 +1,1552 @@
+{
+ "meta": {
+  "storm": "San Francisco, November 18, 2026 (downtown gauge 67.1 mm, a record for the date; 776 flood reports that day, the most since 2008)",
+  "storm_window": [
+   "2026-11-18 00:00:00",
+   "2026-11-19 12:00:00"
+  ],
+  "timeline": [
+   "2026-11-17 00:00:00",
+   "2026-11-21 00:00:00"
+  ],
+  "time_zone": "America/Los_Angeles",
+  "source": {
+   "dispatch": "DataSF, Fire Department and Emergency Medical Services Dispatched Calls for Service, dataset nuek-vuh3",
+   "pulled": "2026-11-21 (records through 2026-11-21 03:23 local; DataSF stamps data_as_of 2026-11-19/20)",
+   "span": [
+    "2025-09-01 00:00:46",
+    "2026-11-21 03:23:49"
+   ],
+   "files": [
+    "gtsr_fire_2025-09.csv.gz",
+    "gtsr_fire_2025-10.csv.gz",
+    "gtsr_fire_2025-11.csv.gz",
+    "gtsr_fire_2025-12.csv.gz",
+    "gtsr_fire_2026-01.csv.gz",
+    "gtsr_fire_2026-02.csv.gz",
+    "gtsr_fire_2026-03.csv.gz",
+    "gtsr_fire_2026-04.csv.gz",
+    "gtsr_fire_2026-05.csv.gz",
+    "gtsr_fire_2026-06.csv.gz",
+    "gtsr_fire_2026-07.csv.gz",
+    "gtsr_fire_2026-08.csv.gz",
+    "gtsr_fire_2026-09.csv.gz",
+    "gtsr_fire_2026-10.csv.gz",
+    "gtsr_fire_2026-11.csv.gz"
+   ],
+   "neighborhoods": "DataSF Analysis Neighborhoods, dataset j2bu-swwd (41)",
+   "rain": "NOAA/NWS downtown gauge and SFO airport (dataset_sf/rainfall_*.csv)",
+   "floods": "SF 311 Sewer / Flooding cases, dataset vw6y-z8j6 (dataset_sf/flood_reports_311_san_francisco.csv)"
+  },
+  "rules": {
+   "incident": "One incident = one incident_number. All its unit rows are grouped; it is counted once however many units went.",
+   "response": "Minutes from received_dttm (call receipt) to the earliest on_scene_dttm of any unit on the incident.",
+   "dropped": "Left out of times (still counted in the status table): no unit recorded on scene, negative time, over 120 minutes, or a receipt/arrival clock time that does not exist or repeats at a daylight saving change.",
+   "neighborhood": "The incident's neighborhoods_analysis_boundaries field from DataSF (the 41 Analysis Neighborhoods). Flood reports are placed by point in polygon.",
+   "dry_day": "Downtown gauge, SFO gauge and the area mean all 0 mm that day and the 2 days before, between 2025-09-01 and 2026-10-31. Days with no gauge reading are not dry days.",
+   "matching": "Each storm call is matched to dry-day calls with the same weekday, local hour of receipt and call_type. Dry calls are weighted so the mix of those cells equals the storm's. A storm call whose cell holds fewer than 3 dry calls is left out of the comparison and counted.",
+   "few": "A comparison is flagged as too few calls when it has fewer than 20 matched storm calls or 60 matched dry calls.",
+   "percentile": "Nearest rank: the smallest time at or above the given share of calls (weighted for dry days). The page computes the scrubber stats with the same rule.",
+   "interval": "90% bootstrap interval, 1000 draws, seed 20261118: storm calls resampled one by one, dry calls resampled by whole day.",
+   "priority": "All priorities are included. Matching is on call_type only, as asked; the final priority mix is in the status table."
+  },
+  "status_all": {
+   "ok": 212612,
+   "no_unit_on_scene": 12524,
+   "daylight_saving_change": 103,
+   "over_120_min": 18,
+   "negative_time": 5
+  },
+  "status_storm": {
+   "ok": 813,
+   "no_unit_on_scene": 55
+  },
+  "priority_storm": {
+   "3": 543,
+   "2": 325
+  },
+  "dry_days": 202,
+  "dry_days_used": 58,
+  "unit_rows": 450280,
+  "incidents": 225262
+ },
+ "city": {
+  "label": "All of San Francisco",
+  "storm_valid": 813,
+  "storm_matched": 800,
+  "storm_unmatched": 13,
+  "dry_matched": 19211,
+  "dry_days": 58,
+  "storm_med": 7.816666666666666,
+  "storm_p90": 21.95,
+  "dry_med": 7.75,
+  "dry_p90": 22.266666666666666,
+  "d_med": 0.06666666666666643,
+  "d_p90": -0.31666666666666643,
+  "d_med_ci": [
+   -0.33333333333333304,
+   0.39999999999999947
+  ],
+  "d_p90_ci": [
+   -1.9333333333333336,
+   1.0833333333333321
+  ],
+  "few": false,
+  "storm_calls": 868,
+  "flood_storm": 820
+ },
+ "neighborhoods": [
+  {
+   "label": "Bayview Hunters Point",
+   "storm_valid": 39,
+   "storm_matched": 28,
+   "storm_unmatched": 11,
+   "dry_matched": 429,
+   "dry_days": 58,
+   "storm_med": 11.166666666666666,
+   "storm_p90": 26.016666666666666,
+   "dry_med": 9.633333333333333,
+   "dry_p90": 24.316666666666666,
+   "d_med": 1.5333333333333332,
+   "d_p90": 1.6999999999999993,
+   "d_med_ci": [
+    -2.5500000000000007,
+    4.0
+   ],
+   "d_p90_ci": [
+    -3.6999999999999993,
+    3.333333333333332
+   ],
+   "few": false,
+   "storm_calls": 40,
+   "flood_storm": 48
+  },
+  {
+   "label": "Bernal Heights",
+   "storm_valid": 13,
+   "storm_matched": 5,
+   "storm_unmatched": 8,
+   "dry_matched": 28,
+   "dry_days": 22,
+   "storm_med": 7.716666666666667,
+   "storm_p90": 17.65,
+   "dry_med": 14.383333333333333,
+   "dry_p90": 24.0,
+   "d_med": -6.666666666666666,
+   "d_p90": -6.350000000000001,
+   "d_med_ci": [
+    -13.283333333333333,
+    2.133333333333333
+   ],
+   "d_p90_ci": [
+    -15.233333333333333,
+    -2.8000000000000007
+   ],
+   "few": true,
+   "storm_calls": 15,
+   "flood_storm": 18
+  },
+  {
+   "label": "Castro/Upper Market",
+   "storm_valid": 21,
+   "storm_matched": 15,
+   "storm_unmatched": 6,
+   "dry_matched": 122,
+   "dry_days": 41,
+   "storm_med": 9.316666666666666,
+   "storm_p90": 16.166666666666668,
+   "dry_med": 9.883333333333333,
+   "dry_p90": 20.45,
+   "d_med": -0.5666666666666664,
+   "d_p90": -4.283333333333331,
+   "d_med_ci": [
+    -4.033333333333333,
+    4.75
+   ],
+   "d_p90_ci": [
+    -7.416666666666664,
+    -0.6833333333333336
+   ],
+   "few": true,
+   "storm_calls": 22,
+   "flood_storm": 17
+  },
+  {
+   "label": "Chinatown",
+   "storm_valid": 25,
+   "storm_matched": 16,
+   "storm_unmatched": 9,
+   "dry_matched": 112,
+   "dry_days": 43,
+   "storm_med": 6.533333333333333,
+   "storm_p90": 24.216666666666665,
+   "dry_med": 7.5,
+   "dry_p90": 24.483333333333334,
+   "d_med": -0.9666666666666668,
+   "d_p90": -0.26666666666666927,
+   "d_med_ci": [
+    -2.4666666666666677,
+    0.8499999999999996
+   ],
+   "d_p90_ci": [
+    -12.18333333333333,
+    11.48333333333333
+   ],
+   "few": true,
+   "storm_calls": 25,
+   "flood_storm": 7
+  },
+  {
+   "label": "Excelsior",
+   "storm_valid": 16,
+   "storm_matched": 12,
+   "storm_unmatched": 4,
+   "dry_matched": 95,
+   "dry_days": 41,
+   "storm_med": 13.216666666666667,
+   "storm_p90": 20.45,
+   "dry_med": 11.216666666666667,
+   "dry_p90": 22.35,
+   "d_med": 2.0,
+   "d_p90": -1.9000000000000021,
+   "d_med_ci": [
+    -4.916666666666666,
+    5.833333333333334
+   ],
+   "d_p90_ci": [
+    -7.6,
+    6.183333333333334
+   ],
+   "few": true,
+   "storm_calls": 16,
+   "flood_storm": 10
+  },
+  {
+   "label": "Financial District/South Beach",
+   "storm_valid": 57,
+   "storm_matched": 47,
+   "storm_unmatched": 10,
+   "dry_matched": 543,
+   "dry_days": 58,
+   "storm_med": 9.65,
+   "storm_p90": 27.566666666666666,
+   "dry_med": 8.666666666666666,
+   "dry_p90": 25.1,
+   "d_med": 0.9833333333333343,
+   "d_p90": 2.466666666666665,
+   "d_med_ci": [
+    -0.8499999999999996,
+    5.050000000000001
+   ],
+   "d_p90_ci": [
+    -2.25,
+    6.383333333333333
+   ],
+   "few": false,
+   "storm_calls": 61,
+   "flood_storm": 34
+  },
+  {
+   "label": "Glen Park",
+   "storm_valid": 5,
+   "storm_matched": 1,
+   "storm_unmatched": 4,
+   "dry_matched": 3,
+   "dry_days": 3,
+   "storm_med": 25.433333333333334,
+   "storm_p90": 25.433333333333334,
+   "dry_med": 10.466666666666667,
+   "dry_p90": 14.016666666666667,
+   "d_med": 14.966666666666667,
+   "d_p90": 11.416666666666666,
+   "d_med_ci": [
+    11.416666666666666,
+    21.2
+   ],
+   "d_p90_ci": [
+    11.416666666666666,
+    14.966666666666667
+   ],
+   "few": true,
+   "storm_calls": 5,
+   "flood_storm": 1
+  },
+  {
+   "label": "Golden Gate Park",
+   "storm_valid": 6,
+   "storm_matched": 0,
+   "storm_unmatched": 6,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 7,
+   "flood_storm": 10
+  },
+  {
+   "label": "Haight Ashbury",
+   "storm_valid": 13,
+   "storm_matched": 6,
+   "storm_unmatched": 7,
+   "dry_matched": 32,
+   "dry_days": 24,
+   "storm_med": 7.916666666666667,
+   "storm_p90": 31.133333333333333,
+   "dry_med": 7.766666666666667,
+   "dry_p90": 19.9,
+   "d_med": 0.15000000000000036,
+   "d_p90": 11.233333333333334,
+   "d_med_ci": [
+    -4.166666666666667,
+    8.399999999999999
+   ],
+   "d_p90_ci": [
+    -9.400000000000002,
+    17.53333333333333
+   ],
+   "few": true,
+   "storm_calls": 14,
+   "flood_storm": 28
+  },
+  {
+   "label": "Hayes Valley",
+   "storm_valid": 12,
+   "storm_matched": 9,
+   "storm_unmatched": 3,
+   "dry_matched": 113,
+   "dry_days": 47,
+   "storm_med": 6.033333333333333,
+   "storm_p90": 29.366666666666667,
+   "dry_med": 7.983333333333333,
+   "dry_p90": 25.833333333333332,
+   "d_med": -1.9500000000000002,
+   "d_p90": 3.533333333333335,
+   "d_med_ci": [
+    -4.466666666666667,
+    0.5166666666666666
+   ],
+   "d_p90_ci": [
+    -16.983333333333334,
+    8.183333333333334
+   ],
+   "few": true,
+   "storm_calls": 12,
+   "flood_storm": 38
+  },
+  {
+   "label": "Inner Richmond",
+   "storm_valid": 8,
+   "storm_matched": 4,
+   "storm_unmatched": 4,
+   "dry_matched": 27,
+   "dry_days": 24,
+   "storm_med": 8.733333333333333,
+   "storm_p90": 12.85,
+   "dry_med": 8.033333333333333,
+   "dry_p90": 19.866666666666667,
+   "d_med": 0.6999999999999993,
+   "d_p90": -7.0166666666666675,
+   "d_med_ci": [
+    -3.6833333333333327,
+    5.699999999999999
+   ],
+   "d_p90_ci": [
+    -11.133333333333335,
+    -1.0500000000000007
+   ],
+   "few": true,
+   "storm_calls": 8,
+   "flood_storm": 11
+  },
+  {
+   "label": "Inner Sunset",
+   "storm_valid": 14,
+   "storm_matched": 7,
+   "storm_unmatched": 7,
+   "dry_matched": 30,
+   "dry_days": 17,
+   "storm_med": 8.633333333333333,
+   "storm_p90": 42.81666666666667,
+   "dry_med": 6.666666666666667,
+   "dry_p90": 20.183333333333334,
+   "d_med": 1.966666666666666,
+   "d_p90": 22.633333333333336,
+   "d_med_ci": [
+    -4.633333333333334,
+    3.583333333333333
+   ],
+   "d_p90_ci": [
+    -14.566666666666668,
+    30.01666666666667
+   ],
+   "few": true,
+   "storm_calls": 15,
+   "flood_storm": 25
+  },
+  {
+   "label": "Japantown",
+   "storm_valid": 5,
+   "storm_matched": 1,
+   "storm_unmatched": 4,
+   "dry_matched": 6,
+   "dry_days": 5,
+   "storm_med": 5.2,
+   "storm_p90": 5.2,
+   "dry_med": 12.0,
+   "dry_p90": 24.933333333333334,
+   "d_med": -6.8,
+   "d_p90": -19.733333333333334,
+   "d_med_ci": [
+    -16.900000000000002,
+    -0.6333333333333329
+   ],
+   "d_p90_ci": [
+    -19.733333333333334,
+    -6.8
+   ],
+   "few": true,
+   "storm_calls": 7,
+   "flood_storm": 13
+  },
+  {
+   "label": "Lakeshore",
+   "storm_valid": 15,
+   "storm_matched": 6,
+   "storm_unmatched": 9,
+   "dry_matched": 38,
+   "dry_days": 28,
+   "storm_med": 7.416666666666667,
+   "storm_p90": 28.033333333333335,
+   "dry_med": 9.183333333333334,
+   "dry_p90": 26.833333333333332,
+   "d_med": -1.7666666666666666,
+   "d_p90": 1.2000000000000028,
+   "d_med_ci": [
+    -4.449999999999999,
+    1.1333333333333346
+   ],
+   "d_p90_ci": [
+    -30.816666666666663,
+    8.416666666666668
+   ],
+   "few": true,
+   "storm_calls": 17,
+   "flood_storm": 6
+  },
+  {
+   "label": "Lincoln Park",
+   "storm_valid": 0,
+   "storm_matched": 0,
+   "storm_unmatched": 0,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 0,
+   "flood_storm": 0
+  },
+  {
+   "label": "Lone Mountain/USF",
+   "storm_valid": 10,
+   "storm_matched": 5,
+   "storm_unmatched": 5,
+   "dry_matched": 46,
+   "dry_days": 25,
+   "storm_med": 6.1,
+   "storm_p90": 24.916666666666668,
+   "dry_med": 11.483333333333333,
+   "dry_p90": 27.266666666666666,
+   "d_med": -5.383333333333333,
+   "d_p90": -2.349999999999998,
+   "d_med_ci": [
+    -8.316666666666666,
+    11.7
+   ],
+   "d_p90_ci": [
+    -62.96666666666667,
+    8.916666666666668
+   ],
+   "few": true,
+   "storm_calls": 12,
+   "flood_storm": 9
+  },
+  {
+   "label": "Marina",
+   "storm_valid": 20,
+   "storm_matched": 12,
+   "storm_unmatched": 8,
+   "dry_matched": 74,
+   "dry_days": 47,
+   "storm_med": 10.0,
+   "storm_p90": 21.5,
+   "dry_med": 7.3,
+   "dry_p90": 29.383333333333333,
+   "d_med": 2.7,
+   "d_p90": -7.883333333333333,
+   "d_med_ci": [
+    -1.7166666666666668,
+    8.45
+   ],
+   "d_p90_ci": [
+    -17.2,
+    3.2333333333333343
+   ],
+   "few": true,
+   "storm_calls": 21,
+   "flood_storm": 41
+  },
+  {
+   "label": "McLaren Park",
+   "storm_valid": 1,
+   "storm_matched": 1,
+   "storm_unmatched": 0,
+   "dry_matched": 3,
+   "dry_days": 3,
+   "storm_med": 14.8,
+   "storm_p90": 14.8,
+   "dry_med": 0.0,
+   "dry_p90": 23.616666666666667,
+   "d_med": 14.8,
+   "d_p90": -8.816666666666666,
+   "d_med_ci": [
+    -8.816666666666666,
+    14.8
+   ],
+   "d_p90_ci": [
+    -8.816666666666666,
+    14.8
+   ],
+   "few": true,
+   "storm_calls": 2,
+   "flood_storm": 0
+  },
+  {
+   "label": "Mission",
+   "storm_valid": 86,
+   "storm_matched": 71,
+   "storm_unmatched": 15,
+   "dry_matched": 1407,
+   "dry_days": 58,
+   "storm_med": 7.683333333333334,
+   "storm_p90": 18.583333333333332,
+   "dry_med": 7.35,
+   "dry_p90": 19.7,
+   "d_med": 0.3333333333333339,
+   "d_p90": -1.1166666666666671,
+   "d_med_ci": [
+    -0.5666666666666664,
+    2.1833333333333345
+   ],
+   "d_p90_ci": [
+    -6.366666666666667,
+    1.283333333333335
+   ],
+   "few": false,
+   "storm_calls": 94,
+   "flood_storm": 95
+  },
+  {
+   "label": "Mission Bay",
+   "storm_valid": 11,
+   "storm_matched": 7,
+   "storm_unmatched": 4,
+   "dry_matched": 87,
+   "dry_days": 41,
+   "storm_med": 18.133333333333333,
+   "storm_p90": 35.36666666666667,
+   "dry_med": 8.216666666666667,
+   "dry_p90": 28.65,
+   "d_med": 9.916666666666666,
+   "d_p90": 6.716666666666669,
+   "d_med_ci": [
+    -1.8500000000000005,
+    12.616666666666665
+   ],
+   "d_p90_ci": [
+    -15.833333333333332,
+    15.0
+   ],
+   "few": true,
+   "storm_calls": 11,
+   "flood_storm": 29
+  },
+  {
+   "label": "Nob Hill",
+   "storm_valid": 24,
+   "storm_matched": 16,
+   "storm_unmatched": 8,
+   "dry_matched": 255,
+   "dry_days": 57,
+   "storm_med": 8.0,
+   "storm_p90": 23.3,
+   "dry_med": 6.933333333333334,
+   "dry_p90": 19.616666666666667,
+   "d_med": 1.0666666666666664,
+   "d_p90": 3.6833333333333336,
+   "d_med_ci": [
+    -0.4500000000000002,
+    5.116666666666667
+   ],
+   "d_p90_ci": [
+    -4.799999999999999,
+    7.866666666666667
+   ],
+   "few": true,
+   "storm_calls": 25,
+   "flood_storm": 6
+  },
+  {
+   "label": "Noe Valley",
+   "storm_valid": 2,
+   "storm_matched": 0,
+   "storm_unmatched": 2,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 2,
+   "flood_storm": 33
+  },
+  {
+   "label": "North Beach",
+   "storm_valid": 9,
+   "storm_matched": 7,
+   "storm_unmatched": 2,
+   "dry_matched": 80,
+   "dry_days": 40,
+   "storm_med": 6.65,
+   "storm_p90": 28.2,
+   "dry_med": 7.866666666666666,
+   "dry_p90": 27.483333333333334,
+   "d_med": -1.216666666666666,
+   "d_p90": 0.716666666666665,
+   "d_med_ci": [
+    -3.1000000000000005,
+    13.916666666666668
+   ],
+   "d_p90_ci": [
+    -19.433333333333334,
+    4.5
+   ],
+   "few": true,
+   "storm_calls": 9,
+   "flood_storm": 8
+  },
+  {
+   "label": "Oceanview/Merced/Ingleside",
+   "storm_valid": 11,
+   "storm_matched": 7,
+   "storm_unmatched": 4,
+   "dry_matched": 34,
+   "dry_days": 25,
+   "storm_med": 9.65,
+   "storm_p90": 52.733333333333334,
+   "dry_med": 8.966666666666667,
+   "dry_p90": 29.883333333333333,
+   "d_med": 0.6833333333333336,
+   "d_p90": 22.85,
+   "d_med_ci": [
+    -4.166666666666667,
+    10.266666666666667
+   ],
+   "d_p90_ci": [
+    -22.333333333333336,
+    34.78333333333333
+   ],
+   "few": true,
+   "storm_calls": 11,
+   "flood_storm": 7
+  },
+  {
+   "label": "Outer Mission",
+   "storm_valid": 13,
+   "storm_matched": 7,
+   "storm_unmatched": 6,
+   "dry_matched": 55,
+   "dry_days": 36,
+   "storm_med": 8.566666666666666,
+   "storm_p90": 17.266666666666666,
+   "dry_med": 10.6,
+   "dry_p90": 35.71666666666667,
+   "d_med": -2.033333333333333,
+   "d_p90": -18.450000000000003,
+   "d_med_ci": [
+    -7.566666666666667,
+    5.183333333333334
+   ],
+   "d_p90_ci": [
+    -24.03333333333334,
+    -3.0
+   ],
+   "few": true,
+   "storm_calls": 13,
+   "flood_storm": 32
+  },
+  {
+   "label": "Outer Richmond",
+   "storm_valid": 23,
+   "storm_matched": 9,
+   "storm_unmatched": 14,
+   "dry_matched": 76,
+   "dry_days": 37,
+   "storm_med": 8.633333333333333,
+   "storm_p90": 12.1,
+   "dry_med": 7.716666666666667,
+   "dry_p90": 27.733333333333334,
+   "d_med": 0.9166666666666661,
+   "d_p90": -15.633333333333335,
+   "d_med_ci": [
+    -2.0999999999999996,
+    2.533333333333334
+   ],
+   "d_p90_ci": [
+    -26.58333333333333,
+    -8.766666666666667
+   ],
+   "few": true,
+   "storm_calls": 25,
+   "flood_storm": 15
+  },
+  {
+   "label": "Pacific Heights",
+   "storm_valid": 14,
+   "storm_matched": 6,
+   "storm_unmatched": 8,
+   "dry_matched": 36,
+   "dry_days": 25,
+   "storm_med": 5.966666666666667,
+   "storm_p90": 22.633333333333333,
+   "dry_med": 6.5,
+   "dry_p90": 20.05,
+   "d_med": -0.5333333333333332,
+   "d_p90": 2.583333333333332,
+   "d_med_ci": [
+    -1.8666666666666671,
+    1.8666666666666663
+   ],
+   "d_p90_ci": [
+    -14.350000000000001,
+    11.299999999999999
+   ],
+   "few": true,
+   "storm_calls": 14,
+   "flood_storm": 40
+  },
+  {
+   "label": "Portola",
+   "storm_valid": 10,
+   "storm_matched": 4,
+   "storm_unmatched": 6,
+   "dry_matched": 24,
+   "dry_days": 18,
+   "storm_med": 5.533333333333333,
+   "storm_p90": 19.55,
+   "dry_med": 11.583333333333334,
+   "dry_p90": 21.5,
+   "d_med": -6.050000000000001,
+   "d_p90": -1.9499999999999993,
+   "d_med_ci": [
+    -8.666666666666666,
+    7.966666666666667
+   ],
+   "d_p90_ci": [
+    -16.0,
+    -0.8666666666666671
+   ],
+   "few": true,
+   "storm_calls": 10,
+   "flood_storm": 5
+  },
+  {
+   "label": "Potrero Hill",
+   "storm_valid": 6,
+   "storm_matched": 4,
+   "storm_unmatched": 2,
+   "dry_matched": 20,
+   "dry_days": 17,
+   "storm_med": 6.783333333333333,
+   "storm_p90": 43.083333333333336,
+   "dry_med": 11.216666666666667,
+   "dry_p90": 21.566666666666666,
+   "d_med": -4.433333333333334,
+   "d_p90": 21.51666666666667,
+   "d_med_ci": [
+    -6.300000000000001,
+    30.21666666666667
+   ],
+   "d_p90_ci": [
+    -14.783333333333333,
+    28.25
+   ],
+   "few": true,
+   "storm_calls": 7,
+   "flood_storm": 6
+  },
+  {
+   "label": "Presidio",
+   "storm_valid": 6,
+   "storm_matched": 2,
+   "storm_unmatched": 4,
+   "dry_matched": 10,
+   "dry_days": 10,
+   "storm_med": 20.55,
+   "storm_p90": 28.883333333333333,
+   "dry_med": 11.783333333333333,
+   "dry_p90": 21.983333333333334,
+   "d_med": 8.766666666666667,
+   "d_p90": 6.899999999999999,
+   "d_med_ci": [
+    -1.0833333333333321,
+    17.1
+   ],
+   "d_p90_ci": [
+    -19.316666666666666,
+    11.833333333333332
+   ],
+   "few": true,
+   "storm_calls": 6,
+   "flood_storm": 0
+  },
+  {
+   "label": "Presidio Heights",
+   "storm_valid": 4,
+   "storm_matched": 1,
+   "storm_unmatched": 3,
+   "dry_matched": 3,
+   "dry_days": 3,
+   "storm_med": 5.716666666666667,
+   "storm_p90": 5.716666666666667,
+   "dry_med": 5.566666666666666,
+   "dry_p90": 6.266666666666667,
+   "d_med": 0.15000000000000036,
+   "d_p90": -0.5499999999999998,
+   "d_med_ci": [
+    -0.5499999999999998,
+    1.8000000000000003
+   ],
+   "d_p90_ci": [
+    -0.5499999999999998,
+    0.15000000000000036
+   ],
+   "few": true,
+   "storm_calls": 5,
+   "flood_storm": 6
+  },
+  {
+   "label": "Russian Hill",
+   "storm_valid": 9,
+   "storm_matched": 2,
+   "storm_unmatched": 7,
+   "dry_matched": 12,
+   "dry_days": 11,
+   "storm_med": 4.383333333333334,
+   "storm_p90": 8.15,
+   "dry_med": 11.066666666666666,
+   "dry_p90": 20.233333333333334,
+   "d_med": -6.683333333333333,
+   "d_p90": -12.083333333333334,
+   "d_med_ci": [
+    -9.933333333333334,
+    -0.4666666666666668
+   ],
+   "d_p90_ci": [
+    -21.633333333333333,
+    -6.166666666666666
+   ],
+   "few": true,
+   "storm_calls": 10,
+   "flood_storm": 9
+  },
+  {
+   "label": "Seacliff",
+   "storm_valid": 0,
+   "storm_matched": 0,
+   "storm_unmatched": 0,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 0,
+   "flood_storm": 0
+  },
+  {
+   "label": "South of Market",
+   "storm_valid": 94,
+   "storm_matched": 85,
+   "storm_unmatched": 9,
+   "dry_matched": 1861,
+   "dry_days": 58,
+   "storm_med": 7.066666666666666,
+   "storm_p90": 21.4,
+   "dry_med": 8.8,
+   "dry_p90": 23.166666666666668,
+   "d_med": -1.7333333333333343,
+   "d_p90": -1.7666666666666693,
+   "d_med_ci": [
+    -2.633333333333333,
+    -0.2333333333333325
+   ],
+   "d_p90_ci": [
+    -8.15,
+    3.0666666666666664
+   ],
+   "few": false,
+   "storm_calls": 101,
+   "flood_storm": 54
+  },
+  {
+   "label": "Sunset/Parkside",
+   "storm_valid": 50,
+   "storm_matched": 25,
+   "storm_unmatched": 25,
+   "dry_matched": 238,
+   "dry_days": 50,
+   "storm_med": 9.583333333333334,
+   "storm_p90": 26.75,
+   "dry_med": 11.3,
+   "dry_p90": 24.716666666666665,
+   "d_med": -1.7166666666666668,
+   "d_p90": 2.033333333333335,
+   "d_med_ci": [
+    -3.9499999999999993,
+    1.466666666666666
+   ],
+   "d_p90_ci": [
+    -17.583333333333332,
+    4.166666666666664
+   ],
+   "few": false,
+   "storm_calls": 54,
+   "flood_storm": 87
+  },
+  {
+   "label": "Tenderloin",
+   "storm_valid": 99,
+   "storm_matched": 90,
+   "storm_unmatched": 9,
+   "dry_matched": 1920,
+   "dry_days": 58,
+   "storm_med": 8.25,
+   "storm_p90": 22.05,
+   "dry_med": 7.416666666666667,
+   "dry_p90": 20.4,
+   "d_med": 0.833333333333333,
+   "d_p90": 1.6500000000000021,
+   "d_med_ci": [
+    -0.7166666666666668,
+    2.1833333333333327
+   ],
+   "d_p90_ci": [
+    -2.25,
+    9.01666666666667
+   ],
+   "few": false,
+   "storm_calls": 104,
+   "flood_storm": 6
+  },
+  {
+   "label": "Treasure Island",
+   "storm_valid": 2,
+   "storm_matched": 0,
+   "storm_unmatched": 2,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 2,
+   "flood_storm": 0
+  },
+  {
+   "label": "Twin Peaks",
+   "storm_valid": 3,
+   "storm_matched": 1,
+   "storm_unmatched": 2,
+   "dry_matched": 4,
+   "dry_days": 4,
+   "storm_med": 7.55,
+   "storm_p90": 7.55,
+   "dry_med": 8.633333333333333,
+   "dry_p90": 18.766666666666666,
+   "d_med": -1.083333333333333,
+   "d_p90": -11.216666666666665,
+   "d_med_ci": [
+    -1.4500000000000002,
+    2.3166666666666664
+   ],
+   "d_p90_ci": [
+    -11.216666666666665,
+    -1.083333333333333
+   ],
+   "few": true,
+   "storm_calls": 4,
+   "flood_storm": 1
+  },
+  {
+   "label": "Visitacion Valley",
+   "storm_valid": 3,
+   "storm_matched": 0,
+   "storm_unmatched": 3,
+   "dry_matched": 0,
+   "dry_days": 0,
+   "few": true,
+   "storm_calls": 3,
+   "flood_storm": 0
+  },
+  {
+   "label": "West of Twin Peaks",
+   "storm_valid": 24,
+   "storm_matched": 10,
+   "storm_unmatched": 14,
+   "dry_matched": 73,
+   "dry_days": 46,
+   "storm_med": 7.733333333333333,
+   "storm_p90": 17.15,
+   "dry_med": 8.966666666666667,
+   "dry_p90": 25.183333333333334,
+   "d_med": -1.2333333333333334,
+   "d_p90": -8.033333333333335,
+   "d_med_ci": [
+    -5.85,
+    3.583333333333334
+   ],
+   "d_p90_ci": [
+    -27.499999999999996,
+    7.550000000000001
+   ],
+   "few": true,
+   "storm_calls": 27,
+   "flood_storm": 39
+  },
+  {
+   "label": "Western Addition",
+   "storm_valid": 30,
+   "storm_matched": 21,
+   "storm_unmatched": 9,
+   "dry_matched": 260,
+   "dry_days": 58,
+   "storm_med": 8.866666666666667,
+   "storm_p90": 21.866666666666667,
+   "dry_med": 8.0,
+   "dry_p90": 21.633333333333333,
+   "d_med": 0.8666666666666671,
+   "d_p90": 0.23333333333333428,
+   "d_med_ci": [
+    -2.0666666666666673,
+    4.5
+   ],
+   "d_p90_ci": [
+    -8.750000000000002,
+    14.849999999999998
+   ],
+   "few": false,
+   "storm_calls": 32,
+   "flood_storm": 25
+  }
+ ],
+ "types": [
+  {
+   "label": "Medical Incident",
+   "storm_valid": 480,
+   "storm_matched": 480,
+   "storm_unmatched": 0,
+   "dry_matched": 15119,
+   "dry_days": 58,
+   "storm_med": 9.033333333333333,
+   "storm_p90": 24.0,
+   "dry_med": 9.383333333333333,
+   "dry_p90": 23.55,
+   "d_med": -0.34999999999999964,
+   "d_p90": 0.4499999999999993,
+   "d_med_ci": [
+    -0.8000000000000007,
+    0.14999999999999858
+   ],
+   "d_p90_ci": [
+    -1.716666666666665,
+    1.9166666666666679
+   ],
+   "few": false
+  },
+  {
+   "label": "Alarms",
+   "storm_valid": 133,
+   "storm_matched": 133,
+   "storm_unmatched": 0,
+   "dry_matched": 2310,
+   "dry_days": 58,
+   "storm_med": 6.133333333333334,
+   "storm_p90": 9.083333333333334,
+   "dry_med": 5.916666666666667,
+   "dry_p90": 8.066666666666666,
+   "d_med": 0.21666666666666679,
+   "d_p90": 1.0166666666666675,
+   "d_med_ci": [
+    -0.04999999999999982,
+    0.36666666666666625
+   ],
+   "d_p90_ci": [
+    0.1833333333333318,
+    1.5999999999999996
+   ],
+   "few": false
+  },
+  {
+   "label": "Citizen Assist / Service Call",
+   "storm_valid": 55,
+   "storm_matched": 55,
+   "storm_unmatched": 0,
+   "dry_matched": 496,
+   "dry_days": 58,
+   "storm_med": 13.533333333333333,
+   "storm_p90": 33.45,
+   "dry_med": 13.8,
+   "dry_p90": 37.61666666666667,
+   "d_med": -0.2666666666666675,
+   "d_p90": -4.166666666666664,
+   "d_med_ci": [
+    -3.033333333333333,
+    3.349999999999998
+   ],
+   "d_p90_ci": [
+    -15.049999999999997,
+    15.799999999999997
+   ],
+   "few": false
+  },
+  {
+   "label": "Electrical Hazard",
+   "storm_valid": 41,
+   "storm_matched": 38,
+   "storm_unmatched": 3,
+   "dry_matched": 117,
+   "dry_days": 47,
+   "storm_med": 7.0,
+   "storm_p90": 11.716666666666667,
+   "dry_med": 6.633333333333334,
+   "dry_p90": 9.55,
+   "d_med": 0.36666666666666625,
+   "d_p90": 2.166666666666666,
+   "d_med_ci": [
+    -0.583333333333333,
+    1.4333333333333336
+   ],
+   "d_p90_ci": [
+    0.7166666666666668,
+    3.083333333333334
+   ],
+   "few": false
+  },
+  {
+   "label": "Other",
+   "storm_valid": 40,
+   "storm_matched": 40,
+   "storm_unmatched": 0,
+   "dry_matched": 641,
+   "dry_days": 57,
+   "storm_med": 6.85,
+   "storm_p90": 35.96666666666667,
+   "dry_med": 4.966666666666667,
+   "dry_p90": 26.366666666666667,
+   "d_med": 1.8833333333333329,
+   "d_p90": 9.600000000000001,
+   "d_med_ci": [
+    -0.6166666666666663,
+    6.7666666666666675
+   ],
+   "d_p90_ci": [
+    -8.75,
+    23.833333333333332
+   ],
+   "few": false
+  },
+  {
+   "label": "Traffic Collision",
+   "storm_valid": 20,
+   "storm_matched": 20,
+   "storm_unmatched": 0,
+   "dry_matched": 241,
+   "dry_days": 56,
+   "storm_med": 5.883333333333334,
+   "storm_p90": 11.4,
+   "dry_med": 5.033333333333333,
+   "dry_p90": 10.883333333333333,
+   "d_med": 0.8500000000000005,
+   "d_p90": 0.5166666666666675,
+   "d_med_ci": [
+    -0.2833333333333332,
+    2.0
+   ],
+   "d_p90_ci": [
+    -4.6,
+    11.833333333333332
+   ],
+   "few": false
+  },
+  {
+   "label": "Outside Fire",
+   "storm_valid": 17,
+   "storm_matched": 17,
+   "storm_unmatched": 0,
+   "dry_matched": 209,
+   "dry_days": 49,
+   "storm_med": 5.783333333333333,
+   "storm_p90": 8.816666666666666,
+   "dry_med": 6.266666666666667,
+   "dry_p90": 9.683333333333334,
+   "d_med": -0.4833333333333334,
+   "d_p90": -0.8666666666666671,
+   "d_med_ci": [
+    -1.4499999999999993,
+    1.2833333333333332
+   ],
+   "d_p90_ci": [
+    -2.5166666666666666,
+    2.2666666666666657
+   ],
+   "few": true
+  },
+  {
+   "label": "Structure Fire / Smoke in Building",
+   "storm_valid": 10,
+   "storm_matched": 8,
+   "storm_unmatched": 2,
+   "dry_matched": 42,
+   "dry_days": 26,
+   "storm_med": 3.8,
+   "storm_p90": 11.8,
+   "dry_med": 3.7666666666666666,
+   "dry_p90": 5.983333333333333,
+   "d_med": 0.033333333333333215,
+   "d_p90": 5.816666666666667,
+   "d_med_ci": [
+    -0.9500000000000002,
+    0.9999999999999996
+   ],
+   "d_p90_ci": [
+    -1.6333333333333329,
+    6.65
+   ],
+   "few": true
+  },
+  {
+   "label": "Gas Leak (Natural and LP Gases)",
+   "storm_valid": 8,
+   "storm_matched": 4,
+   "storm_unmatched": 4,
+   "dry_matched": 17,
+   "dry_days": 15,
+   "storm_med": 6.5,
+   "storm_p90": 8.466666666666667,
+   "dry_med": 7.8,
+   "dry_p90": 20.533333333333335,
+   "d_med": -1.2999999999999998,
+   "d_p90": -12.066666666666668,
+   "d_med_ci": [
+    -5.016666666666667,
+    0.11666666666666625
+   ],
+   "d_p90_ci": [
+    -18.3,
+    -0.8666666666666671
+   ],
+   "few": true
+  }
+ ],
+ "observation": {
+  "n_neighborhoods": 7,
+  "spearman_flood_vs_d_med": -0.5,
+  "spearman_flood_vs_d_p90": -0.21428571428571433,
+  "top_flood": [
+   [
+    "Mission",
+    95,
+    0.3,
+    -1.1
+   ],
+   [
+    "Sunset/Parkside",
+    87,
+    -1.7,
+    2.0
+   ],
+   [
+    "South of Market",
+    54,
+    -1.7,
+    -1.8
+   ],
+   [
+    "Bayview Hunters Point",
+    48,
+    1.5,
+    1.7
+   ],
+   [
+    "Financial District/South Beach",
+    34,
+    1.0,
+    2.5
+   ]
+  ],
+  "d_med_top5_flood_median": 0.3333333333333339,
+  "d_med_other_median": 0.833333333333333
+ },
+ "scenario": {
+  "passed": true,
+  "val": {
+   "label": "October 2026 (held out)",
+   "n": 6374,
+   "mae": 0.6333333333333333,
+   "bias": -0.03333333333333366,
+   "p90_abs": 2.1500000000000004
+  },
+  "val_storm": {
+   "label": "Storm window",
+   "n": 354,
+   "mae": 0.6499999999999999,
+   "bias": -0.2333333333333334,
+   "p90_abs": 2.283333333333333
+  },
+  "turn": 1.3333333333333333,
+  "busy": 68.23333333333333,
+  "curve": {
+   "0": 1.9666666666666666,
+   "250": 2.283333333333333,
+   "500": 2.55,
+   "750": 2.8833333333333333,
+   "1000": 3.15,
+   "1250": 3.466666666666667,
+   "1500": 3.783333333333333,
+   "1750": 3.933333333333333,
+   "2000": 4.866666666666666,
+   "2250": 5.416666666666667,
+   "2500": 5.283333333333333,
+   "2750": 5.3,
+   "7250": 7.9
+  },
+  "rules": {
+   "stations": "Station positions are estimated from the records: the median position of the 5% quickest arrivals of each station's own engine, September 2025 to August 2026. Good to a few hundred metres.",
+   "travel": "Drive time from a station is the median en-route-to-on-scene time of engines answering calls in their own station area at that street-grid distance (250 m bands), fitted on September 2025 to August 2026.",
+   "check": "The drive-time model is checked on October 2026, which it was not fitted on. Scenario results are shown only if the median absolute error is at most 1.0 min and the median signed error at most 0.5 min.",
+   "sim": "Medical calls in the storm window are replayed in order of receipt. The extra ambulance answers only calls in its own station's first-due area (the distances the drive-time model was checked on). It is dispatched when the real first dispatch happened and rolls after the median time engines take to leave quarters, and counts only if it would beat the first unit that really arrived. It is then busy for the median ambulance on-scene-to-available time plus the drive back. Every other unit does what it really did.",
+   "limits": "One unit, one station, one storm. It ignores traffic and flooding on the way, crews that were already out, and how dispatchers would really use the unit, so read it as a rough ceiling on the gain."
+  },
+  "stations": [
+   {
+    "id": "01",
+    "lon": -122.40871,
+    "lat": 37.78099
+   },
+   {
+    "id": "02",
+    "lon": -122.40969,
+    "lat": 37.79742
+   },
+   {
+    "id": "03",
+    "lon": -122.41771,
+    "lat": 37.78589
+   },
+   {
+    "id": "04",
+    "lon": -122.38985,
+    "lat": 37.77373
+   },
+   {
+    "id": "05",
+    "lon": -122.43061,
+    "lat": 37.7805
+   },
+   {
+    "id": "06",
+    "lon": -122.43025,
+    "lat": 37.76766
+   },
+   {
+    "id": "07",
+    "lon": -122.41718,
+    "lat": 37.7617
+   },
+   {
+    "id": "08",
+    "lon": -122.39638,
+    "lat": 37.7777
+   },
+   {
+    "id": "09",
+    "lon": -122.40521,
+    "lat": 37.74647
+   },
+   {
+    "id": "10",
+    "lon": -122.44642,
+    "lat": 37.78483
+   },
+   {
+    "id": "11",
+    "lon": -122.42477,
+    "lat": 37.74871
+   },
+   {
+    "id": "12",
+    "lon": -122.45223,
+    "lat": 37.76451
+   },
+   {
+    "id": "13",
+    "lon": -122.40223,
+    "lat": 37.79533
+   },
+   {
+    "id": "14",
+    "lon": -122.48581,
+    "lat": 37.77999
+   },
+   {
+    "id": "15",
+    "lon": -122.45311,
+    "lat": 37.72324
+   },
+   {
+    "id": "16",
+    "lon": -122.43587,
+    "lat": 37.79897
+   },
+   {
+    "id": "17",
+    "lon": -122.38568,
+    "lat": 37.72798
+   },
+   {
+    "id": "18",
+    "lon": -122.4904,
+    "lat": 37.75171
+   },
+   {
+    "id": "19",
+    "lon": -122.4787,
+    "lat": 37.72821
+   },
+   {
+    "id": "20",
+    "lon": -122.45601,
+    "lat": 37.75128
+   },
+   {
+    "id": "21",
+    "lon": -122.44092,
+    "lat": 37.7755
+   },
+   {
+    "id": "22",
+    "lon": -122.47266,
+    "lat": 37.76375
+   },
+   {
+    "id": "23",
+    "lon": -122.50593,
+    "lat": 37.76042
+   },
+   {
+    "id": "24",
+    "lon": -122.44013,
+    "lat": 37.75418
+   },
+   {
+    "id": "25",
+    "lon": -122.38727,
+    "lat": 37.74518
+   },
+   {
+    "id": "26",
+    "lon": -122.4344,
+    "lat": 37.73979
+   },
+   {
+    "id": "28",
+    "lon": -122.41012,
+    "lat": 37.80183
+   },
+   {
+    "id": "29",
+    "lon": -122.40715,
+    "lat": 37.76616
+   },
+   {
+    "id": "31",
+    "lon": -122.4703,
+    "lat": 37.78072
+   },
+   {
+    "id": "32",
+    "lon": -122.42358,
+    "lat": 37.73669
+   },
+   {
+    "id": "33",
+    "lon": -122.45901,
+    "lat": 37.7123
+   },
+   {
+    "id": "34",
+    "lon": -122.50187,
+    "lat": 37.77935
+   },
+   {
+    "id": "35",
+    "lon": -122.39212,
+    "lat": 37.788
+   },
+   {
+    "id": "36",
+    "lon": -122.4204,
+    "lat": 37.7757
+   },
+   {
+    "id": "37",
+    "lon": -122.3988,
+    "lat": 37.7573
+   },
+   {
+    "id": "38",
+    "lon": -122.42945,
+    "lat": 37.78953
+   },
+   {
+    "id": "39",
+    "lon": -122.45995,
+    "lat": 37.74089
+   },
+   {
+    "id": "40",
+    "lon": -122.47515,
+    "lat": 37.74874
+   },
+   {
+    "id": "41",
+    "lon": -122.41629,
+    "lat": 37.79129
+   },
+   {
+    "id": "42",
+    "lon": -122.40608,
+    "lat": 37.73172
+   },
+   {
+    "id": "43",
+    "lon": -122.43236,
+    "lat": 37.71774
+   },
+   {
+    "id": "44",
+    "lon": -122.4011,
+    "lat": 37.71778
+   },
+   {
+    "id": "48",
+    "lon": -122.37269,
+    "lat": 37.82618
+   },
+   {
+    "id": "51",
+    "lon": -122.45483,
+    "lat": 37.80146
+   }
+  ]
+ }
+}

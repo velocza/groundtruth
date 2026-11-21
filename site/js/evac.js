@@ -191,7 +191,7 @@
   const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many || one + 's'}`;
   const listNames = (xs, n) => { const u = [...new Set(xs)]; return u.slice(0, n).join(', ') + (u.length > n ? ` and ${u.length - n} more` : ''); };
 
-  let app = null, Mo, Sc, G, U_, g, env, hazards, br, spof, ready = false, on = false;
+  let app = null, SF = false, SS = [], Mo, Sc, G, U_, g, env, hazards, br, spof, ready = false, on = false;
   const st = { mode: 'model', thr: 50, flood: false, local: true, ev: null, pickNode: -1, timer: 0, key: '', mine: false };
 
   /* The one place this view reads the hazard score. It is the score the map draws (GTModel.index, with the map's alert
@@ -200,7 +200,8 @@
 
   API.register = function (a) {                            // called once from app.js: adds this view to its tables, then waits to be opened
     app = a; Mo = root.GTModel; Sc = root.GTScene; G = root.GT; U_ = root.GT_USGS;
-    if (!$('#evac') || !root.GT_ROADS || !U_ || (root.GT_REGION && root.GT_REGION.id !== 'lamorinda')) return;   // the road graph and the USGS clip are built for the Lamorinda box only
+    if (!$('#evac') || !root.GT_ROADS || !U_) return;     // the road graph and the USGS clip come from the area's own data folder (data/ or data_sf/)
+    SF = !!(root.GT_REGION && root.GT_REGION.id === 'sf'); SS = G.streets.concat(root.GT_ROADS.extra || []);   // San Francisco adds its freeways and bridges after the named streets
     a.POSES.evac = { px: -0.6, py: 11.4, pz: 11.2, tx: 0, ty: 0, tz: 0 }; a.LOOKS.evac = { risk: 0.8, motion: 0, roads: 1, splitVis: 0, dim: 0.12, bld: 0.9 };
     a.ORDER.splice(Math.max(0, a.ORDER.indexOf('method')), 0, 'evac'); a.NAMES.evac = 'Getting out'; a.SUBS.evac = 'Which homes still have a road out in this storm'; a.SPLIT.evac = 1;
     new MutationObserver(() => { const now = $('#evac').classList.contains('on'); if (now !== on) { on = now; now ? open() : close(); } }).observe($('#evac'), { attributes: true, attributeFilter: ['class'] });
@@ -213,10 +214,12 @@
   /* ------------------------------------------------ set-up, on first open */
   let F23 = [], F17 = [], m23, m17, in17, slopeMax, labels = [], surveyed;
   function init() {
-    g = Graph(root.GT_ROADS, G.streets, { bbox: Mo.bbox, NX: Mo.NX, NY: Mo.NY });
+    g = Graph(root.GT_ROADS, SS, { bbox: Mo.bbox, NX: Mo.NX, NY: Mo.NY });
     // recorded winter 2023 slides: the USGS reconnaissance points inside the box, and the ten local reports the site already carries
-    F23 = U_.p23.map(p => ({ f: [p[0], p[1]], src: 'usgs', label: 'USGS mapped · ' + shortDate(p[5]) + (p[3] === 'RC' ? ' · road cut' : ' · hillslope'), what: p[7], day: dayOf(G.rain.wy2023.start, usDate(p[5])) }))
-      .concat(G.events.map(e => ({ f: e.lonlat, src: 'local', label: 'Local report · ' + shortIso(e.date) + ' · ' + (e.where.length > 26 ? e.where.slice(0, 24) + '...' : e.where), what: e.what, day: dayOf(G.rain.wy2023.start, e.date), where: e.where })));
+    // In San Francisco the site's own slide list is these same USGS points, so it is not added a second time.
+    const evNear = p => (G.events.find(e => Math.abs(e.lonlat[0] - p[0]) < 2e-4 && Math.abs(e.lonlat[1] - p[1]) < 2e-4) || {}).where;
+    F23 = U_.p23.map(p => ({ f: [p[0], p[1]], src: 'usgs', label: 'USGS mapped · ' + shortDate(p[5]) + (p[3] === 'RC' ? ' · road cut' : ' · hillslope'), what: p[7], day: dayOf(G.rain.wy2023.start, usDate(p[5])), where: SF ? (evNear(p) || 'USGS point ' + p[2]) : undefined }))
+      .concat((SF ? [] : G.events).map(e => ({ f: e.lonlat, src: 'local', label: 'Local report · ' + shortIso(e.date) + ' · ' + (e.where.length > 26 ? e.where.slice(0, 24) + '...' : e.where), what: e.what, day: dayOf(G.rain.wy2023.start, e.date), where: e.where })));
     m23 = mappedEdges(g, F23.map(f => f.f), MAP_M); F23.forEach((f, i) => f.edges = m23.touch[i]);
     F17 = U_.s17; m17 = mappedEdges(g, F17.map(s => [s[4], s[5], s[6], s[7]]), MAP_M);
     in17 = new Uint8Array(g.ne); slopeMax = new Float32Array(g.ne);
@@ -298,7 +301,7 @@
         const b1 = Math.atan2((toe[0] - hd[0]) * KX, (toe[1] - hd[1]) * KY), b2 = Math.atan2((end[0] - hd[0]) * KX, (end[1] - hd[1]) * KY); let da = Math.abs(b1 - b2) * 180 / Math.PI; if (da > 180) da = 360 - da; if (r.path.length > 1) angs.push(da); }
       const med = xs => { const v = xs.slice().sort((p, q) => p - q); return v.length ? (v[(v.length - 1) >> 1] + v[v.length >> 1]) / 2 : null; };
       out.runout = { n: errs.length, medErr: med(errs), medAbsErr: med(errs.map(Math.abs)), medAngle: med(angs), medLen: med(lens), medAll: med(F17.map(s => s[3])) };
-      out.spof = spof.slice(0, 3).map(o => ({ street: G.streets[o.k].n, town: G.streets[o.k].t, homes: o.cut, metres: Math.round(o.len), slide2023: o.s23, slide2017: o.s17 }));
+      out.spof = spof.slice(0, 3).map(o => ({ street: SS[o.k].n, town: SS[o.k].t, homes: o.cut, metres: Math.round(o.len), slide2023: o.s23, slide2017: o.s17 }));
       out.graph = g.meta;
       return valCache[k] = out;
     } finally { Mo.opts.motion = mo; st.mode = mode; st.flood = fl; setMapped(); }
@@ -338,18 +341,18 @@
   function renderCut() {
     const ul = $('#evCut'); ul.textContent = ''; const rows = [...st.ev.byStreet].sort((a, b) => b[1] - a[1]).slice(0, 10);
     $('#evCutNote').textContent = rows.length ? 'Grouped by the street the buildings stand on. Press one to see what blocks it.' : 'No street is cut off at this setting.';
-    for (const [k, n] of rows) { const s = G.streets[k], li = document.createElement('li'), b = document.createElement('button'); b.innerHTML = '<span class="nm"></span><span class="tw"></span><span class="tier High"></span>';
+    for (const [k, n] of rows) { const s = SS[k], li = document.createElement('li'), b = document.createElement('button'); b.innerHTML = '<span class="nm"></span><span class="tw"></span><span class="tier High"></span>';
       b.children[0].textContent = s.n; b.children[1].textContent = s.t; b.children[2].textContent = plural(n, 'building'); b.setAttribute('aria-label', `${s.n}, ${s.t}: ${plural(n, 'building')} with no road out. Show on map.`);
       b.addEventListener('click', () => selectStreet(k)); li.appendChild(b); ul.appendChild(li); }
   }
   /* nearest road to a clicked place, then the nearer end of that piece of road */
-  function nodeAt(lon, lat) { const hit = edgesWithin(g, [lon, lat], 250); if (!hit.length) return -1; hit.sort((a, b) => a[1] - b[1]); const e = hit[0][0], [x, y] = g.toXY(lon, lat), u = g.eu[e], v = g.ev[e]; return Math.hypot(g.x[u] - x, g.y[u] - y) <= Math.hypot(g.x[v] - x, g.y[v] - y) ? u : v; }
+  function nodeAt(lon, lat) { let hit = []; for (const r of [40, 120, 250]) { hit = edgesWithin(g, [lon, lat], r); if (hit.length) break; } if (!hit.length) return -1; /* small radius first: the nearest road is the same, and dense city grids stay fast */ hit.sort((a, b) => a[1] - b[1]); const e = hit[0][0], [x, y] = g.toXY(lon, lat), u = g.eu[e], v = g.ev[e]; return Math.hypot(g.x[u] - x, g.y[u] - y) <= Math.hypot(g.x[v] - x, g.y[v] - y) ? u : v; }
   function selectAt(lon, lat) { const n = nodeAt(lon, lat); if (n < 0) { $('#evRoute').textContent = 'No named street within 250 m of that spot.'; return; } showRoute(n); }
   function streetNode(k) {                                 // a stranded point on the street if there is one, else its point farthest from an exit
     let best = -1, bv = -1; for (let e = 0; e < g.ne; e++) if (g.ek[e] === k) for (const n of [g.eu[e], g.ev[e]]) { const v = (g.base[n] && !st.ev.r.reach[n] ? 1e9 + g.nb[n] : isFinite(st.ev.r.metres[n]) ? st.ev.r.metres[n] : 0); if (v > bv) { bv = v; best = n; } }
     return best;
   }
-  function selectStreet(k) { const n = streetNode(k); if (n >= 0) showRoute(n, false, G.streets[k].n); }
+  function selectStreet(k) { const n = streetNode(k); if (n >= 0) showRoute(n, false, SS[k].n); }
   const lonlat = n => [Mo.bbox[0] + g.x[n] / KX, Mo.bbox[1] + g.y[n] / KY];
   const nodeStreet = n => { let best = -1, bl = -1; for (let j = g.adjOff[n]; j < g.adjOff[n + 1]; j++) { const e = g.adjE[j], w = (g.eu[e] === n ? g.b0[e] : g.b1[e]) * 1000 + g.elen[e]; if (w > bl) { bl = w; best = e; } } return best < 0 ? 'this spot' : g.name(best); };
   let baseRoute = null;
@@ -377,12 +380,12 @@
     Sc.showPath(null); Sc.showStreet(o.es.map(e => g.geom(e))); st.mine = true; Sc.highlight(m[0], m[1], true); app.flyTo(m[0], m[1], 5.6);
     labels.forEach(l => l.show(false)); const near = []; for (const e of o.es) if (m17.flag[e]) near.push(m17.flag[e] - 1);
     [...new Set(near)].slice(0, 6).forEach(i => { let l = labels.find(x => x.i === i); if (!l) { const el = document.createElement('div'); el.className = 'pin-label evac-mk usgs'; el.textContent = `USGS mapped · 2017 · ${fmt(F17[i][2])} m²`; el.hidden = true; $('#labels').appendChild(el); l = Sc.addLabel(F17[i][0], F17[i][1], el, 0.07); l.i = i; labels.push(l); } l.show(true); });
-    $('#evSpofOut').textContent = `${G.streets[o.k].n}, ${G.streets[o.k].t}: ${plural(o.cut, 'building')} sit behind this point with no other road out, on ${listNames(bs.map(b => G.streets[b[0]].n), 6)}. `
+    $('#evSpofOut').textContent = `${SS[o.k].n}, ${SS[o.k].t}: ${plural(o.cut, 'building')} sit behind this point with no other road out, on ${listNames(bs.map(b => SS[b[0]].n), 6)}. `
       + (o.s17 ? `USGS mapped ${plural(o.s17 === 1 ? 1 : new Set(near).size, 'slide')} from the 2016-17 season within ${MAP_M} m of this stretch. ` : o.in17 ? `No 2016-17 slide was mapped within ${MAP_M} m of this stretch. ` : 'This stretch lies outside the area USGS mapped in 2017. ') + (o.s23 ? 'A slide was recorded here in winter 2023.' : '');
   }
   function renderStatic() {
     const ol = $('#evSpof'); ol.textContent = '';
-    for (const o of spof.slice(0, 12)) { const s = G.streets[o.k], li = document.createElement('li'), b = document.createElement('button'); b.innerHTML = '<span class="nm"></span><span class="tw"></span><span class="tier Elevated"></span><span class="tip-mm"></span>';
+    for (const o of spof.slice(0, 12)) { const s = SS[o.k], li = document.createElement('li'), b = document.createElement('button'); b.innerHTML = '<span class="nm"></span><span class="tw"></span><span class="tier Elevated"></span><span class="tip-mm"></span>';
       b.children[0].textContent = s.n; b.children[1].textContent = s.t; b.children[2].textContent = plural(o.cut, 'building');
       b.children[3].textContent = `If this ${fmt(Math.round(o.len / 10) * 10)} m of ${s.n} fails, ${plural(o.cut, 'building')} ${o.cut === 1 ? 'has' : 'have'} no way out.` + (o.s23 ? ' Slide recorded here in winter 2023.' : '') + (o.s17 ? ' USGS mapped a 2016-17 slide within 30 m.' : '');
       b.setAttribute('aria-label', b.children[3].textContent + ' Show on map.'); b.addEventListener('click', () => showSpof(o)); li.appendChild(b); ol.appendChild(li); }
@@ -390,23 +393,25 @@
     $('#evSpofNote').textContent = `${fmt(spof.length)} streets have a stretch that is the only way out for at least one building, and ${fmt(tot)} of them carry 50 buildings or more. This list comes from the street layout alone, so it does not change with the storm or with the model.`;
     $('#evLimits').textContent = '';
     for (const t of [
-      `Only the ${fmt(m.streets)} named streets are in the network. Driveways, private roads, unnamed links, fire roads and Highway 24 with its ramps are missing, so some real ways out are not counted.`,
-      `A way out means reaching a road that leaves the map box (${fmt(m.exits)} such points). It is not a route to a shelter, and one-way rules, road width, traffic and closures are ignored.`,
+      SF ? `The network is the ${fmt(m.streets)} named streets plus the freeways, bridges and ramps from Overture Maps. Driveways, private roads, unnamed links and paths are missing. Freeways join streets only through their ramps, never where they pass overhead.`
+        : `Only the ${fmt(m.streets)} named streets are in the network. Driveways, private roads, unnamed links, fire roads and Highway 24 with its ramps are missing, so some real ways out are not counted.`,
+      SF ? `A way out means reaching the county line to the south or crossing the Golden Gate Bridge or the Bay Bridge (${fmt(m.exits)} such points). Streets that only stop at the water's edge of the map do not count. It is not a route to a shelter, and one-way rules, road width, traffic, bridge closures and ferries are ignored.`
+        : `A way out means reaching a road that leaves the map box (${fmt(m.exits)} such points). It is not a route to a shelter, and one-way rules, road width, traffic and closures are ignored.`,
       `Street ends within ${fmt(m.tol_m)} m of each other are treated as joined. That connects ${fmt(m.endpoints_joined / m.endpoints * 100)}% of street ends; a wrong join or a missed one changes routes.`,
       `Buildings are placed on the nearest named street. ${fmt(m.buildings_no_road)} of ${fmt(m.buildings)} (${pc(m.buildings_no_road)}) have none within ${fmt(m.max_bld_m)} m, and ${fmt(m.buildings_unlinked)} more (${pc(m.buildings_unlinked)}) sit on streets with no link to the map edge in this data. Both groups are left out, never counted as stranded.`,
       `Roads are blocked by the site's current score, which is a fixed formula and not a trained or calibrated model, read on 29 m cells along each road. A blocked road here means "scores at or above the level you picked", not a forecast that it will fail.`,
       `Debris paths are a downhill trace from the ${RUNOUT_CAP} highest-scoring cells near roads, a screening estimate of direction and reach.`,
-      `The USGS inventories are incomplete. The January 2023 one is a reconnaissance with limited staff, time and road access: ${fmt(U_.meta.y2023.inside)} of its ${fmt(U_.meta.y2023.total)} points ${U_.meta.y2023.inside === 1 ? 'falls' : 'fall'} in this map. The 2016-17 map was drawn from one satellite image and has no dates. A road with no mapped slide is unconfirmed, not safe.`,
+      `The USGS inventories are incomplete. The January 2023 one is a reconnaissance with limited staff, time and road access: ${fmt(U_.meta.y2023.inside)} of its ${fmt(U_.meta.y2023.total)} points ${U_.meta.y2023.inside === 1 ? 'falls' : 'fall'} in this map. ` + (SF ? 'The 2016-17 USGS map covers the eastern Bay hills only, not San Francisco. ' : 'The 2016-17 map was drawn from one satellite image and has no dates. ') + 'A road with no mapped slide is unconfirmed, not safe.',
       'There is no wildfire, earthquake or flood model here. The creek switch is a screening proxy and has not been checked against anything.'
     ]) { const li = document.createElement('li'); li.textContent = t; $('#evLimits').appendChild(li); }
   }
   function renderValidation() {
     if (!on) return; let v; try { v = validate(); } catch (err) { console.error(err); return; }
     const a = v.y23, b = v.y17, r = v.runout, lvl = v.thr >= 75 ? 'High' : 'Elevated', p = (id, t) => { $(id).textContent = t; };
-    p('#evHappened', `What happened: the ${plural(a.recorded, 'slide')} recorded in winter 2023 (${a.usgs} mapped by USGS, the rest from local reports) touch ${plural(a.blockedMapped, 'road segment')} and on their own cut off ${plural(a.strandedMapped, 'building')}. The score, on its worst day of that storm sequence (${a.day}, ${a.rain} mm in 72 hours), blocks ${plural(a.blocked, 'segment')} and cuts off ${plural(a.strandedModel, 'building')}.`);
-    p('#evVal23', `Winter 2023, a spot check and not a validation. The USGS reconnaissance has ${a.totalPoints} points for the whole Bay Area and ${a.usgs} inside this map; its crews drove ${fmt(a.surveyedKm, 0)} km of road here. Adding the ten local reports gives ${a.recorded} recorded slides, ${a.onRoad} of them within ${MAP_M} m of a named street. At ${lvl} the score blocked the road at ${a.hits} of those ${a.onRoad} and missed ${a.misses}`
+    p('#evHappened', `What happened: the ${plural(a.recorded, 'slide')} recorded in winter 2023 (${a.usgs === a.recorded ? 'all mapped by USGS' : a.usgs + ' mapped by USGS, the rest from local reports'}) touch ${plural(a.blockedMapped, 'road segment')} and on their own cut off ${plural(a.strandedMapped, 'building')}. The score, on its worst day of that storm sequence (${a.day}, ${a.rain} mm in 72 hours), blocks ${plural(a.blocked, 'segment')} and cuts off ${plural(a.strandedModel, 'building')}.`);
+    p('#evVal23', `Winter 2023, a spot check and not a validation. The USGS reconnaissance has ${a.totalPoints} points for the whole Bay Area and ${a.usgs} inside this map; ${a.surveyedKm ? `its crews drove ${fmt(a.surveyedKm, 0)} km of road here` : 'none of the routes its crews drove crosses this map, so these points came from news and public reports'}. ${a.recorded > a.usgs ? `Adding the ${a.recorded - a.usgs} local reports gives ${a.recorded} recorded slides` : `That is ${plural(a.recorded, 'recorded slide')}`}, ${a.onRoad} of them within ${MAP_M} m of a named street. At ${lvl} the score blocked the road at ${a.hits} of those ${a.onRoad} and missed ${a.misses}`
       + (a.missed.length ? ` (${listNames(a.missed, 4)})` : '') + `. It also blocked ${fmt(a.unconfirmed)} segments with no recorded slide, ${fmt(a.unconfirmedSurveyed)} of them on roads the USGS crews drove. Those are unconfirmed, not wrong: nobody mapped every road. Blocking the same number of segments by steepest slope alone reaches ${a.slopeHits} of the ${a.onRoad}.`);
-    p('#evVal17', `2016-17 storm season. USGS mapped ${fmt(b.total)} slides from a March 11, 2017 satellite image, and ${fmt(b.polygons)} fall in this map. ${fmt(b.mapped)} of the ${fmt(b.segments)} road segments inside the mapped area have one within ${MAP_M} m. Replaying the three wettest storms of that season (${b.storms.map(s => s.date).join('; ')}) at ${lvl}, the score blocked ${fmt(b.hits)} of those ${fmt(b.mapped)}, missed ${fmt(b.misses)}, and blocked ${fmt(b.unconfirmed)} with no mapped slide. Steepest slope alone, blocking the same ${fmt(b.blocked)} segments, gets ${fmt(b.slopeHits)}. `
+    p('#evVal17', SF && !b.polygons ? '2016-17 storm season. The USGS map of that season (SIM 3503) covers the eastern Bay hills only, so there is no 2016-17 check for San Francisco.' : `2016-17 storm season. USGS mapped ${fmt(b.total)} slides from a March 11, 2017 satellite image, and ${fmt(b.polygons)} fall in this map. ${fmt(b.mapped)} of the ${fmt(b.segments)} road segments inside the mapped area have one within ${MAP_M} m. Replaying the three wettest storms of that season (${b.storms.map(s => s.date).join('; ')}) at ${lvl}, the score blocked ${fmt(b.hits)} of those ${fmt(b.mapped)}, missed ${fmt(b.misses)}, and blocked ${fmt(b.unconfirmed)} with no mapped slide. Steepest slope alone, blocking the same ${fmt(b.blocked)} segments, gets ${fmt(b.slopeHits)}. `
       + (b.auc == null ? '' : `Ranking instead of a cut-off: a segment with a mapped slide outscores one without ${fmt(b.auc * 10, 1)} times in 10, against ${fmt(b.aucSlope * 10, 1)} for slope alone. 5 is a coin flip.`));
     p('#evValRun', r.n ? `Debris reach. The 2023 release holds the routes the survey crews travelled, not slide paths, so the 2016-17 polygons are used. The typical mapped slide here is ${fmt(r.medAll)} m long, smaller than one 29 m cell of this map. For the ${r.n} that are 60 m or longer (median ${fmt(r.medLen)} m), the traced path is a median ${fmt(Math.abs(r.medErr))} m ${r.medErr >= 0 ? 'longer' : 'shorter'} than mapped (median miss ${fmt(r.medAbsErr)} m) and points ${fmt(r.medAngle)} degrees off the mapped direction. The trace is built for long debris flows and overshoots small slides.` : '');
     p('#evValNote', 'Neither inventory was used to build or tune the score: the map formula is fixed by hand, and the experimental model behind Ask was trained on four news reports from earlier winters. These checks use real terrain and real gauge rain only, with the simulated ground motion switched off, and follow the alert sensitivity set at the top of the page.');
@@ -443,7 +448,7 @@
     $('#evLocal').addEventListener('change', e => { st.local = e.target.checked; recompute(); replayLine(); renderValidation(); });
     $('#evR72').addEventListener('input', e => app.setStorm(+e.target.value, app.S.api, true));
     $('#evPeak').addEventListener('click', () => { const R23 = G.rain.wy2023; let best = null; for (let D = dayOf(R23.start, '2022-12-31'); D <= dayOf(R23.start, '2023-01-18'); D++) for (let d = D - 3; d < D; d++) { const sc = before23(d, D); if (!best || Mo.Tof(sc) > Mo.Tof(best)) best = sc; } app.setStorm(Math.min(300, best.r72), Math.min(280, best.api), true); });
-    $('#evFindF').addEventListener('submit', e => { e.preventDefault(); const q = $('#evFind').value.trim().toLowerCase(); if (!q) return; const ss = G.streets; let k = ss.findIndex(s => s.n.toLowerCase() === q); if (k < 0) k = ss.findIndex(s => s.n.toLowerCase().startsWith(q)); if (k < 0) k = ss.findIndex(s => s.n.toLowerCase().includes(q));
+    $('#evFindF').addEventListener('submit', e => { e.preventDefault(); const q = $('#evFind').value.trim().toLowerCase(); if (!q) return; const ss = SS; let k = ss.findIndex(s => s.n.toLowerCase() === q); if (k < 0) k = ss.findIndex(s => s.n.toLowerCase().startsWith(q)); if (k < 0) k = ss.findIndex(s => s.n.toLowerCase().includes(q));
       if (k < 0) { $('#evRoute').textContent = 'No street by that name on this map.'; return; } selectStreet(k); });
     root.addEventListener('resize', () => { clearTimeout(drawLine.t); drawLine.t = setTimeout(drawLine, 200); });
   }

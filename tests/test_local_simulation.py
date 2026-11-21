@@ -58,8 +58,8 @@ class LocalSimulationTests(unittest.TestCase):
             if process.poll() is None: process.terminate(); process.wait(timeout=5)
 
     def test_export_predictions_match_trainer(self):
-        artifact = json.loads((ROOT/'local_model/trees.json').read_text())
-        fixture = json.loads((ROOT/'local_model/parity.json').read_text())
+        artifact = json.loads((ROOT/'local_model_landslide/trees.json').read_text())
+        fixture = json.loads((ROOT/'local_model_landslide/parity.json').read_text())
         np.testing.assert_allclose(predict(artifact, np.array(fixture['X'])), fixture['scores'], atol=1e-9)
 
     def test_inputs_are_repository_only(self):

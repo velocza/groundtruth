@@ -2,15 +2,15 @@
    Lamorinda text is the page default. Elements marked data-only="<area>" show for that area only, and elements marked data-t="<key>" take the text below. */
 (function () {
   var REGIONS = {
-    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: true,
+    lamorinda: { id: 'lamorinda', dir: 'data', label: 'Lamorinda, Contra Costa County', sub: 'Lafayette, Orinda, Moraga', short: 'Lamorinda', places: 'Lafayette, Orinda and Moraga', placesOr: 'Lafayette, Orinda or Moraga', motion: true, landslideModel: true,
       towns: [['Lafayette', -122.118, 37.886], ['Orinda', -122.183, 37.877], ['Moraga', -122.130, 37.835]], tourQ: 'Where would debris from Miner Road go, and how many buildings are near the path?', example: 'Miner Road with 100 mm rain' },
-    sf: { id: 'sf', dir: 'data_sf', label: 'San Francisco, San Francisco County', sub: 'City of San Francisco', short: 'San Francisco', places: 'San Francisco', placesOr: 'San Francisco', motion: false,
+    sf: { id: 'sf', dir: 'data_sf', files: ['flood_model', 'storm_response'], label: 'San Francisco, San Francisco County', sub: 'City of San Francisco', short: 'San Francisco', places: 'San Francisco', placesOr: 'San Francisco', motion: false,
       tourQ: 'Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', example: 'Twin Peaks Boulevard with 100 mm rain',
-      title: 'scree · San Francisco',
+      title: 'escape · San Francisco',
       text: {
-        h1: 'scree, a landslide risk dashboard for San Francisco',
+        h1: 'escape, a landslide risk dashboard for San Francisco',
         topH: 'Steep streets, record rain.', topBadge: 'Real data',
-        lede: 'scree pairs real terrain with storm rain to rank San Francisco\'s slopes by landslide risk.',
+        lede: 'escape pairs real terrain with storm rain to rank San Francisco\'s slopes by landslide risk.',
         topNotice: '<b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. San Francisco has no ground motion layer yet, and nothing is simulated in its place. Street flooding reports are in the dataset for model training and are not drawn on this map.',
         topFoot: 'A hackathon prototype. It shows relative risk from a placeholder formula. For safety decisions, follow the National Weather Service and your city.',
         rpBody: 'Real gauge rain from San Francisco drives the map. Beacons mark slides the USGS mapped that winter.', rpGauges: 'San Francisco gauges, area mean',
@@ -18,16 +18,17 @@
         btOf: 'of 6 sat near Elevated or High ground beforehand', btListH: 'The six mapped slides',
         inBody: 'Click the terrain to read one 30 m cell: its slope, its drainage, and what is pushing its score up.', jump: 'Show the most exposed slope',
         askLabel: 'Name a street in San Francisco',
-        askHelp: 'Ask runs in your browser for San Francisco. The trees were trained on four older Lamorinda reports and are read here against San Francisco terrain without retraining, so treat the scores as a demonstration. The dashboard map uses the original placeholder.',
+        askHelp: 'San Francisco has no trained landslide model yet, so street and area answers here use the map\'s placeholder score from real terrain and rain. Ask about flooding for the separate San Francisco flood model, trained on the city\'s 311 flood reports.',
         methodH: 'Real terrain, real rain. The model comes next.',
         methodBody: 'Everything on this map was pulled from public data for this exact box of the city. The risk score is a hand-set placeholder that marks where the trained model will plug in.',
         srcRain: 'NOAA GHCN-Daily and CoCoRaHS gauges with the downtown gauge, 2008 to 2026-11-20',
         srcStreets: 'Overture Maps, 1,817 named streets', srcBld: 'Overture Maps, 166,518 footprints',
         src3d: 'Overture Maps building outlines, 166,583 drawn. 96% carry a mapped height and the rest stand at the area median of 7.0 m. Roads, water, parks and names are Overture too. Hill shading uses the USGS 3DEP 10 m elevation model and the ground photo is USGS and USDA NAIP aerial imagery. Heights are drawn 1.6 times taller, the same as the terrain.',
+        evNote: 'Bright lines on the map are blocked road segments. Markers labelled USGS mapped are the six slides the U.S. Geological Survey recorded in the city in winter 2023.',
         srcSlides: '6 mapped by the USGS in winter 2023. The dataset also holds 31,478 city flood reports and 382 NWS storm reports'
       },
       attrs: { '[data-t=topBadge]': ['class', 'badge quiet'], '#gl': ['aria-label', '3D terrain of San Francisco with landslide risk drawn as light'], '#askIn': ['placeholder', 'Ulloa Street, Twin Peaks Boulevard, Folsom Street'] },
-      chips: [['Is Twin Peaks Boulevard at risk this weekend?', 'Twin Peaks Boulevard this weekend?'], ['What would 150 mm of rain do to Ulloa Street?', 'Ulloa Street with 150 mm'], ['Which streets are worst right now?', 'Worst streets right now'], ['Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', 'Debris path from Twin Peaks Boulevard']]
+      chips: [['Which streets flood worst?', 'Streets that flood worst'], ['Is Twin Peaks Boulevard at risk this weekend?', 'Twin Peaks Boulevard this weekend?'], ['What would 150 mm of rain do to Ulloa Street?', 'Ulloa Street with 150 mm'], ['Which streets are worst right now?', 'Worst streets right now'], ['Where would debris from Twin Peaks Boulevard go, and how many buildings are near the path?', 'Debris path from Twin Peaks Boulevard']]
     }
   };
   var KEY = 'gt-region', id = null;
@@ -38,7 +39,7 @@
   window.GT_REGIONS = REGIONS; window.GT_REGION = R;
   document.documentElement.setAttribute('data-region', id);
   if (R.title) document.title = R.title;
-  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong', 'local-model'].forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
+  ['assets', 'buildings', 'map3d', 'map3d_hi', 'data', 'rainlong'].concat(R.landslideModel ? ['local-model'] : [], ['roads_graph', 'usgs_inventory', 'census_bg'], R.files || []).forEach(function (f) { document.write('<script src="' + R.dir + '/' + f + '.js"><\/script>'); });
 
   /* switch area: remember the choice and reload with that area's data */
   window.GT_setRegion = function (next) {

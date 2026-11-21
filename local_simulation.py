@@ -11,7 +11,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/'model'))
 import handoff_common as C
-from train_local import static
+from landslide_live import MODEL_DIR, static
 
 
 def predict(artifact, X):
@@ -54,7 +54,7 @@ class Simulation:
         self.interval = interval
         self.runtime = Path(runtime) if runtime else ROOT/'runtime'
         self.runtime.mkdir(exist_ok=True)
-        self.artifact = json.loads((ROOT/'local_model/trees.json').read_text())
+        self.artifact = json.loads((MODEL_DIR/'trees.json').read_text())
         self.Xs, self.rain = static(), C.Rain()
         text = (ROOT/'site/data/data.js').read_text(encoding='utf-8')
         g = json.loads(text[text.index('{'):].strip().rstrip(';'))
