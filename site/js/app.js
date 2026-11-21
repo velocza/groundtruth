@@ -1,0 +1,731 @@
+/* GroundTruth page logic: scroll story (GSAP ScrollTrigger), storm controls, 2023 replay, slope inspector, street agent. */
+(async function () {
+  const G = window.GT, Mo = window.GTModel, Sc = window.GTScene;
+  const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = (v, d) => Number(v).toLocaleString('en-US', { maximumFractionDigits: d || 0, minimumFractionDigits: d || 0 });
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d; };
+  const dstr = d => `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
+
+  try { await Mo.load(); Sc.build($('#gl')); }
+  catch (err) { $('#loading p').textContent = 'The 3D map could not start in this browser. The rest of the page still works.'; $('#loading .bar').hidden = true; setTimeout(() => $('#loading').classList.add('off'), 2600); console.error(err); return; }
+  Sc.setReduced(reduce);
+  const U = Sc.u;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ------------------------------------------------ scenario state */
+  const S = { r72: 60, api: 120, era: 0, amt: 0 };                 // what the storm panel is set to (used by the agent too)
+  const view = { r72: 60, api: 120 };                              // tweened copy that feeds the shader
+  function pushScenario(sc, fast) {
+    U.uEra.value = sc.era; U.uAmt.value = sc.amt;
+    gsap.to(view, { r72: sc.r72, api: sc.api, duration: fast ? 0.15 : 0.6, ease: 'power2.out', overwrite: true,
+      onUpdate() { U.uR72.value = view.r72; U.uApi.value = view.api; Sc.rain.value = Math.min(1, view.r72 / 220); } });
+  }
+
+  /* ------------------------------------------------ rain record helpers (real gauges) */
+  const R23 = G.rain.wy2023, RNOW = G.rain.recent;
+  const next72 = (rec, d) => (rec.mm[d + 1] || 0) + (rec.mm[d + 2] || 0) + (rec.mm[d + 3] || 0);
+  const D0 = 80, D1 = 181;                                         // Dec 20, 2022 to Mar 31, 2023
+  const wetCum = []; { let c = 0; for (let d = 0; d < R23.mm.length; d++) { c += Math.max(0, R23.api[d] - 60); wetCum.push(c); } }
+  const seasonCum = []; { let c = 0; for (const v of R23.mm) { c += v || 0; seasonCum.push(c); } }
+  const replaySc = d => ({ r72: next72(R23, d), api: R23.api[d], era: 1, amt: Math.min(1, wetCum[d] / wetCum[D1]) });
+  let peakDay = D0; { let best = -1; for (let d = D0; d <= D1; d++) { const sc = replaySc(d), T = 0.55 * Math.min(1.5, sc.r72 / 200) + 0.45 * Math.min(1.3, sc.api / 200); if (T > best) { best = T; peakDay = d; } } }
+  const lastNow = RNOW.mm.length - 1;
+  const PRESETS = {
+    today: () => ({ r72: RNOW.mm[lastNow] + RNOW.mm[lastNow - 1] + RNOW.mm[lastNow - 2], api: RNOW.api[lastNow] }),
+    nye: () => ({ r72: next72(R23, 90), api: R23.api[90] }),
+    peak: () => ({ r72: next72(R23, peakDay), api: R23.api[peakDay] }),
+    dry: () => ({ r72: 0, api: 6 })
+  };
+  { const pd = addDays(R23.start, peakDay); $('[data-preset=peak]').textContent = `${MONTHS[pd.getUTCMonth()]} ${pd.getUTCDate()}, ${pd.getUTCFullYear()}`; }
+
+  /* ------------------------------------------------ hindcast: every day of the real gauge record since Oct 2015, scored with today's ground */
+  const RL = window.GT_RAIN, HN = RL.mm.length;
+  const hsc = d => ({ r72: (RL.mm[d + 1] || 0) + (RL.mm[d + 2] || 0) + (RL.mm[d + 3] || 0), api: RL.api[d], era: 0, amt: 0 });
+  const hT = Float32Array.from({ length: HN }, (_, d) => Mo.Tof(hsc(d)));
+  const hWY = Int16Array.from({ length: HN }, (_, d) => { const t = addDays(RL.start, d); return t.getUTCFullYear() + (t.getUTCMonth() >= 9 ? 1 : 0); });
+  /* season rain to date against the same date in the other water years of the gauge record */
+  function seasonStats(d) {
+    const doy = k => { const t = addDays(RL.start, k), y = t.getUTCFullYear() - (t.getUTCMonth() >= 9 ? 0 : 1); return Math.round((t - new Date(Date.UTC(y, 9, 1, 12))) / 864e5); };
+    const n = doy(d); let total = 0; for (let k = d - n; k <= d; k++) total += RL.mm[k] || 0;
+    const others = []; for (let k = 0; k < HN; k++) if (doy(k) === 0 && k + n < HN && k !== d - n) { let s = 0; for (let j = k; j <= k + n; j++) s += RL.mm[j] || 0; others.push(s); }
+    const mean = others.length ? others.reduce((a, b) => a + b, 0) / others.length : 0;
+    return { total, mean, pct: mean > 0 ? total / mean * 100 : null, years: others.length };
+  }
+  let timing = null;                                               // set once the slide lists exist: how many dated slides followed a top 5% trigger day
+  function hindcast(score) {                                       // score(sc) -> 0..100
+    const years = {}; let el = 0, hi = 0, worst = -1, wd = 0;
+    for (let y = hWY[0]; y <= hWY[HN - 1]; y++) years[y] = [0, 0];
+    const tMin = (-Mo.opts.bias - 6) / 7.1 - 0.01;                  // below this trigger the score cannot reach 50 even on the steepest, fastest cell
+    for (let d = 0; d < HN - 3; d++) { if (hT[d] < tMin) continue; const v = score(hsc(d)); if (v > worst) { worst = v; wd = d; } if (v >= 75) { hi++; years[hWY[d]][1]++; } else if (v >= 50) { el++; years[hWY[d]][0]++; } }
+    return { years, el, hi, worst, worstDate: dstr(addDays(RL.start, wd)) };
+  }
+
+  /* ------------------------------------------------ storm panel */
+  const r72El = $('#r72'), apiEl = $('#api');
+  const fill = el => el.style.setProperty('--fill', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
+  let statTimer = 0, lastRank = null, lastArea = null, lastBld = null, listTab = 'top';
+  const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+  let watch = store.get('gt.watch', []).filter(n => G.streets.some(s => s.n === n));
+  const stormSc = () => ({ r72: S.r72, api: S.api, era: 0, amt: 0 });
+  const tipText = (el, hi) => el === 0 && hi === 0 ? 'Already High before any more rain' : el === 0 ? (hi == null ? 'Already Elevated. High needs more than 400 mm' : `Already Elevated. High at ${hi} mm`) : el == null ? 'Stays below Elevated even at 400 mm' : hi == null ? `Elevated at ${el} mm. High needs more than 400 mm` : `Elevated at ${el} mm, High at ${hi} mm`;
+  function streetRow(s, mine) {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.innerHTML = `<span class="nm"></span><span class="tw"></span><span class="tier ${Mo.tier(s.score)}">${fmt(s.score)}</span>`;
+    b.querySelector('.nm').textContent = s.name; b.querySelector('.tw').textContent = s.town;
+    b.setAttribute('aria-label', `${s.name}, ${s.town}, score ${fmt(s.score)}. Show on map.`);
+    b.addEventListener('click', () => flyToStreet(s.k)); li.appendChild(b);
+    if (mine) {
+      const sc = stormSc(), t = document.createElement('span'); t.className = 'tip-mm'; t.textContent = tipText(Mo.tipStreet(s.k, sc, 50), Mo.tipStreet(s.k, sc, 75)) + ' of rain in 72 hours'; b.appendChild(t);
+      const x = document.createElement('button'); x.className = 'x'; x.textContent = 'Remove'; x.setAttribute('aria-label', 'Stop watching ' + s.name); x.addEventListener('click', () => toggleWatch(s.name)); li.className = 'mine'; li.appendChild(x);
+    }
+    return li;
+  }
+  function renderList() {
+    const ul = $('#topStreets'); ul.textContent = ''; if (!lastRank) return;
+    const mine = listTab === 'mine', rows = mine ? lastRank.all.filter(s => watch.includes(s.name)).slice(0, 8) : lastRank.top;
+    for (const s of rows) ul.appendChild(streetRow(s, mine));
+    $('#mineEmpty').hidden = !(mine && !rows.length);
+    $('#tabTop').setAttribute('aria-pressed', !mine); $('#tabMine').setAttribute('aria-pressed', mine); $('#tabMine').textContent = watch.length ? `My streets (${watch.length})` : 'My streets';
+  }
+  function toggleWatch(name) { watch = watch.includes(name) ? watch.filter(n => n !== name) : [...watch, name]; store.set('gt.watch', watch); renderList(); return watch.includes(name); }
+  $('#tabTop').addEventListener('click', () => { listTab = 'top'; renderList(); }); $('#tabMine').addEventListener('click', () => { listTab = 'mine'; renderList(); });
+  function stormStats() {
+    const sc = stormSc();
+    lastArea = Mo.areaStats(sc); lastRank = Mo.rankStreets(sc, 6);
+    lastBld = Mo.buildingsAt(sc);
+    $('#stHigh').textContent = fmt(lastArea.highKm2, 1); $('#stStreets').textContent = fmt(lastRank.elevated); $('#stBld').textContent = fmt(lastBld.el + lastBld.hi);
+    $('#stThr').textContent = fmt(S.r72 / 201 * 100) + '%';
+    { const T = Mo.Tof(sc); let n = 0, last = -1; for (let d = 0; d < HN - 3; d++) if (hT[d] >= T) { n++; last = d; }
+      $('#stHist').textContent = n ? `The gauges saw rain and soil this wet or wetter on ${fmt(n)} of ${fmt(HN - 3)} days since October 2015, most recently ${dstr(addDays(RL.start, last))}.` + (timing && T >= timing.p95 ? ` That is in the wettest 5% of days, the band that ${timing.hit} of the ${timing.n} dated slides in this project followed within three days.` : '') : 'Nothing in the gauge record since October 2015 matches rain and soil this wet.'; }
+    renderList();
+  }
+  function setStorm(r72, api, fromUser) {
+    S.r72 = Math.round(r72); S.api = Math.round(api);
+    r72El.value = S.r72; apiEl.value = S.api; fill(r72El); fill(apiEl);
+    $('#r72v').textContent = S.r72; $('#apiv').textContent = S.api; { const x = $('#exR72'); x.value = S.r72; fill(x); $('#exR72v').textContent = S.r72; }
+    if (active === 'storm' || active === 'ask' || active === 'inspect' || exploring) pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }, fromUser);
+    clearTimeout(statTimer); statTimer = setTimeout(stormStats, fromUser ? 90 : 0);
+    if (sel) renderInspector();
+  }
+  r72El.addEventListener('input', () => setStorm(+r72El.value, S.api, true));
+  $('#exR72').addEventListener('input', e => setStorm(+e.target.value, S.api, true));
+  { const dl = $('#exStreets'), seen = new Set(); for (const s of G.streets) { if (seen.has(s.n)) continue; seen.add(s.n); const o = document.createElement('option'); o.value = s.n; dl.appendChild(o); }
+    $('#exFindF').addEventListener('submit', e => { e.preventDefault(); const q = $('#exFind').value.trim().toLowerCase(), out = $('#exFindOut'); if (!q) return;
+      let k = G.streets.findIndex(s => s.n.toLowerCase() === q); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().startsWith(q)); if (k < 0) k = G.streets.findIndex(s => s.n.toLowerCase().includes(q));
+      if (k < 0) { out.textContent = 'No street by that name on this map.'; return; }
+      const r = Mo.streetScore(k, stormSc()); flyToStreet(k); if (!r) { out.textContent = G.streets[k].n + ": at the edge of the map, no score."; return; } out.textContent = `${G.streets[k].n}, ${G.streets[k].t || ''}: ${Math.round(r.score)} ${Mo.tier(r.score)}`.replace(', :', ':'); }); }
+  apiEl.addEventListener('input', () => setStorm(S.r72, +apiEl.value, true));
+  const stormPicks = [];
+  { /* storm library: the wettest independent storms in the gauge record, at least two weeks apart */
+    const order = Array.from({ length: HN - 3 }, (_, d) => d).sort((a, b) => hT[b] - hT[a]), picks = stormPicks;
+    for (const d of order) { if (picks.length >= 8) break; if (picks.every(p => Math.abs(p - d) >= 14)) picks.push(d); }
+    const sel = $('#stormLib');
+    for (const d of picks) { const sc = hsc(d), o = document.createElement('option'); o.value = d; o.textContent = `${dstr(addDays(RL.start, d))}: ${fmt(sc.r72)} mm, soil ${fmt(sc.api)}`; sel.appendChild(o); }
+    sel.addEventListener('change', () => { if (sel.value === '') return; const sc = hsc(+sel.value); setStorm(Math.min(300, Math.round(sc.r72)), Math.min(280, Math.round(sc.api)), true); });
+  }
+  $$('[data-preset]').forEach(b => b.addEventListener('click', () => {
+    const p = PRESETS[b.dataset.preset](), o = { r: S.r72, a: S.api };
+    gsap.to(o, { r: Math.min(300, p.r72), a: Math.min(280, p.api), duration: reduce ? 0 : 0.9, ease: 'power3.out', onUpdate: () => setStorm(o.r, o.a, true) });
+  }));
+
+  /* ------------------------------------------------ street highlight + camera flights */
+  let streetOn = -1;
+  function flyToStreet(k) {
+    const st = G.streets[k], mid = st.p[Math.floor(st.p.length / 2)];
+    Sc.showStreet(st.g); Sc.highlight(mid[0], mid[1], true); U.uHiR.value = 0.02; streetOn = k;
+    gsap.to(U.uRoads, { value: 1, duration: 0.5 });
+    flyTo(mid[0], mid[1], 5.2);
+  }
+  function flyTo(lon, lat, dist) {
+    const p = Sc.focusPose(lon, lat, dist, window.innerWidth > 900 ? (active === 'inspect' ? -0.12 : 0.2) : 0);
+    if (exploring) { gsap.to(Sc.orbit, { tx: p.tx, tz: p.tz, dist: dist * 1.25, duration: reduce ? 0 : 1.4, ease: 'power3.inOut' }); }
+    else gsap.to(Sc.cam, { ...p, duration: reduce ? 0 : 1.6, ease: 'power3.inOut', overwrite: 'auto' });
+  }
+
+  /* ------------------------------------------------ scroll story */
+  const POSES = {
+    top: { px: -1.6, py: 4.9, pz: 11.2, tx: 1.4, ty: 0, tz: -1.2 },
+    motion: { px: 5.6, py: 4.4, pz: 6.4, tx: 1.8, ty: 0.2, tz: -1.4 },
+    storm: { px: -1.5, py: 9.5, pz: 11.5, tx: 0, ty: 0, tz: -1.6 },
+    replay: { px: 0.4, py: 12.6, pz: 9.6, tx: 0.2, ty: 0, tz: 0.2 },
+    backtest: { px: 3.4, py: 10.5, pz: 10.4, tx: 2.2, ty: 0, tz: -0.2 },
+    inspect: { px: 7.8, py: 4.2, pz: 4.6, tx: 3.4, ty: 0.2, tz: -1.8 },
+    ask: { px: 6.6, py: 6.8, pz: 9.4, tx: 2.6, ty: 0, tz: -0.4 },
+    method: { px: 0, py: 15, pz: 15, tx: 0, ty: 0, tz: 1.5 }
+  };
+  const LOOKS = {                                                  // what the terrain shows in each chapter
+    top: { risk: 0.75, motion: 0.55, roads: 0, splitVis: 0, dim: 0, bld: 0 },
+    motion: { risk: 0, motion: 1, roads: 0, splitVis: 1, dim: 0, bld: 0 },
+    storm: { risk: 1, motion: 0.25, roads: 0.5, splitVis: 0, dim: 0, bld: 0.9 },
+    replay: { risk: 1, motion: 0.15, roads: 0.35, splitVis: 0, dim: 0, bld: 0.5 },
+    backtest: { risk: 1, motion: 0.1, roads: 0.45, splitVis: 0, dim: 0, bld: 0.5 },
+    inspect: { risk: 0.7, motion: 0.9, roads: 0.2, splitVis: 0, dim: 0, bld: 0.6 },
+    ask: { risk: 1, motion: 0.2, roads: 1, splitVis: 0, dim: 0, bld: 0.9 },
+    method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.45, bld: 0 }
+  };
+  const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'];
+  let active = 'top', exploring = false, replayDay = D0;
+  Object.assign(Sc.cam, POSES.top);
+
+  function applyLook(id) {
+    const k = LOOKS[id], d = reduce ? 0 : 0.9;
+    gsap.to(U.uRisk, { value: k.risk, duration: d, overwrite: true }); gsap.to(U.uMotion, { value: k.motion, duration: d, overwrite: true });
+    gsap.to(U.uRoads, { value: k.roads, duration: d, overwrite: true }); gsap.to(U.uSplitVis, { value: k.splitVis, duration: d, overwrite: true });
+    gsap.to(U.uDim, { value: k.dim, duration: d, overwrite: true }); gsap.to(U.uBld, { value: k.bld, duration: d, overwrite: true });
+    gsap.to(U.uSplit, { value: id === 'motion' ? $('#split').value / 100 : 0, duration: d, overwrite: true });
+  }
+  function enter(id) {
+    if (exploring) return;
+    active = id; applyLook(id);
+    $$('.nav nav a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
+    if (id === 'top') pushScenario({ r72: 140, api: 230, era: 0, amt: 0 });
+    else if (id === 'motion' || id === 'method') pushScenario({ r72: 0, api: 60, era: 0, amt: 0 });
+    else if (id === 'replay') setReplay(replayDay, true);
+    else if (id === 'backtest') pushScenario(replaySc(peakDay));
+    else pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 });
+    showEvents(id === 'replay' || id === 'backtest', id === 'backtest');
+    $('#inspector').classList.toggle('on', id === 'inspect' && !!sel);
+    samplePts.forEach(p => p.ring.show(id === 'inspect'));
+    if (id !== 'ask' && id !== 'storm') { Sc.showStreet(null); streetOn = -1; if (id !== 'inspect' && id !== 'backtest') Sc.highlight(0, 0, false); }
+    if (id !== 'inspect') Sc.showPath(null);
+    if (reduce) Object.assign(Sc.cam, POSES[id]);
+  }
+
+  let setReplay = () => {};
+  const replayST = ScrollTrigger.create({ trigger: '#replay', start: 'top top', end: reduce ? '+=1200' : '+=2600', pin: true, anticipatePin: 1, refreshPriority: 1,
+    onUpdate: self => setReplay(D0 + self.progress * (D1 - D0)) });
+  // camera: one scrubbed tween per chapter boundary, created top to bottom (the replay pin above refreshes first)
+  if (!reduce) ORDER.slice(1).forEach((id, n) => {
+    gsap.fromTo(Sc.cam, POSES[ORDER[n]], { ...POSES[id], ease: 'power1.inOut', immediateRender: false,
+      scrollTrigger: { trigger: '#' + id, start: 'top bottom', end: 'top top', scrub: 0.8 } });
+  });
+  ORDER.forEach(id => ScrollTrigger.create({ trigger: '#' + id, start: 'top 55%', end: id === 'replay' ? () => '+=' + (replayST.end - replayST.start + window.innerHeight) : 'bottom 55%', onToggle: st => { if (st.isActive) enter(id); } }));
+
+  /* ------------------------------------------------ compare slider */
+  $('#split').addEventListener('input', e => { fill(e.target); U.uSplit.value = e.target.value / 100; });
+  fill($('#split'));
+
+  /* ------------------------------------------------ replay */
+  const events = G.events.map(e => {
+    const el = document.createElement('div'); el.className = 'pin-label ev'; el.textContent = e.where.length > 34 ? e.where.slice(0, 32) + '...' : e.where; el.hidden = true; $('#labels').appendChild(el);
+    const day = Math.round((new Date(e.date + 'T12:00:00Z') - new Date(R23.start + 'T12:00:00Z')) / 864e5);
+    return { ...e, day, mk: Sc.addMarker(e.lonlat[0], e.lonlat[1], el) };
+  });
+  let eventsOn = false, eventsAll = false;
+  function showEvents(on, all) { eventsOn = on; eventsAll = !!all; events.forEach(e => e.mk.show(on && (eventsAll || e.day <= replayDay))); }
+  setReplay = function (d, force) {
+    d = Math.max(D0, Math.min(D1, Math.round(d))); if (d === replayDay && !force) return; replayDay = d;
+    const sc = replaySc(d);
+    if (active === 'replay' && !exploring) pushScenario(sc, true);
+    $('#rpDate').textContent = dstr(addDays(R23.start, d)); $('#rpRain').textContent = fmt(sc.r72); $('#rpApi').textContent = fmt(sc.api);
+    events.forEach(e => e.mk.show(eventsOn && (eventsAll || e.day <= d)));
+    $('#rpSeason').textContent = fmt(seasonCum[d]);
+    const log = $('#rpLog'), seen = events.filter(e => e.day <= d).sort((a, b) => a.day - b.day).slice(-4);
+    log.textContent = '';
+    if (!seen.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'No slides reported yet. The first comes with the New Year\'s Eve storm.'; log.appendChild(li); }
+    for (const e of seen) { const li = document.createElement('li'), b = document.createElement('b'), s = document.createElement('span'); const ed = addDays(R23.start, e.day);
+      b.textContent = `${MONTHS[ed.getUTCMonth()]} ${ed.getUTCDate()}`; s.textContent = `${e.where}, ${e.town}. ${e.what}`; li.append(b, s); log.appendChild(li); }
+    drawRain();
+  };
+  let playing = null;
+  $('#playBtn').addEventListener('click', () => {
+    if (playing) { playing.kill(); playing = null; $('#playBtn').textContent = 'Play the winter'; return; }
+    const st = replayST, o = { y: Math.max(st.start, Math.min(window.scrollY, st.end - 4)) };
+    if (o.y >= st.end - 40) o.y = st.start;
+    window.scrollTo(0, o.y); $('#playBtn').textContent = 'Pause';
+    playing = gsap.to(o, { y: st.end - 2, duration: (st.end - o.y) / (st.end - st.start) * 22, ease: 'none', onUpdate: () => window.scrollTo(0, o.y),
+      onComplete: () => { playing = null; $('#playBtn').textContent = 'Play again'; } });
+  });
+  ['wheel', 'touchstart', 'keydown'].forEach(ev => window.addEventListener(ev, e => { if (playing && !(ev === 'keydown' && e.target === $('#playBtn'))) { playing.kill(); playing = null; $('#playBtn').textContent = 'Play the winter'; } }, { passive: true }));
+
+  /* ------------------------------------------------ canvas charts */
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function prep(cv) { const r = cv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.max(10, r.width * dpr); cv.height = Math.max(10, r.height * dpr); const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return [x, r.width, r.height]; }
+  function drawRain() {
+    const cv = $('#rainChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv);
+    const a = 60, b = D1 + 6, n = b - a, L = 34, Rr = 40, T = 6, B = 20, pw = w - L - Rr, ph = h - T - B;
+    const X = d => L + (d - a) / n * pw, maxR = 80, maxA = 300;
+    x.font = '11px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    for (const v of [0, 40, 80]) { const y = T + ph - v / maxR * ph; x.beginPath(); x.moveTo(L, y + .5); x.lineTo(L + pw, y + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 6, y + 4); }
+    x.textAlign = 'left'; x.fillStyle = css('--accent'); for (const v of [100, 200, 300]) x.fillText(v, L + pw + 6, T + ph - v / maxA * ph + 4);
+    x.fillStyle = css('--ink-3'); x.textAlign = 'center';
+    for (const [d, lb] of [[61, 'Dec'], [92, 'Jan'], [123, 'Feb'], [151, 'Mar']]) x.fillText(lb, X(d) + 12, h - 5);
+    const bw = Math.max(1.5, pw / n - 1.2);
+    for (let d = a; d < b; d++) { const v = R23.mm[d] || 0, bh = Math.min(v, maxR) / maxR * ph; x.fillStyle = d <= replayDay ? '#8fb4ff' : 'rgba(143,180,255,.28)'; x.fillRect(X(d), T + ph - bh, bw, bh); }
+    x.beginPath(); for (let d = a; d < b; d++) { const y = T + ph - Math.min(R23.api[d], maxA) / maxA * ph; d === a ? x.moveTo(X(d), y) : x.lineTo(X(d), y); } x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
+    for (const e of events) { x.fillStyle = e.day <= replayDay ? css('--t-high') : css('--ink-3'); x.beginPath(); x.arc(X(e.day) + bw / 2, T + 4, 3, 0, 7); x.fill(); }
+    const px = X(replayDay) + bw / 2; x.strokeStyle = css('--ink'); x.lineWidth = 1; x.beginPath(); x.moveTo(px, T); x.lineTo(px, T + ph); x.stroke();
+  }
+  function drawSeries(pt) {
+    const cv = $('#tsChart'), [x, w, h] = prep(cv); if (!pt) { x.fillStyle = css('--ink-3'); x.font = '12.5px "Instrument Sans", sans-serif'; x.fillText('No motion record at this cell in the sample.', 0, 20); return; }
+    const an = Mo.analyseSeries(pt), d = pt.disp_mm, t = an.t, L = 34, R = 8, T = 8, B = 20, pw = w - L - R, ph = h - T - B;
+    const lo = Math.min(...d, 0), hi = Math.max(...d, 0), pad = (hi - lo) * 0.08 + 2, X = v => L + v / t[t.length - 1] * pw, Y = v => T + (hi + pad - v) / (hi - lo + 2 * pad) * ph;
+    x.font = '11px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    const step = (hi - lo) > 120 ? 50 : (hi - lo) > 40 ? 20 : 10;
+    for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) { x.beginPath(); x.moveTo(L, Y(v) + .5); x.lineTo(L + pw, Y(v) + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 6, Y(v) + 4); }
+    x.textAlign = 'center'; const y0 = 2016.5; for (let yr = 2018; yr <= 2026; yr += 2) x.fillText(yr, X(yr - y0), h - 5);
+    const w23 = [2022.99 - y0, 2023.25 - y0]; x.fillStyle = 'rgba(143,180,255,.14)'; x.fillRect(X(w23[0]), T, X(w23[1]) - X(w23[0]), ph);
+    x.fillStyle = 'rgba(238,240,246,.55)'; for (let k = 0; k < d.length; k++) x.fillRect(X(t[k]) - 1, Y(d[k]) - 1, 2, 2);
+    const th = an.long.theta; x.beginPath(); for (let k = 0; k < t.length; k++) { const v = th[0] + th[1] * t[k] + th[2] * Math.sin(2 * Math.PI * t[k]) + th[3] * Math.cos(2 * Math.PI * t[k]); k ? x.lineTo(X(t[k]), Y(v)) : x.moveTo(X(t[k]), Y(v)); }
+    x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
+    return an;
+  }
+
+  /* ------------------------------------------------ inspector */
+  let sel = null;                                                  // {i, lon, lat, pt}
+  const samplePts = G.insar.points.map(p => {
+    const el = document.createElement('div'); el.className = 'pin-label'; el.style.cssText = 'padding:0;width:12px;height:12px;border-radius:50%;margin:-6px 0 0 -6px;background:transparent;border:1.5px solid ' + (p.kind === 'creep' ? '#ffcf7a' : '#8fb4ff'); el.hidden = true; $('#labels').appendChild(el);
+    return { p, ring: Sc.addLabel(p.lonlat[0], p.lonlat[1], el, 0.06) };
+  });
+  function nearestSample(lon, lat) {
+    let best = null, bd = 1e9; for (const s of samplePts) { const dx = (s.p.lonlat[0] - lon) * 87800, dy = (s.p.lonlat[1] - lat) * 110950, d = Math.hypot(dx, dy); if (d < bd) { bd = d; best = s.p; } }
+    return { pt: best, dist: bd };
+  }
+  function currentSc() { return exploring ? stormSc() : active === 'replay' ? replaySc(replayDay) : active === 'backtest' ? replaySc(peakDay) : stormSc(); }
+  function select(lon, lat) {
+    const i = Mo.cellOf(lon, lat); if (i < 0) return; Sc.showPath(null); $('#runOut').hidden = true;
+    const ns = nearestSample(lon, lat); sel = { i, lon, lat, pt: ns.dist < 130 ? ns.pt : null, near: ns };
+    Sc.highlight(lon, lat, true); U.uHiR.value = 0.011; renderInspector();
+    $('#inspector').classList.add('on');
+  }
+  function renderInspector() {
+    if (!sel) return; const sc = currentSc(), i = sel.i, L = Mo.L, t = Mo.terms(i, sc), v = Mo.index(i, sc), tr = Mo.tier(v);
+    const town = [['Lafayette', -122.118, 37.886], ['Orinda', -122.183, 37.877], ['Moraga', -122.130, 37.835]].sort((a, b) => Math.hypot((sel.lon - a[1]) * .79, sel.lat - a[2]) - Math.hypot((sel.lon - b[1]) * .79, sel.lat - b[2]))[0][0];
+    $('#inTitle').textContent = `Slope near ${town}`; $('#inSub').textContent = `${sel.lat.toFixed(4)} N, ${Math.abs(sel.lon).toFixed(4)} W. ${fmt(L.elev[i])} m elevation.`;
+    $('#inScore').textContent = fmt(v); const te = $('#inTier'); te.textContent = tr; te.className = 'tier ' + tr;
+    const an = drawSeries(sel.pt);
+    const kv = [['Slope', fmt(L.slope[i], 1) + '°, faces ' + ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(L.aspect[i] / 45) % 8]], ['Buildings within 90 m', fmt(Mo.buildingsNear([i], 3))], ['_', ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(L.aspect[i] / 45) % 8]], ['To a stream', fmt(L.dstream[i]) + ' m'],
+      ['Long-term speed', fmt(L.vpre[i], 1) + ' mm/yr'], ['Recent speed', fmt(an ? -an.recent.v : t.vr, 1) + ' mm/yr'], ['Greenness 2023 to 2026', fmt(L.ndvi23[i], 2) + ' to ' + fmt(L.ndvi26[i], 2)]];
+    $('#inKv').innerHTML = kv.filter(k => k[0] !== '_').map(k => `<div><dt>${k[0]}</dt><dd>${k[1]}</dd></div>`).join('');
+    const parts = t.parts.filter(p => p[1] > 0.04).sort((a, b) => b[1] - a[1]).slice(0, 4), mx = Math.max(0.5, ...parts.map(p => p[1]));
+    $('#inWhy').innerHTML = parts.map(p => `<li><span>${p[0]}</span><i style="width:${(p[1] / mx * 90).toFixed(0)}px"></i><b>+${p[1].toFixed(1)}</b></li>`).join('') || '<li><span>Nothing is pushing this cell up under the current storm.</span></li>';
+    const tE = Mo.tipCell(i, sc, 50), tH = Mo.tipCell(i, sc, 75);
+    $('#inTip').innerHTML = `Rain in 72 hours that tips this cell, with soil wetness held at ${fmt(sc.api)} mm: <b>${tipText(tE, tH)}</b>.`;
+    drawTip(i, sc, tE, tH);
+    const hk = Mo.opts.motion + '|' + Mo.opts.bias; if (!sel.hc || sel.hcKey !== hk) { sel.hc = hindcast(s2 => Mo.index(i, s2)); sel.hcKey = hk; }
+    $('#histCap').innerHTML = sel.hc.el + sel.hc.hi ? `Against every day of real rain since October 2015, this cell would have scored Elevated on <b>${sel.hc.el}</b> ${sel.hc.el === 1 ? 'day' : 'days'} and High on <b>${sel.hc.hi}</b>. Worst: ${sel.hc.worstDate}, score ${fmt(sel.hc.worst)}.` : `Against every day of real rain since October 2015, this cell never reaches Elevated. Its worst day is ${sel.hc.worstDate}, score ${fmt(sel.hc.worst)}.`;
+    drawHist(sel.hc);
+    $('#tsCap').textContent = sel.pt ? `Simulated motion record, point ${sel.pt.id}. Long-term ${fmt(-an.long.v, 1)} mm/yr, last 5 months ${fmt(-an.recent.v, 1)} mm/yr.` : `Nearest point with a motion record is ${fmt(sel.near.dist)} m away.`;
+  }
+  function drawTip(i, sc, tE, tH) {
+    const cv = $('#tipChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv), L = 26, R = 14, T = 4, B = 16, pw = w - L - R, ph = h - T - B, X = r => L + r / 300 * pw, Y = v => T + (100 - v) / 100 * ph;
+    x.font = '10.5px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    for (const v of [50, 75]) { x.beginPath(); x.setLineDash([3, 3]); x.moveTo(L, Y(v) + .5); x.lineTo(L + pw, Y(v) + .5); x.stroke(); x.textAlign = 'right'; x.fillText(v, L - 5, Y(v) + 3.5); }
+    x.setLineDash([]); x.textAlign = 'center'; for (const r of [0, 100, 200, 300]) x.fillText(r, X(r), h - 3);
+    x.beginPath(); for (let r = 0; r <= 300; r += 6) { const v = Mo.index(i, { ...sc, r72: r }); r ? x.lineTo(X(r), Y(v)) : x.moveTo(X(r), Y(v)); } x.strokeStyle = css('--accent'); x.lineWidth = 1.6; x.stroke();
+    const now = Math.min(300, sc.r72); x.fillStyle = css('--ink'); x.beginPath(); x.arc(X(now), Y(Mo.index(i, sc)), 3.2, 0, 7); x.fill();
+    for (const [t, c] of [[tE, '--t-elevated'], [tH, '--t-high']]) if (t != null && t > 0 && t <= 300) { x.fillStyle = css(c); x.fillRect(X(t) - 1, T, 2, ph); }
+  }
+  function drawHist(hc) {
+    const cv = $('#histChart'); if (!cv.offsetParent) return; const [x, w, h] = prep(cv), ys = Object.keys(hc.years).map(Number), L = 26, R = 6, T = 4, B = 15, pw = w - L - R, ph = h - T - B;
+    const mx = Math.max(4, ...ys.map(y => hc.years[y][0] + hc.years[y][1])), bw = pw / ys.length;
+    x.font = '10.5px "IBM Plex Mono", monospace'; x.fillStyle = css('--ink-3'); x.strokeStyle = css('--line'); x.lineWidth = 1;
+    x.beginPath(); x.moveTo(L, T + ph + .5); x.lineTo(L + pw, T + ph + .5); x.stroke(); x.textAlign = 'right'; x.fillText(mx, L - 5, T + 8); x.fillText(0, L - 5, T + ph + 3);
+    ys.forEach((y, n) => { const [e, hi] = hc.years[y], X0 = L + n * bw + 2, he = e / mx * ph, hh = hi / mx * ph;
+      x.fillStyle = css('--t-elevated'); x.fillRect(X0, T + ph - he - hh, bw - 4, he); x.fillStyle = css('--t-high'); x.fillRect(X0, T + ph - hh, bw - 4, hh);
+      x.fillStyle = css('--ink-3'); x.textAlign = 'center'; x.fillText("'" + String(y).slice(2), X0 + (bw - 4) / 2, h - 3); });
+  }
+  $('#runBtn').addEventListener('click', () => {
+    if (!sel) return; const ro = Mo.runout(sel.i), out = $('#runOut');
+    Sc.showPath(ro.path.map(Mo.lonlatOf));
+    const end = { reach: 'where debris would be expected to stop', flat: 'where the ground levels out', basin: 'in a closed low spot', edge: 'at the edge of the map', far: 'after 3 km, where the trace is cut off' }[ro.why];
+    const st = ro.streets.slice(0, 4).map(s => `${s.name} after ${fmt(s.dist)} m`);
+    out.textContent = `Downhill path: ${fmt(ro.length)} m long with a ${fmt(ro.drop)} m drop, ending ${end}. ` + (st.length ? `In the way: ${st.join(', ')}${ro.streets.length > 4 ? ` and ${ro.streets.length - 4} more` : ''}. ` : 'No mapped street lies on the path. ') + (ro.creek >= 0 ? `It joins a creek line after ${fmt(ro.creek)} m. ` : '') + `${fmt(Mo.buildingsNear(ro.path, 1))} buildings stand within about 30 m of it. ` + 'A screening estimate from the terrain, not a flow simulation.';
+    out.hidden = false; lastRunout = ro;
+  });
+  let lastRunout = null;
+  $('#inClose').addEventListener('click', () => { sel = null; $('#inspector').classList.remove('on'); Sc.highlight(0, 0, false); Sc.showPath(null); });
+  let down = null;
+  $('#gl').addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, az: Sc.orbit.az, el: Sc.orbit.el }; if (exploring) $('#gl').setPointerCapture(e.pointerId); });
+  $('#gl').addEventListener('pointermove', e => { if (!down || !exploring) return; Sc.orbit.az = down.az - (e.clientX - down.x) * 0.005; Sc.orbit.el = Math.max(0.18, Math.min(1.45, down.el + (e.clientY - down.y) * 0.004)); });
+  $('#gl').addEventListener('pointerup', e => {
+    const moved = down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6; down = null;
+    if (moved || !(exploring || active === 'inspect')) return;
+    const ll = Sc.pick(e.clientX, e.clientY); if (ll) select(ll[0], ll[1]);
+  });
+  $('#gl').addEventListener('wheel', e => { if (!exploring) return; e.preventDefault(); Sc.orbit.dist = Math.max(3, Math.min(28, Sc.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+  $('#jumpFast').addEventListener('click', () => {
+    const p = samplePts.map(s => s.p).filter(p => p.kind === 'creep').sort((a, b) => a.disp_mm[a.disp_mm.length - 1] - b.disp_mm[b.disp_mm.length - 1])[0];
+    select(p.lonlat[0], p.lonlat[1]); flyTo(p.lonlat[0], p.lonlat[1], 4.4);
+  });
+
+  /* ------------------------------------------------ real data only: drop the simulated motion from the score everywhere */
+  function setReal(on) {
+    Mo.opts.motion = on ? 0 : 1; gsap.to(U.uUseMotion, { value: on ? 0 : 1, duration: reduce ? 0 : 0.6 });
+    $('#realOnly').checked = on; $('#exReal').setAttribute('aria-pressed', on);
+    const f = $('#simflag'); f.textContent = on ? 'Real data only: terrain and gauge rain' : 'Ground motion layer: simulated sample'; f.classList.toggle('real', on);
+    stormStats(); if (sel) renderInspector(); renderBacktest();
+  }
+  const SENS = { '-6.5': 'Fewer alerts', '-5.7': 'Balanced', '-4.9': 'More alerts' };
+  function setBias(b) {
+    Mo.opts.bias = b; gsap.to(U.uBias, { value: b, duration: reduce ? 0 : 0.6 });
+    $$('[data-bias]').forEach(x => x.setAttribute('aria-pressed', +x.dataset.bias === b));
+    stormStats(); if (sel) renderInspector(); renderBacktest();
+  }
+  $$('[data-bias]').forEach(x => x.addEventListener('click', () => setBias(+x.dataset.bias)));
+  $('#realOnly').addEventListener('change', e => setReal(e.target.checked));
+  $('#exReal').addEventListener('click', () => setReal(Mo.opts.motion === 1));
+
+  /* ------------------------------------------------ backtest: the ten reported slides against the score in the three days before each report */
+  const nullPts = (() => { let seed = 7; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296, out = []; while (out.length < 240) { const st = G.streets[Math.floor(rnd() * G.streets.length)], q = st.p[Math.floor(rnd() * st.p.length)]; if (Mo.cellOf(q[0], q[1]) >= 0) out.push(q); } return out; })();
+  const RAD = 10;                                                   // 10 cells, about 300 m: reports name a street, not a spot
+  function backtest() {
+    const fields = new Map(), field = d => { if (!fields.has(d)) fields.set(d, Mo.sortedField(replaySc(d))); return fields.get(d); };
+    const nulls = new Map(), nullOf = d => { if (!nulls.has(d)) { const sc = replaySc(d); nulls.set(d, Float32Array.from(nullPts, q => Mo.maxNear(q[0], q[1], sc, RAD)).sort()); } return nulls.get(d); };
+    const rows = events.map(e => {
+      let peak = 0, pd = e.day - 1;
+      for (let d = e.day - 3; d < e.day; d++) { const v = Mo.maxNear(e.lonlat[0], e.lonlat[1], replaySc(d), RAD); if (v > peak) { peak = v; pd = d; } }
+      const nu = nullOf(pd);
+      return { e, peak, pd, area: Mo.shareAbove(field(pd), 50), top: Mo.shareAbove(field(pd), peak), beats: 1 - Mo.shareAbove(nu, peak), nullTop: Mo.shareAbove(field(pd), nu[nu.length >> 1]) };
+    });
+    const med = xs => { const v = xs.slice().sort((a, b) => a - b); return (v[(v.length - 1) >> 1] + v[v.length >> 1]) / 2; };
+    return { rows, area: rows.reduce((a, r) => a + r.area, 0) / rows.length, bld: (b => b.el + b.hi)(Mo.buildingsAt(replaySc(peakDay))), hits: rows.filter(r => r.peak >= 50).length, top: med(rows.map(r => r.top)), nullTop: med(rows.map(r => r.nullTop)), auc: rows.reduce((a, r) => a + r.beats, 0) / rows.length };
+  }
+  /* alert burden: days in the 11 year gauge record on which 100 or more buildings would sit on Elevated or High ground. The score only sees rain through T, so buildings are tabulated per T step. */
+  const ALERT_BLD = 100;
+  function alertDays() {
+    const tab = new Int32Array(143).fill(-1), at = t => { const k = Math.min(142, Math.round(t * 100)); if (tab[k] < 0) { const T = k / 100, sc = T <= 0.825 ? { r72: T * 200 / 0.55, api: 0, era: 0, amt: 0 } : { r72: 300, api: (T - 0.825) * 200 / 0.45, era: 0, amt: 0 }, b = Mo.buildingsAt(sc); tab[k] = b.el + b.hi; } return tab[k]; };
+    const years = {}; for (let y = hWY[0]; y <= hWY[HN - 1]; y++) years[y] = 0;
+    let total = 0; for (let d = 0; d < HN - 3; d++) if (at(hT[d]) >= ALERT_BLD) { total++; years[hWY[d]]++; }
+    const ys = Object.keys(years); return { total, years, n: ys.length, perYear: total / ys.length, wy23: years[2023] || 0, quiet: ys.filter(y => !years[y]).length };
+  }
+  /* slides from other winters, found in local news after the model was fixed: a spot check outside the test winter */
+  const OTHER = (() => {
+    const pts = n => { const s = G.streets.find(x => x.n === n); return s ? s.p : null; }, mid = p => p && p[p.length >> 1];
+    const aug = pts('Augusta Drive'), can = pts('Canyon Road');
+    let bridge = null; if (aug && can) { let bd = 1e9; for (const q of can) for (const a of aug) { const d = Math.hypot((q[0] - a[0]) * 0.79, q[1] - a[1]); if (d < bd) { bd = d; bridge = q; } } }
+    return [['2016-03-13', 'Augusta Drive, Moraga', mid(aug)], ['2017-02-09', 'Van Tassel Lane, Orinda', mid(pts('Van Tassel Lane'))], ['2017-04-18', 'Canyon bridge, Moraga', bridge], ['2019-02-13', 'Canyon bridge again', bridge]]
+      .filter(e => e[2] && Mo.cellOf(e[2][0], e[2][1]) >= 0).map(([date, where, q]) => ({ date, where, q, day: Math.round((new Date(date + 'T12:00:00Z') - new Date(RL.start + 'T12:00:00Z')) / 864e5) }));
+  })();
+  function drawTimeline() {
+    const cv = $('#tlChart'); if (!cv || !cv.offsetParent) return; const [x, w, h] = prep(cv), L = 8, R = 8, T = 22, B = 16, pw = w - L - R, ph = h - T - B, n = HN - 3;
+    const off = Math.round((new Date(R23.start + 'T12:00:00Z') - new Date(RL.start + 'T12:00:00Z')) / 864e5);
+    const all = events.map(e => ({ day: e.day + off, test: true })).concat(OTHER.map(e => ({ day: e.day, test: false })));
+    const sorted = Float32Array.from(hT.subarray(0, n)).sort(), p95 = sorted[Math.floor(n * 0.95)], tmax = sorted[n - 1] || 1;
+    const X = d => L + d / (n - 1) * pw, Y = t => T + ph - t / tmax * ph;
+    x.clearRect(0, 0, w, h); x.font = '10.5px "IBM Plex Mono", monospace'; x.textAlign = 'center';
+    for (let d = 0; d < n; d++) { const t = addDays(RL.start, d); if (t.getUTCMonth() === 0 && t.getUTCDate() === 1) { x.fillStyle = css('--ink-3'); x.fillText("'" + String(t.getUTCFullYear()).slice(2), X(d), h - 4); x.fillStyle = css('--line'); x.fillRect(Math.round(X(d)), T, 1, ph); } }
+    x.fillStyle = css('--ink-3'); x.globalAlpha = 0.55; for (let px = 0; px < pw; px++) { const d0 = Math.floor(px / pw * n), d1 = Math.max(d0 + 1, Math.floor((px + 1) / pw * n)); let m = 0; for (let d = d0; d < d1 && d < n; d++) if (hT[d] > m) m = hT[d]; if (m >= p95) { x.globalAlpha = 1; x.fillStyle = css('--accent'); } else { x.globalAlpha = 0.55; x.fillStyle = css('--ink-3'); } x.fillRect(L + px, Y(m), 1, T + ph - Y(m)); }
+    x.globalAlpha = 1; x.strokeStyle = css('--accent'); x.setLineDash([3, 3]); x.beginPath(); x.moveTo(L, Y(p95) + .5); x.lineTo(L + pw, Y(p95) + .5); x.stroke(); x.setLineDash([]);
+    let hit = 0; for (const e of all) { let m = 0; for (let d = e.day - 3; d < e.day; d++) if (d >= 0 && d < n && hT[d] > m) m = hT[d]; if (m >= p95) hit++; x.beginPath(); x.arc(X(e.day), 11, 3.5, 0, 6.3); if (e.test) { x.fillStyle = css('--t-elevated'); x.fill(); } else { x.strokeStyle = css('--ink'); x.lineWidth = 1.5; x.stroke(); x.lineWidth = 1; } }
+    let base = 0; for (let d = 3; d < n; d++) if (hT[d - 1] >= p95 || hT[d - 2] >= p95 || hT[d - 3] >= p95) base++; base = base / (n - 3) * 100;
+    $('#tlCap').textContent = `Each bar is one day of the rain trigger, from real gauge rain. Bright bars are the wettest 5% of days, above the dashed line. Dots mark every dated slide in this project: filled for winter 2023, open for the four from other winters. ${hit} of ${all.length} were reported within three days after a top 5% day. Only ${fmt(base)}% of all days are that close to one. The trigger is the same at every alert setting.`;
+  }
+  window.addEventListener('resize', () => { clearTimeout(drawTimeline.t); drawTimeline.t = setTimeout(drawTimeline, 200); });
+  function renderOther() {
+    if (!timing) { const n = HN - 3, off = Math.round((new Date(R23.start + 'T12:00:00Z') - new Date(RL.start + 'T12:00:00Z')) / 864e5), p95 = Float32Array.from(hT.subarray(0, n)).sort()[Math.floor(n * 0.95)], days = events.map(e => e.day + off).concat(OTHER.map(e => e.day));
+      timing = { p95, n: days.length, hit: days.filter(dd => { for (let d = dd - 3; d < dd; d++) if (d >= 0 && d < n && hT[d] >= p95) return true; return false; }).length }; stormStats(); }
+    drawTimeline();
+    const ol = $('#btOther'); if (!ol) return; ol.textContent = ''; let hits = 0;
+    for (const e of OTHER) {
+      let peak = 0, pd = e.day - 1; for (let d = e.day - 3; d < e.day; d++) { if (d < 0 || d >= HN - 3) continue; const v = Mo.maxNear(e.q[0], e.q[1], hsc(d), RAD); if (v > peak) { peak = v; pd = d; } }
+      if (peak >= 50) hits++;
+      const li = document.createElement('li'), b = document.createElement('button'), ed = addDays(RL.start, e.day), sc = hsc(pd);
+      b.innerHTML = `<span class="d">${MONTHS[ed.getUTCMonth()]} ${String(ed.getUTCFullYear()).slice(2)}</span><span class="w"></span><span class="tier ${Mo.tier(peak)}">${Math.floor(peak)} ${Mo.tier(peak)}</span><span class="l">${fmt(sc.r72)} mm rain</span>`;
+      b.querySelector('.w').textContent = e.where;
+      b.setAttribute('aria-label', `${e.where}, reported ${dstr(ed)}. Highest score within 300 metres in the three days before: ${fmt(peak)}, ${Mo.tier(peak)}, with ${fmt(sc.r72)} millimetres of rain in 72 hours. Show on map.`);
+      b.addEventListener('click', () => { Sc.highlight(e.q[0], e.q[1], true); U.uHiR.value = 0.021; pushScenario(sc); flyTo(e.q[0], e.q[1], 5.4); });
+      li.appendChild(b); ol.appendChild(li);
+    }
+    $('#btOtherNote').textContent = `${hits} of ${OTHER.length} sat near Elevated or High ground at this setting. These were found in local news after the formula was fixed, so nothing was tuned to them, but four slides picked by a search are a spot check and not a test set. ${(e => { if (!e) return ''; const se = seasonStats(e.day); return `The April 2017 bridge slide moved with almost no rain that week, late in a season that had reached ${fmt(se.pct)}% of average rain. A three day rain trigger is not built to see that.`; })(OTHER.find(e => e.date === '2017-04-18'))} ${OTHER.filter(e => stormPicks.some(d => Math.abs(d - e.day) <= 5)).length} of the ${OTHER.length} were reported within five days of one of the eight wettest storms in the gauge record, so the rain trigger gets the timing even where the map score is too low. Sources are in the dataset notes.`;
+  }
+  let btCache = {};
+  function renderBacktest() {
+    const mo = Mo.opts.motion, bias = Mo.opts.bias, K = (m, b) => m + '|' + b;
+    const get = (m, b) => { const k = K(m, b); if (!btCache[k]) { Mo.opts.motion = m; Mo.opts.bias = b; btCache[k] = backtest(); btCache[k].alerts = alertDays(); Mo.opts.motion = mo; Mo.opts.bias = bias; } return btCache[k]; };
+    const key = mo;
+    const bt = get(mo, bias), o = get(mo ? 0 : 1, bias), pc = v => fmt(v * 100, v < 0.1 ? 1 : 0) + '%';
+    $('#btHit').textContent = bt.hits; $('#btTop').textContent = pc(bt.top); $('#btAuc').textContent = fmt(bt.auc * 10, 1);
+    $('#btNull').textContent = pc(bt.nullTop);
+    const roc = $('#btRoc'); roc.textContent = '';
+    for (const b of Object.keys(SENS).map(Number).sort((x, y) => x - y)) { const r = get(mo, b), tr = document.createElement('tr'); if (b === bias) tr.className = 'on';
+      tr.innerHTML = `<td>${SENS[b]}</td><td>${r.hits} of 10</td><td>${pc(r.area)}</td><td>${fmt(r.bld)}</td><td>${fmt(r.alerts.perYear, 1)}</td><td></td>`;
+      if (b !== bias) { const u = document.createElement('button'); u.textContent = 'Use'; u.setAttribute('aria-label', 'Use the ' + SENS[b] + ' setting'); u.addEventListener('click', () => setBias(b)); tr.lastChild.appendChild(u); } else tr.lastChild.textContent = 'In use';
+      roc.appendChild(tr); }
+    const ol = $('#btList'); ol.textContent = '';
+    for (const r of bt.rows.slice().sort((a, b) => a.e.day - b.e.day)) {
+      const li = document.createElement('li'), b = document.createElement('button'), ed = addDays(R23.start, r.e.day);
+      b.innerHTML = `<span class="d">${MONTHS[ed.getUTCMonth()]} ${ed.getUTCDate()}</span><span class="w"></span><span class="tier ${Mo.tier(r.peak)}">${Math.floor(r.peak)} ${Mo.tier(r.peak)}</span><span class="l">top ${pc(r.top)} of map</span>`;
+      b.querySelector('.w').textContent = r.e.where;
+      b.setAttribute('aria-label', `${r.e.where}, reported ${dstr(ed)}. Highest score within 300 metres in the three days before: ${fmt(r.peak)}, ${Mo.tier(r.peak)}, which ranks in the top ${pc(r.top)} of the map. Show on map.`);
+      b.addEventListener('click', () => { Sc.highlight(r.e.lonlat[0], r.e.lonlat[1], true); U.uHiR.value = 0.021; pushScenario(replaySc(r.pd)); flyTo(r.e.lonlat[0], r.e.lonlat[1], 5.4); });
+      li.appendChild(b); ol.appendChild(li);
+    }
+    renderOther();
+    const verdict = bt.auc >= 0.6 && bt.hits < 5 ? 'The placeholder ranks these slopes better than chance but under-warns at this setting. Raising the sensitivity catches more slides and flags more of the map, which is the trade every warning system has to pick.' : bt.auc >= 0.6 ? 'The placeholder ranks these slopes better than chance.' : 'The placeholder does little better than chance here.';
+    $('#btNote').innerHTML = `<b>${verdict}</b> ${key ? 'This run includes the simulated ground motion. With it removed' : 'This run uses real terrain and real gauge rain only. With the simulated motion added'}: ${o.hits} of 10 flagged, median rank top ${pc(o.top)}, ${fmt(o.auc * 10, 1)} in 10 against random street spots. Across ${bt.alerts.n} winters of gauge rain this setting would have called an alert day, meaning ${ALERT_BLD} or more buildings on Elevated or High ground, ${fmt(bt.alerts.total)} times: ${fmt(bt.alerts.wy23)} in winter 2023 and none at all in ${bt.alerts.quiet} of the winters. Slides from other winters were not collected, so alert days outside 2023 cannot be checked either way. The rain is the gauge record, so it stands in for a perfect forecast. Report dates can lag the slide, slides get reported where there are roads, and ten events cannot prove a model.`;
+  }
+
+  /* ------------------------------------------------ storm briefing + exports */
+  async function saveFile(filename, text, mime) {
+    try { const dl = window.claude && window.claude.use ? await Promise.race([window.claude.use('downloads'), new Promise(r => setTimeout(() => r(null), 2500))]) : null; if (dl) { await dl.save({ filename, data: text }); return true; } } catch (e) { if (e && e.code === 'declined') return false; }
+    try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: mime })); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); return true; } catch (e) { return false; }
+  }
+  $('#csvBtn').addEventListener('click', () => {
+    if (!lastRank) return; const sc = stormSc(), q = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const lines = ['rank,street,town,score,tier,buildings_along_street,buildings_on_elevated_or_high_ground,rain_72h_mm,soil_wetness_mm,ground_motion,alert_sensitivity'];
+    lastRank.all.forEach((s, n) => lines.push([n + 1, q(s.name), q(s.town), s.score.toFixed(1), Mo.tier(s.score), ...(b => [b.total, b.flagged])(Mo.streetBuildings(s.k, sc)), sc.r72, sc.api, Mo.opts.motion ? 'simulated' : 'excluded', q(SENS[Mo.opts.bias])].join(',')));
+    saveFile(`groundtruth_streets_${sc.r72}mm.csv`, lines.join('\n') + '\n', 'text/csv');
+  });
+  function briefingText() {
+    const sc = stormSc(), rk = lastRank, a = lastArea, towns = ['Lafayette', 'Orinda', 'Moraga'];
+    const byTown = towns.map(t => { const xs = rk.all.filter(s => s.town === t); return `${t}: ${xs.filter(s => s.score >= 75).length} High, ${xs.filter(s => s.score >= 50 && s.score < 75).length} Elevated of ${xs.length} streets`; });
+    const top = rk.all.slice(0, 8).map((s, n) => { const hi = Mo.tipStreet(s.k, sc, 75); return `${n + 1}. ${s.name}, ${s.town}: ${Math.round(s.score)} (${Mo.tier(s.score)})` + (s.score < 75 && hi != null ? `. High at ${hi} mm` : ''); });
+    const similar = (() => { let best = null, bd = 1e9; for (let d = 61; d <= D1; d++) { const r = replaySc(d), dist = Math.hypot(r.r72 - sc.r72, (r.api - sc.api) * 0.7); if (dist < bd) { bd = dist; best = d; } } return bd < 45 ? best : null; })();
+    const out = [`GROUNDTRUTH STORM BRIEFING, LAMORINDA`, `Scenario: ${sc.r72} mm of rain in the next 72 hours on soil at a wetness index of ${sc.api} mm. That is ${fmt(sc.r72 / 201 * 100)}% of the worldwide rainfall threshold for a 72 hour storm (Caine 1980, 201 mm). Alert sensitivity: ${SENS[Mo.opts.bias]}.`,
+      `Exposure: ${fmt(a.highKm2, 1)} square km of hillside in the High tier (${fmt(a.high * 100, 1)}% of the map) and ${fmt(a.elevated * 100, 1)}% in Elevated. ${rk.elevated} of ${rk.total} named streets score Elevated or High, ${rk.high} of them High. ${fmt(lastBld.hi)} buildings stand on High ground and ${fmt(lastBld.el)} on Elevated, out of ${fmt(lastBld.total)} mapped.`,
+      'By town:\n' + byTown.join('\n'), 'Streets to check first:\n' + top.join('\n')];
+    if (similar != null) { const sd = addDays(R23.start, similar), near = events.filter(e => Math.abs(e.day - similar) <= 4); out.push(`Closest day in the winter 2023 record: ${dstr(sd)} (${fmt(replaySc(similar).r72)} mm in the following 72 hours, wetness ${fmt(R23.api[similar])} mm).` + (near.length ? ` Slides reported within four days of it: ${near.map(e => e.where).join('; ')}.` : ' No slides were reported within four days of it.')); }
+    if (watch.length) out.push('Watched streets:\n' + rk.all.filter(s => watch.includes(s.name)).map(s => `${s.name}: ${Math.round(s.score)} (${Mo.tier(s.score)}). ${tipText(Mo.tipStreet(s.k, sc, 50), Mo.tipStreet(s.k, sc, 75))}`).join('\n'));
+    { const se = seasonStats(HN - 1); if (se.pct != null) out.push(`Season so far (gauges, to ${dstr(addDays(RL.start, HN - 1))}): ${fmt(se.total)} mm since October 1, ${fmt(se.pct)}% of the average for this date.` + (se.pct >= 150 ? ' In a season this wet, slow deep slides can move between storms. This score keys on three day rain and does not capture that.' : '')); }
+    out.push(`Limits: ${Mo.opts.motion ? 'ground motion in this run is simulated sample data' : 'this run uses real terrain and rain only, with no ground motion input'}, and the score is a placeholder formula, not a trained or validated model. Use it to see how the tool works. For real decisions follow the National Weather Service and city engineering staff.`);
+    return out.join('\n\n');
+  }
+  /* five day outlook: carry soil wetness forward day by day (API_d = 0.92 x API_d-1 + rain_d, as in the gauge record) */
+  const ol = $('#outlook'), olIn = $('#olIn');
+  for (let d = 0; d < 5; d++) { const l = document.createElement('label'); l.textContent = 'Day ' + (d + 1); const i = document.createElement('input'); i.type = 'number'; i.min = 0; i.max = 250; i.step = 1; i.inputMode = 'decimal'; i.value = [18, 62, 44, 8, 0][d]; i.addEventListener('input', renderOutlook); l.appendChild(i); olIn.appendChild(l); }
+  const olVals = () => $$('#olIn input').map(i => Math.max(0, Math.min(250, parseFloat(i.value) || 0)));
+  function renderOutlook() {
+    const rain = olVals(), tb = $('#olBody'); tb.textContent = ''; let api = S.api; const days = [];
+    for (let d = 0; d < 5; d++) { const sc = { r72: rain[d] + (rain[d + 1] || 0) + (rain[d + 2] || 0), api, era: 0, amt: 0 }; days.push({ sc, a: Mo.areaStats(sc), rk: Mo.rankStreets(sc, 1), b: Mo.buildingsAt(sc) }); api = 0.92 * api + rain[d]; }
+    const pk = days.reduce((b, x, n) => Mo.Tof(x.sc) > Mo.Tof(days[b].sc) ? n : b, 0);
+    days.forEach((x, n) => { const tr = document.createElement('tr'); if (n === pk && Mo.Tof(x.sc) > 0.3) tr.className = 'peak';
+      tr.innerHTML = `<td>Day ${n + 1}</td><td>${fmt(x.sc.r72)} mm</td><td>${fmt(x.sc.api)} mm</td><td>${fmt(x.a.highKm2, 1)}</td><td>${fmt(x.b.el + x.b.hi)}</td><td>${fmt(x.rk.elevated)}</td><td></td>`;
+      const b = document.createElement('button'); b.textContent = 'Show on map'; b.setAttribute('aria-label', `Show day ${n + 1} on the map`); b.addEventListener('click', () => { ol.close(); setStorm(Math.min(300, x.sc.r72), Math.min(280, x.sc.api), true); });
+      tr.lastChild.appendChild(b); tb.appendChild(tr); });
+    const w = watch.map(nm => { const k = G.streets.findIndex(s => s.n === nm); return `${nm}: ${days.map(x => Math.round(Mo.streetScore(k, x.sc).score)).join(', ')}`; });
+    $('#olWatch').textContent = (w.length ? 'Your streets, day by day. ' + w.join('. ') + '. ' : '') + 'Days 4 and 5 see less than 72 hours of forecast, so they read low. Wetness is shown as each day begins.';
+  }
+  const OL = { nye: () => R23.mm.slice(91, 96), jan: () => R23.mm.slice(99, 104), light: () => [4, 9, 6, 2, 0], clear: () => [0, 0, 0, 0, 0] };
+  $$('[data-ol]').forEach(b => b.addEventListener('click', () => { const v = OL[b.dataset.ol](); $$('#olIn input').forEach((i, n) => i.value = Math.round(v[n] || 0)); renderOutlook(); }));
+  $('#outlookBtn').addEventListener('click', () => { renderOutlook(); ol.showModal ? ol.showModal() : ol.setAttribute('open', ''); });
+  $('#olClose').addEventListener('click', () => ol.close()); ol.addEventListener('click', e => { if (e.target === ol) ol.close(); });
+
+  const brief = $('#brief');
+  function openBrief() { if (!lastRank) stormStats(); $('#briefText').textContent = briefingText(); $('#briefSrc').textContent = 'Built from the scores on this page for the storm you set. Every number comes from the model record.'; if (brief.showModal) brief.showModal(); else brief.setAttribute('open', ''); }
+  $('#briefBtn').addEventListener('click', openBrief);
+  $('#briefClose').addEventListener('click', () => brief.close ? brief.close() : brief.removeAttribute('open'));
+  brief.addEventListener('click', e => { if (e.target === brief && brief.close) brief.close(); });
+  $('#briefCopy').addEventListener('click', async e => { const b = e.currentTarget; try { await navigator.clipboard.writeText($('#briefText').textContent); b.textContent = 'Copied'; } catch (err) { const r = document.createRange(); r.selectNodeContents($('#briefText')); const g = getSelection(); g.removeAllRanges(); g.addRange(r); b.textContent = 'Selected, press copy'; } setTimeout(() => b.textContent = 'Copy text', 1800); });
+  $('#briefSave').addEventListener('click', () => saveFile(`groundtruth_briefing_${S.r72}mm.txt`, $('#briefText').textContent + '\n', 'text/plain'));
+
+  /* ------------------------------------------------ explore mode */
+  const exBtn = $('#exploreBtn');
+  function setExplore(on) {
+    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.textContent = on ? 'Back to story' : 'Explore map';
+    if (on) {
+      const c = Sc.cam, dx = c.px - c.tx, dz = c.pz - c.tz; Object.assign(Sc.orbit, { tx: c.tx, tz: c.tz, dist: Math.hypot(dx, c.py, dz), az: Math.atan2(dx, dz), el: Math.atan2(c.py, Math.hypot(dx, dz)), on: true });
+      pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }); syncExplore(); showEvents(false); samplePts.forEach(p => p.ring.show(true)); if (brief.open) brief.close();
+      $('#inspector').classList.toggle('on', !!sel);
+    } else { Sc.orbit.on = false; $('#inspector').classList.remove('on'); samplePts.forEach(p => p.ring.show(false)); enter(active); ScrollTrigger.update(); }
+  }
+  function syncExplore() {
+    const on = id => $(id).getAttribute('aria-pressed') === 'true';
+    gsap.to(U.uRisk, { value: on('#exRisk') ? 1 : 0, duration: .4 }); gsap.to(U.uMotion, { value: on('#exMotion') ? 1 : 0, duration: .4 });
+    gsap.to(U.uRoads, { value: on('#exRoads') ? 1 : 0, duration: .4 }); gsap.to(U.uBld, { value: on('#exBld') ? 1 : 0, duration: .4 }); gsap.to(U.uSplitVis, { value: on('#exSat') ? 1 : 0, duration: .4 }); U.uSplit.value = 0; gsap.to(U.uDim, { value: 0, duration: .4 });
+  }
+  exBtn.addEventListener('click', () => setExplore(!exploring));
+  ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); syncExplore(); }));
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
+
+  /* ------------------------------------------------ street agent */
+  const norm = s => s.toLowerCase().replace(/[.,?!']/g, '').replace(/\bst\b/g, 'street').replace(/\brd\b/g, 'road').replace(/\bdr\b/g, 'drive').replace(/\bblvd\b/g, 'boulevard').replace(/\bave\b/g, 'avenue').replace(/\bln\b/g, 'lane').replace(/\bct\b/g, 'court').replace(/\bsaint\b/g, 'st').replace(/\s+/g, ' ').trim();
+  const sIndex = G.streets.map((s, k) => ({ k, key: norm(s.n).replace(/\bstreet\b/g, 'st') }));
+  function findStreet(q) {
+    const n = ' ' + norm(q).replace(/\bstreet\b/g, 'st') + ' '; let best = null;
+    for (const s of sIndex) if (n.includes(' ' + s.key + ' ') && (!best || s.key.length > best.key.length)) best = s;
+    if (best) return [best.k];
+    const toks = n.trim().split(' ').filter(t => t.length > 3 && !['road', 'drive', 'lane', 'court', 'risk', 'this', 'weekend', 'what', 'about', 'street', 'does', 'look', 'safe', 'will', 'slide', 'landslide', 'right'].includes(t));
+    return sIndex.filter(s => toks.some(t => s.key.split(' ').includes(t))).slice(0, 5).map(s => s.k);
+  }
+  function record(k, r72) {
+    const st = G.streets[k], sc = { r72: r72 == null ? S.r72 : r72, api: S.api, era: 0, amt: 0 }, r = Mo.streetScore(k, sc); if (!r) return null;
+    const lo = Mo.streetScore(k, { ...sc, r72: sc.r72 * 0.5 }).score, hi = Mo.streetScore(k, { ...sc, r72: sc.r72 * 1.5 }).score;
+    const i = r.worst, L = Mo.L, t = Mo.terms(i, sc), [wl, wa] = Mo.lonlatOf(i);
+    const near = G.events.filter(e => st.p.some(p => Math.hypot((p[0] - e.lonlat[0]) * 87800, (p[1] - e.lonlat[1]) * 110950) < 450)).map(e => `${e.date}: ${e.where}. ${e.what}`);
+    return { street: st.n, town: st.t, score: Math.round(r.score), tier: Mo.tier(r.score), score_if_half_the_rain: Math.round(lo), score_if_one_and_a_half_times_the_rain: Math.round(hi),
+      storm: { rain_next_72h_mm: sc.r72, soil_wetness_index_mm: sc.api, rain_amount_came_from: r72 == null ? 'the storm set on the page' : 'the amount named in the question' },
+      buildings_along_street: (b => ({ total: b.total, on_ground_scored_elevated_or_high: b.flagged }))(Mo.streetBuildings(k, sc)),
+      history_from_real_rain_since_oct_2015: (h => ({ days_scored_elevated: h.el, days_scored_high: h.hi, worst_day: h.worstDate, worst_day_score: Math.round(h.worst) }))(hindcast(s2 => Mo.streetScore(k, s2).score)),
+      rain_in_72h_that_makes_it_elevated_mm: Mo.tipStreet(k, sc, 50), rain_in_72h_that_makes_it_high_mm: Mo.tipStreet(k, sc, 75), ground_motion_input: Mo.opts.motion ? 'simulated sample' : 'excluded, real terrain and rain only', steepest_risky_spot: { slope_deg: +L.slope[i].toFixed(1), simulated_ground_speed_mm_per_yr: +t.vr.toFixed(1), simulated_speed_change_mm_per_yr: +(t.vr - L.vpre[i]).toFixed(1), metres_to_stream: Math.round(L.dstream[i]) },
+      top_reasons: t.parts.filter(p => p[1] > 0.15).sort((a, b) => b[1] - a[1]).slice(0, 3).map(p => p[0]), reported_slides_winter_2023_within_450m: near, _spot: [wl, wa] };
+  }
+  function templateAnswer(rec) {
+    const why = rec.top_reasons.length ? rec.top_reasons.map(s => s.toLowerCase()).join(', ') : 'no strong drivers';
+    const out = [`${rec.street}, ${rec.town}: ${rec.tier}, ${rec.score} out of 100.`,
+      `That is for ${rec.storm.rain_amount_came_from === 'the storm set on the page' ? 'the storm set on this page' : 'the rain you named'}: ${rec.storm.rain_next_72h_mm} mm of rain in 72 hours on soil at a wetness index of ${rec.storm.soil_wetness_index_mm} mm. What drives it at the riskiest spot along the street: ${why}. The slope there is ${rec.steepest_risky_spot.slope_deg} degrees.`,
+      `If the storm brings half the rain the score is ${rec.score_if_half_the_rain}. At one and a half times it is ${rec.score_if_one_and_a_half_times_the_rain}.`];
+    out.push(`Tipping points at this soil wetness: ${tipText(rec.rain_in_72h_that_makes_it_elevated_mm, rec.rain_in_72h_that_makes_it_high_mm)} of rain in 72 hours.`);
+    if (rec.buildings_along_street.total) out.push(`${rec.buildings_along_street.on_ground_scored_elevated_or_high} of the ${rec.buildings_along_street.total} buildings along it stand on ground scored Elevated or High in this storm.`);
+    { const h = rec.history_from_real_rain_since_oct_2015; out.push(`Scored against every day of real rain since October 2015, it reaches Elevated on ${h.days_scored_elevated} ${h.days_scored_elevated === 1 ? 'day' : 'days'} and High on ${h.days_scored_high}. Its worst day is ${h.worst_day} at ${h.worst_day_score}.`); }
+    if (rec.reported_slides_winter_2023_within_450m.length) out.push(`Reported nearby in winter 2023: ${rec.reported_slides_winter_2023_within_450m.join(' ')}`);
+    out.push((Mo.opts.motion ? 'The ground motion input is simulated sample data' : 'This run leaves ground motion out') + ' and the score is a placeholder, so this shows how the tool works. It is not a reading of the real street. For a real concern, call your city engineering staff or a licensed geotechnical engineer.');
+    return out;
+  }
+  const msgs = $('#msgs');
+  function bubble(cls, paras, src) {
+    const d = document.createElement('div'); d.className = 'msg ' + cls;
+    for (const p of [].concat(paras)) { const el = document.createElement('p'); el.textContent = p; d.appendChild(el); }
+    if (src) { const s = document.createElement('span'); s.className = 'src'; s.textContent = src; d.appendChild(s); }
+    msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+    if (!reduce) gsap.from(d, { y: 14, autoAlpha: 0, duration: 0.5, ease: 'expo.out' });
+    return d;
+  }
+  let sampler; const getSampler = () => sampler !== undefined ? Promise.resolve(sampler) : (window.claude && window.claude.use ? Promise.race([window.claude.use('sample'), new Promise(r => setTimeout(() => r(null), 4000))]).catch(() => null) : Promise.resolve(null)).then(s => (sampler = s || null));
+  /* Agent path: when Claude is available, it answers open questions by calling these page functions. Every number it can say comes from one of them. */
+  const exactStreet = name => { const ks = findStreet(String(name || '')); return ks.length === 1 ? ks[0] : -1; };
+  const pubRecord = (k, r72) => { const rec = record(k, r72); if (!rec) throw new Error('That street has no cells to score.'); const p = { ...rec }; delete p._spot; return p; };
+  let agentShown = null;                                           // street the agent last put on the map
+  const TOOLS = [
+    { name: 'find_streets', description: 'Search street names in Lafayette, Orinda and Moraga. Returns up to 8 matches with their town. Use it when a name is misspelled, partial or ambiguous.',
+      inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] },
+      execute: ({ query }) => { const v = norm(String(query || '')); const hits = G.streets.filter(s => norm(s.n).includes(v)).slice(0, 8); return hits.length ? hits.map(s => ({ street: s.n, town: s.t })) : findStreet(String(query || '')).map(k => ({ street: G.streets[k].n, town: G.streets[k].t })); } },
+    { name: 'street_report', description: 'Full risk record for one street: score out of 100 and tier, drivers, tipping point rain, buildings on flagged ground, history against real rain since October 2015, reported 2023 slides nearby. Optional rain_mm overrides the 72 hour rain set on the page. Also shows the street on the map.',
+      inputSchema: { type: 'object', properties: { street: { type: 'string' }, rain_mm: { type: 'number' } }, required: ['street'] },
+      execute: ({ street, rain_mm }) => { const k = exactStreet(street); if (k < 0) throw new Error('No single street matches that name. Call find_streets first.'); const rec = pubRecord(k, rain_mm == null ? null : Math.max(0, Math.min(400, Math.round(rain_mm)))); flyToStreet(k); agentShown = G.streets[k].n; return rec; } },
+    { name: 'top_streets', description: 'Streets with the highest scores under the storm set on the page. Optional town (Lafayette, Orinda or Moraga) and count (max 10).',
+      inputSchema: { type: 'object', properties: { town: { type: 'string' }, count: { type: 'number' } } },
+      execute: ({ town, count } = {}) => { const rk = lastRank || Mo.rankStreets(stormSc(), 6); const xs = rk.all.filter(s => !town || s.town.toLowerCase() === String(town).toLowerCase()).slice(0, Math.max(1, Math.min(10, count || 5))); return { storm: { rain_next_72h_mm: S.r72, soil_wetness_index_mm: S.api }, streets: xs.map(s => ({ street: s.name, town: s.town, score: Math.round(s.score), tier: Mo.tier(s.score) })), streets_elevated_or_high: rk.elevated, streets_scored: rk.total }; } },
+    { name: 'storm_summary', description: 'Area-wide numbers for the storm set on the page: hillside area and buildings on High and Elevated ground, streets flagged, how often the gauge record since October 2015 was this wet, alert sensitivity, whether simulated ground motion is included.',
+      inputSchema: { type: 'object', properties: {} },
+      execute: () => { const sc = stormSc(), a = Mo.areaStats(sc), b = Mo.buildingsAt(sc), rk = lastRank || Mo.rankStreets(sc, 6), T = Mo.Tof(sc); let n = 0; for (let d = 0; d < HN - 3; d++) if (hT[d] >= T) n++;
+        return { rain_next_72h_mm: sc.r72, soil_wetness_index_mm: sc.api, season_rain_since_oct_1: (se => ({ mm: Math.round(se.total), percent_of_average_for_this_date: se.pct == null ? null : Math.round(se.pct), as_of: dstr(addDays(RL.start, HN - 1)) }))(seasonStats(HN - 1)), percent_of_worldwide_72h_rain_threshold: Math.round(sc.r72 / 201 * 100), high_tier_km2: +a.highKm2.toFixed(1), percent_of_map_high: +(a.high * 100).toFixed(1), percent_of_map_elevated: +(a.elevated * 100).toFixed(1), buildings_on_high_ground: b.hi, buildings_on_elevated_ground: b.el, buildings_mapped: b.total, streets_elevated_or_high: rk.elevated, streets_scored: rk.total, days_this_wet_or_wetter_since_oct_2015: n, days_in_record: HN - 3, alert_sensitivity: SENS[Mo.opts.bias], ground_motion_input: Mo.opts.motion ? 'simulated sample' : 'excluded, real terrain and rain only' }; } },
+    { name: 'debris_path', description: 'Trace where debris would travel downhill from the riskiest spot on a street: path length, height drop, streets in the way, creek, buildings within 30 m. Draws the path on the map. A screening estimate, not a flow simulation.',
+      inputSchema: { type: 'object', properties: { street: { type: 'string' } }, required: ['street'] },
+      execute: ({ street }) => { const k = exactStreet(street); if (k < 0) throw new Error('No single street matches that name. Call find_streets first.'); const r = Mo.streetScore(k, stormSc()), ro = Mo.runout(r.worst); flyToStreet(k); Sc.showPath(ro.path.map(Mo.lonlatOf)); agentShown = G.streets[k].n;
+        return { from: 'the highest scoring cell along ' + G.streets[k].n, path_length_m: ro.length, height_drop_m: ro.drop, ends: { reach: 'where debris would be expected to stop', flat: 'where the ground levels out', basin: 'in a closed low spot', edge: 'at the edge of the map', far: 'trace cut off at 3 km' }[ro.why], streets_in_the_way: ro.streets.filter(x => x.name !== G.streets[k].n).slice(0, 6).map(x => ({ street: x.name, metres_along_path: x.dist })), joins_creek_after_m: ro.creek >= 0 ? ro.creek : null, buildings_within_30m_of_path: Mo.buildingsNear(ro.path, 1), method: 'steepest descent on a 29 m elevation grid, screening estimate only' }; } },
+    { name: 'backtest_summary', description: 'How the score did against the ten slides reported in winter 2022 to 2023, at each alert sensitivity: slides caught, share of the map flagged, median rank, and how often a slide site outscores a random street spot.',
+      inputSchema: { type: 'object', properties: {} },
+      execute: () => { const mo = Mo.opts.motion, bias = Mo.opts.bias, out = {}; for (const b of Object.keys(SENS).map(Number)) { const k = mo + '|' + b; if (!btCache[k]) { Mo.opts.bias = b; btCache[k] = backtest(); btCache[k].alerts = alertDays(); Mo.opts.bias = bias; } const r = btCache[k]; out[SENS[b]] = { slides_caught_of_10: r.hits, percent_of_map_flagged: +(r.area * 100).toFixed(1), median_slide_site_rank_top_percent: +(r.top * 100).toFixed(1), random_street_spot_rank_top_percent: +(r.nullTop * 100).toFixed(1), times_in_10_a_slide_site_outscores_a_random_street_spot: +(r.auc * 10).toFixed(1), alert_days_per_winter_over_the_gauge_record: r.alerts ? +r.alerts.perYear.toFixed(1) : undefined, alert_days_in_winter_2023: r.alerts ? r.alerts.wy23 : undefined }; }
+        return { setting_in_use: SENS[bias], by_setting: out, spot_check_other_winters_at_setting_in_use: OTHER.map(e => { let peak = 0; for (let d = e.day - 3; d < e.day; d++) peak = Math.max(peak, Mo.maxNear(e.q[0], e.q[1], hsc(d), RAD)); return { slide: e.where, reported: e.date, score_beforehand: Math.round(peak), tier: Mo.tier(peak) }; }), caveats: 'ten events, street-level positions, gauge rain used as a perfect forecast, placeholder score' }; } }
+  ];
+  const AGENT_RULES = `You are the GroundTruth street risk assistant for Lafayette, Orinda and Moraga, California. Answer the resident's question by calling the tools. Every number, street name and fact in your answer must come from a tool result in this conversation. Do not add anything from memory. If a tool fails or returns nothing, say what you could not find.
+Write plain sentences. No markdown, no lists, no dashes, no headings. Under 150 words. Lead with the direct answer. Give scores as a number out of 100 with the tier. Say which storm the numbers assume. Never say a street, home or slope is safe.
+End with one sentence saying what the tool results say about the ground motion input (simulated sample data, or left out) and that the score is a placeholder, so this is a demonstration and real concerns go to city engineering staff or a licensed geotechnical engineer.`;
+  async function agentAnswer(q, s) {
+    const wait = bubble('wait', 'Working on it...'); agentShown = null;
+    try {
+      const res = await s(`${AGENT_RULES}\n\nStorm set on the page: ${S.r72} mm of rain in the next 72 hours, soil wetness index ${S.api} mm.\n\nResident's question: ${q}`,
+        { modelTier: 'default', cache: false, tools: TOOLS, onText: ({ text }) => { if (text) { wait.classList.remove('wait'); wait.firstChild.textContent = text; msgs.scrollTop = msgs.scrollHeight; } } });
+      if (!res || !res.text) throw new Error('empty');
+      wait.classList.remove('wait'); wait.firstChild.textContent = res.text;
+      const sp = document.createElement('span'); sp.className = 'src'; sp.textContent = 'Written by Claude from the model record on this page'; wait.appendChild(sp);
+      if (agentShown) watchButton(wait, agentShown);
+      msgs.scrollTop = msgs.scrollHeight; return true;
+    } catch (e) { wait.remove(); if (e && e.code === 'not_granted') sampler = null; return false; }
+  }
+  const GUIDE = ['WARNING SIGNS TO WATCH FOR (U.S. Geological Survey landslide guidance)\n- New cracks or bulges in the ground, pavement or sidewalks\n- Soil pulling away from foundations; decks, patios or stairs tilting or separating from the house\n- Doors and windows that start to stick, new cracks in walls or floors\n- Leaning trees, fences, retaining walls or utility poles; offset fence lines\n- Springs, seeps or soggy ground where it is normally dry; broken water lines\n- A creek that rises fast and turns muddy, or drops suddenly while it is still raining\n- A faint rumble that grows louder, trees cracking, boulders knocking together',
+    'WHAT TO DO\n- In immediate danger, leave if it is safe and call 911\n- During intense rain stay awake and alert; many debris flow deaths happen while people sleep\n- Listen for unusual sounds and watch the creek below you\n- Report new cracks or moving ground to your city public works or fire department, and tell the neighbors downhill\n- Before the wet season, keep drains, gutters and culverts clear and send roof water away from the slope\n- Follow National Weather Service flood and debris flow warnings and the Contra Costa County Community Warning System',
+    'LIMITS\nGroundTruth is a student project. The ground motion input is simulated sample data and the score is a placeholder formula, not a trained or validated model. It cannot tell you a slope is safe.'];
+  function reportButton(d, street, lines) { const b = document.createElement('button'); b.className = 'btn sm act'; b.style.marginLeft = '8px'; b.textContent = 'Download report'; b.addEventListener('click', () => saveFile('groundtruth_' + street.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.txt', 'GROUNDTRUTH STREET REPORT\n\n' + [].concat(lines, GUIDE).join('\n\n') + '\n', 'text/plain')); d.appendChild(b); const m = $('#msgs'); if (d.offsetHeight > m.clientHeight) m.scrollTop = d.offsetTop - m.offsetTop; else m.scrollTop = m.scrollHeight; }
+  function watchButton(d, street) { const b = document.createElement('button'); b.className = 'btn sm act'; const lab = () => b.textContent = watch.includes(street) ? 'Watching. Remove' : 'Watch this street'; lab(); b.addEventListener('click', () => { toggleWatch(street); lab(); }); d.appendChild(b); }
+
+  async function ask(q) {
+    q = q.trim(); if (!q) return; bubble('me', q); $('#askIn').value = ''; hideSugg();
+    if (/\b(briefing|brief me)\b/i.test(q)) { bubble('', 'Here is the briefing for the storm set on this page.'); openBrief(); return; }
+    const mmQ = q.match(/(\d+(?:\.\d+)?)\s*(mm|millimet|inch|in\b|")/i), askR = mmQ ? Math.max(0, Math.min(400, Math.round(parseFloat(mmQ[1]) * (/^(mm|millimet)/i.test(mmQ[2]) ? 1 : 25.4)))) : null;
+    if (/\b(worst|most (exposed|at risk|dangerous)|which streets|top streets|highest)\b/i.test(q)) {
+      const rk = Mo.rankStreets({ r72: S.r72, api: S.api, era: 0, amt: 0 }, 5);
+      bubble('', [`Highest scores under the storm set on this page (${S.r72} mm in 72 hours, soil wetness ${S.api} mm):`, rk.top.map((s, n) => `${n + 1}. ${s.name}, ${s.town}: ${Math.round(s.score)} (${Mo.tier(s.score)})`).join('   '), `${rk.elevated} of ${rk.total} streets are at Elevated or High. These come from sample data with simulated ground motion.`], 'From the placeholder score on this page');
+      flyToStreet(rk.top[0].k); return;
+    }
+    const ks = findStreet(q);
+    const open = ks.length !== 1 || /\b(compare|versus|vs|and|or|why|where|which|how many|how often|debris|runout|path|flow|reach|buildings?|homes?|houses?|history|backtest|worst day|safer|town|area|overall)\b/i.test(q);
+    if (open) { const s0 = await getSampler(); if (s0 && await agentAnswer(q, s0)) return; }
+    { const nq = ' ' + norm(q).replace(/\bstreet\b/g, 'st') + ' ', named = sIndex.filter(x => nq.includes(' ' + x.key + ' ')).filter((x, _, all) => !all.some(y => y !== x && y.key.length > x.key.length && y.key.includes(x.key)));
+      const uniq = [...new Map(named.map(x => [G.streets[x.k].n, x.k])).values()].slice(0, 4);
+      if (uniq.length >= 2) {
+        const recs = uniq.map(k => record(k, askR)).filter(Boolean).sort((x, y) => y.score - x.score);
+        bubble('', [`Under ${recs[0].storm.rain_next_72h_mm} mm of rain in 72 hours on soil at a wetness index of ${recs[0].storm.soil_wetness_index_mm} mm, highest first:`,
+          ...recs.map(r => `${r.street}, ${r.town}: ${r.tier}, ${r.score} out of 100. ${tipText(r.rain_in_72h_that_makes_it_elevated_mm, r.rain_in_72h_that_makes_it_high_mm)}. ${r.buildings_along_street.on_ground_scored_elevated_or_high} of ${r.buildings_along_street.total} buildings on flagged ground. Worst day since 2015: ${r.history_from_real_rain_since_oct_2015.worst_day} at ${r.history_from_real_rain_since_oct_2015.worst_day_score}.`),
+          (Mo.opts.motion ? 'Ground motion in these scores is simulated sample data' : 'These scores leave ground motion out') + ' and the score is a placeholder, so treat this as a demonstration.'], 'Template answer from the model record');
+        flyToStreet(uniq[0]); return;
+      }
+    }
+    if (ks.length === 1 && /\b(debris|runout|run out|path|flow|downhill)\b/i.test(q)) {
+      const r = TOOLS.find(t => t.name === 'debris_path').execute({ street: G.streets[ks[0]].n }), st = r.streets_in_the_way.map(x => `${x.street} after ${fmt(x.metres_along_path)} m`);
+      watchButton(bubble('', [`From the highest scoring spot along ${G.streets[ks[0]].n}, debris would head downhill for about ${fmt(r.path_length_m)} m, dropping ${fmt(r.height_drop_m)} m and ending ${r.ends}.`,
+        (st.length ? `In the way: ${st.join(', ')}. ` : 'No other mapped street lies on the path. ') + (r.joins_creek_after_m != null ? `It joins a creek line after ${fmt(r.joins_creek_after_m)} m. ` : '') + `${fmt(r.buildings_within_30m_of_path)} buildings stand within about 30 m of it.`,
+        'The path is drawn on the map in blue. It is a screening estimate from the terrain, not a flow simulation.'], 'Template answer from the model record'), G.streets[ks[0]].n);
+      return;
+    }
+    if (ks.length !== 1) {
+      bubble('', ks.length ? ['I found more than one street that could match. Which one do you mean?', ks.map(k => `${G.streets[k].n} (${G.streets[k].t})`).join(', ')] : ['I could not find that street in Lafayette, Orinda or Moraga. Try the street name on its own, for example Miner Road or Rheem Boulevard.']);
+      return;
+    }
+    const rec = record(ks[0], askR); if (!rec) { bubble('', 'That street sits at the edge of the map and has no cells to score.'); return; }
+    flyToStreet(ks[0]); Sc.highlight(rec._spot[0], rec._spot[1], true);
+    const tpl = templateAnswer(rec), s = await getSampler();
+    const addWatch = d => watchButton(d, rec.street);
+    if (!s) { const d = bubble('', tpl, 'Template answer from the model record'); addWatch(d); reportButton(d, rec.street, tpl); return; }
+    const wait = bubble('wait', 'Reading the model record for ' + rec.street + '...');
+    const pub = { ...rec }; delete pub._spot;
+    const prompt = `You are the GroundTruth street risk assistant for Lafayette, Orinda and Moraga, California. Answer the resident's question using ONLY the JSON record below. Do not add facts, numbers, places or history that are not in the record. Plain sentences, no markdown, no lists, no dashes, under 150 words. Start with the street, its tier and score out of 100. Say which storm the score assumes. Give the top reasons in everyday words. Give the range for half and one and a half times the rain. Say how many of the buildings along it stand on Elevated or High ground. Say how many days since October 2015 it would have scored Elevated or High and name its worst day. Give the rain amounts that would make it Elevated and High if the record has them (null means not reachable within 400 mm, 0 means already there). Mention reported 2023 slides only if the record lists any. End by stating what the record says about the ground motion input and that the score is a placeholder, so this is a demonstration and not a reading of the real street, and that real concerns go to city engineering staff or a licensed geotechnical engineer. Never say a property is safe.\n\nRecord: ${JSON.stringify(pub)}\n\nResident's question: ${q}`;
+    try {
+      const res = await s(prompt, { modelTier: 'quick', cache: false, onText: ({ text }) => { wait.classList.remove('wait'); wait.firstChild.textContent = text; msgs.scrollTop = msgs.scrollHeight; } });
+      wait.classList.remove('wait'); wait.firstChild.textContent = res.text; const sp = document.createElement('span'); sp.className = 'src'; sp.textContent = 'Written by Claude from the model record'; wait.appendChild(sp); addWatch(wait); reportButton(wait, rec.street, tpl);
+    } catch (e) { wait.remove(); const d = bubble('', tpl, 'Template answer from the model record'); addWatch(d); reportButton(d, rec.street, tpl); if (e && e.code === 'not_granted') sampler = null; }
+  }
+  $('#askForm').addEventListener('submit', e => { e.preventDefault(); const a = $('#sugg .act'); if (a && !$('#sugg').hidden) { ask(a.dataset.n); return; } ask($('#askIn').value); });
+  $$('#askChips [data-q]').forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
+  const sugg = $('#sugg'); function hideSugg() { sugg.hidden = true; sugg.textContent = ''; }
+  $('#askIn').addEventListener('input', e => {
+    const v = norm(e.target.value); hideSugg(); if (v.length < 2 || v.includes(' at ') || v.split(' ').length > 3) return;
+    const hits = G.streets.map((s, k) => ({ s, k })).filter(o => norm(o.s.n).startsWith(v) || norm(o.s.n).includes(' ' + v)).slice(0, 6); if (!hits.length) return;
+    for (const h of hits) { const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.dataset.n = h.s.n; b.innerHTML = '<span></span><small></small>'; b.firstChild.textContent = h.s.n; b.lastChild.textContent = h.s.t; b.addEventListener('click', () => ask(h.s.n)); li.appendChild(b); sugg.appendChild(li); }
+    sugg.hidden = false;
+  });
+  $('#askIn').addEventListener('keydown', e => {
+    if (sugg.hidden || !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return; e.preventDefault(); if (e.key === 'Escape') return hideSugg();
+    const bs = $$('#sugg button'), i = bs.findIndex(b => b.classList.contains('act')), n = (i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach(b => b.classList.remove('act')); bs[n].classList.add('act');
+  });
+  bubble('', 'Ask about any street in Lafayette, Orinda or Moraga. I look up its score under the storm you set, say what drives it, and show it on the map. You can also name a rain amount, ask where debris would go, or ask for a briefing.');
+
+  /* ------------------------------------------------ guided tour: drives the real controls so a viewer sees every tool in about a minute */
+  let tour = null;
+  const tourUI = (on, txt) => { $('#tour').hidden = !on; document.body.classList.toggle('touring', on); if (txt) $('#tourTxt').textContent = txt; };
+  function stopTour() { if (!tour) return; tour.dead = true; if (tour.tw) tour.tw.kill(); tour = null; tourUI(false); }
+  async function runTour() {
+    if (tour) return; if (exploring) setExplore(false);
+    const me = tour = { dead: false, tw: null }, k = reduce ? 0.35 : 1;
+    const wait = ms => new Promise(r => setTimeout(r, ms * k)), alive = () => !me.dead;
+    const topOf = id => $(id).getBoundingClientRect().top + window.scrollY + 4;
+    const scrollToY = (y, dur) => new Promise(r => { const o = { y: window.scrollY }; me.tw = gsap.to(o, { y, duration: reduce ? 0 : dur, ease: 'power2.inOut', onUpdate: () => window.scrollTo(0, o.y), onComplete: r, onInterrupt: r }); });
+    const steps = [
+      ['1 of 7. Radar sees slopes creep', async () => { await scrollToY(topOf('#motion'), 1.6); const sp = $('#split'), o = { v: 50 }; await new Promise(r => { me.tw = gsap.to(o, { v: 18, duration: 1.6 * k, yoyo: true, repeat: 1, ease: 'sine.inOut', onUpdate: () => { sp.value = o.v; sp.dispatchEvent(new Event('input')); }, onComplete: r, onInterrupt: r }); }); await wait(600); }],
+      ['2 of 7. Set a storm and watch exposure rise', async () => { await scrollToY(topOf('#storm'), 1.6); await wait(900); $('[data-preset=peak]').click(); await wait(2600); setBias(-4.9); await wait(2400); setBias(-6.5); await wait(900); }],
+      ['3 of 7. Winter 2023, replayed from real rain', async () => { await scrollToY(replayST.start + 4, 1.6); await wait(500); await scrollToY(replayST.end - 4, 9); await wait(500); }],
+      ['4 of 7. Scored against the slides that were reported', async () => { await scrollToY(topOf('#backtest'), 1.4); await wait(4200); }],
+      ['5 of 7. Open a slope: tipping point, history, debris path', async () => { await scrollToY(topOf('#inspect'), 1.6); await wait(600); $('#jumpFast').click(); await wait(3200); $('#runBtn').click(); await wait(4200); }],
+      ['6 of 7. Ask about a street', async () => { await scrollToY(topOf('#ask'), 1.6); await wait(500); ask('Where would debris from Miner Road go, and how many buildings are near the path?'); await wait(6500); }],
+      ['7 of 7. What is real and what comes next', async () => { await scrollToY(topOf('#method'), 1.6); await wait(3500); }]
+    ];
+    for (const [label, fn] of steps) { if (!alive()) return; tourUI(true, label); await fn(); }
+    if (alive()) { tour = null; tourUI(false); }
+  }
+  $('#tourBtn').addEventListener('click', runTour); $('#tourStop').addEventListener('click', stopTour);
+  ['wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, e => { if (tour && !(e.target.closest && e.target.closest('#tour'))) stopTour(); }, { passive: true }));
+  window.addEventListener('keydown', e => { if (tour && e.key === 'Escape') stopTour(); });
+
+  /* ------------------------------------------------ first paint + entrances */
+  setStorm(92, 156); setReplay(D0, true); enter('top'); drawSeries(null);
+  setTimeout(renderBacktest, 900);
+  { const p = PRESETS.today(), sc = { r72: p.r72, api: p.api, era: 0, amt: 0 }, rk = Mo.rankStreets(sc, 1), ld = addDays(RNOW.start, lastNow);
+    $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The glow behind this text shows a 140 mm storm on wet soil.`; }
+  window.addEventListener('resize', () => { drawRain(); if (sel) renderInspector(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ScrollTrigger.refresh(); drawRain(); });
+  $('#loading').classList.add('off');
+  if (!reduce) {
+    gsap.timeline({ delay: 0.25, defaults: { ease: 'expo.out' } })
+      .from('h1 .line > span', { yPercent: 110, duration: 1.3, stagger: 0.12 })
+      .from('#top .lede, .hero-cta, #nowLine', { y: 22, autoAlpha: 0, duration: 1, stagger: 0.1 }, '-=0.85')
+      .from(Sc.cam, { py: '+=5', pz: '+=7', duration: 2.6, ease: 'power3.out' }, 0)
+      .from('.nav', { autoAlpha: 0, duration: 0.8 }, 0.5);
+    // chapter entrances: text columns slide up from a clip, tool panels rise; each family is authored differently
+    $$('#motion .col, #backtest .col, #inspect .col, #ask .chat').forEach(el => gsap.from(el.children, { y: 34, autoAlpha: 0, duration: 0.9, ease: 'expo.out', stagger: 0.07, scrollTrigger: { trigger: el, start: 'top 78%', once: true } }));
+    gsap.from('#storm .panel', { y: 60, autoAlpha: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#storm .wrap', start: 'top 85%', once: true } });
+    gsap.from('#method .grid > *', { y: 40, autoAlpha: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '#method .grid', start: 'top 82%', once: true } });
+  }
+})();

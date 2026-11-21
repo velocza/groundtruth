@@ -1,0 +1,7 @@
+tmp/
+work/
+raw/
+__pycache__/
+*.pyc
+model/submission/
+.DS_Store

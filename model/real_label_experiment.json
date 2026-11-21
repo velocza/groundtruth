@@ -1,0 +1,103 @@
+{
+ "events": [
+  {
+   "where": "Cedar Lane",
+   "gbm_beats_random": 0.203,
+   "slope_only_beats_random": 0.503
+  },
+  {
+   "where": "Pleasant Hill Road between Springhill Road and Deer Hill Road",
+   "gbm_beats_random": 0.197,
+   "slope_only_beats_random": 0.51
+  },
+  {
+   "where": "Lafayette Ridge Trail",
+   "gbm_beats_random": 0.103,
+   "slope_only_beats_random": 0.887
+  },
+  {
+   "where": "St. Mary's Road, about 300 ft south of Driftwood Drive",
+   "gbm_beats_random": 0.82,
+   "slope_only_beats_random": 0.373
+  },
+  {
+   "where": "Miner Road",
+   "gbm_beats_random": 0.727,
+   "slope_only_beats_random": 0.51
+  },
+  {
+   "where": "Wilder",
+   "gbm_beats_random": 0.92,
+   "slope_only_beats_random": 0.793
+  },
+  {
+   "where": "57 Tarry Lane",
+   "gbm_beats_random": 0.2,
+   "slope_only_beats_random": 0.5
+  },
+  {
+   "where": "Bollinger Canyon Road",
+   "gbm_beats_random": 0.72,
+   "slope_only_beats_random": 0.783
+  },
+  {
+   "where": "Rheem Boulevard",
+   "gbm_beats_random": 0.81,
+   "slope_only_beats_random": 0.5
+  },
+  {
+   "where": "Mulholland Ridge above Camino Ricardo and Ashbrook Place",
+   "gbm_beats_random": 0.417,
+   "slope_only_beats_random": 0.55
+  }
+ ],
+ "auc_gbm_leave_one_slide_out": 0.512,
+ "auc_slope_only": 0.591,
+ "mean_importance": [
+  [
+   "slope_max_90m",
+   0.266
+  ],
+  [
+   "dist_stream",
+   0.195
+  ],
+  [
+   "relief_150m",
+   0.107
+  ],
+  [
+   "eastness",
+   0.101
+  ],
+  [
+   "northness",
+   0.094
+  ],
+  [
+   "prof_curv",
+   0.063
+  ],
+  [
+   "ndvi_2023",
+   0.048
+  ],
+  [
+   "ndvi_change",
+   0.04
+  ],
+  [
+   "slope",
+   0.039
+  ],
+  [
+   "twi",
+   0.027
+  ],
+  [
+   "plan_curv",
+   0.022
+  ]
+ ],
+ "note": "10 events, weak street-level labels, static real features only. Not a validation."
+}
