@@ -363,6 +363,36 @@ body.exploring .ex-rain{display:flex}
 #rides{--rd-drv:var(--accent-text);--rd-rid:var(--text-1);--rd-lnk:var(--rain);--rd-cty:var(--warning);--rd-usgs:var(--t-high)}
 #rides .readout .stat b{font-size:19px}
 #rdMap{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#rqMap{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.rq{display:grid;gap:10px}
+.rq .card-h h3{font-size:14px}
+.rq-form{display:grid;gap:10px}
+.rq-f{display:grid;gap:4px;font-size:12px;color:var(--text-2)}
+.rq-f .field,.rq-f .pick{width:100%}
+.rq-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.rq-needs{border:0;margin:0;padding:0;display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-1)}
+.rq-needs legend{font-size:12px;color:var(--text-2);padding:0;margin-bottom:6px}
+.rq-needs label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.rq-needs input{accent-color:var(--accent)}
+.rq-search{display:flex;align-items:center;gap:10px}
+.rq-spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:rqspin .8s linear infinite;flex:none}
+@keyframes rqspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.rq-spin{animation:none}}
+.rq-h{display:flex;align-items:center;gap:8px;margin:0;font-weight:600;font-size:15px;color:var(--text-1)}
+.rq-h .ic{width:18px;height:18px;stroke:var(--accent-text);fill:none;stroke-width:2.4}
+.rq-drv{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--track);box-shadow:inset 0 0 0 1px var(--border-1)}
+.rq-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-on);font-weight:700;font-size:17px;flex:none}
+.rq-who{display:grid;gap:2px;min-width:0;flex:1}
+.rq-who b{font-size:14px;color:var(--text-1)}
+.rq-who small,.rq-eta small{font-size:12px;color:var(--text-3)}
+.rq-eta{display:grid;gap:2px;text-align:right}
+.rq-eta b{font:600 18px/1 var(--f-data);color:var(--text-1)}
+.rq-tags{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--text-2)}
+.rq-tags li{display:inline-flex;align-items:center;gap:5px}
+.rq-tags .ic{width:14px;height:14px;stroke:var(--accent-text);fill:none;stroke-width:2.4}
+.rq-bar{height:6px;border-radius:999px;background:var(--track);box-shadow:inset 0 0 0 1px var(--border-1);overflow:hidden}
+.rq-bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px}
+.rq .btn{justify-self:start}
 #response{--sr-call:#f2efe8;--sr-slow:var(--danger);--sr-fast:var(--info);--sr-line:rgb(214 222 238 / 0.5);--sr-sel:#ffffff;--sr-none:#9aa3b5;--sr-bar:var(--text-2)}   /* the map panel is dark in both themes, so its marks use fixed light colours */
 #response .readout{grid-template-columns:repeat(2,minmax(0,1fr))}
 #response .readout .stat b{font-size:19px}
@@ -885,6 +915,11 @@ body.exploring .maptools .ex-rain{display:flex}
   <section id="rides">
     <div class="card-h"><h3 style="font-size:16px">Neighbors helping neighbors.</h3><span class="badge warn">Simulated households</span></div>
     <p class="body">In a storm, some households that must leave cannot drive out on their own: they have no car, or an older person lives alone and may need help. This view estimates how many could ride with a neighbor who is leaving anyway, and how many are left for the city and its volunteers.</p>
+    <div class="group rq" id="rqCard">
+      <div class="card-h"><h3>Request a ride</h3><span class="badge warn">Demo · simulated drivers</span></div>
+      <p class="note">A demo of how booking a neighbor ride could work. The drivers are made up, and nothing you type is sent anywhere or leaves this page. The route is a real street path.</p>
+      <div id="rqBox"></div>
+    </div>
     <div class="seg-track" role="group" aria-label="What decides who must leave" style="justify-self:start">
       <button id="rdModel" aria-pressed="true">Model forecast</button><button id="rdMapped" aria-pressed="false">Mapped Jan 2023 slides</button>
     </div>
@@ -1229,6 +1264,7 @@ body.exploring .maptools .ex-rain{display:flex}
 <script src="js/scene.js"></script>
 <script src="js/evac.js"></script>
 <script src="js/rides.js"></script>
+<script src="js/riderequest.js"></script>
 <script src="js/stormresp.js"></script>
 <script src="js/floodl.js"></script>
 <script src="js/cards.js"></script>
