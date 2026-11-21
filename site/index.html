@@ -140,8 +140,9 @@ svg.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;str
 .seg-track>button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
 .seg-track>.thumb{position:absolute;top:3px;left:0;height:calc(100% - 6px);width:0;border-radius:999px;background:var(--thumb);box-shadow:0 0 0 .5px var(--border-2),var(--sh-1);transition:transform var(--d-base) var(--e-spring),width var(--d-base) var(--e-spring)}
 .seg-track.multi>button[aria-pressed="true"]{background:var(--thumb);box-shadow:0 0 0 .5px var(--border-2),var(--sh-1)}
-.seg-track.multi>button i{width:6px;height:6px;border-radius:50%;background:var(--text-disabled);transition:background-color var(--d-fast) var(--e-out)}
-.seg-track.multi>button[aria-pressed="true"] i{background:var(--success)}
+.seg-track.multi>button svg.ck{width:14px;height:14px;stroke-width:2.2;margin-left:-2px;opacity:0;width:0;transition:opacity var(--d-fast) var(--e-out),width var(--d-fast) var(--e-out)}
+.seg-track.multi>button[aria-pressed="true"] svg.ck{opacity:1;width:14px}
+svg.ck{width:13px;height:13px;stroke-width:2.2}
 .seg-track.sm>button{height:calc(var(--ctl) - 6px);padding:0 12px;font-size:12px}
 .seg-l{font-size:12px;color:var(--text-3)}
 
@@ -166,7 +167,7 @@ label.ctl .ends{display:flex;justify-content:space-between;font-size:12px;color:
 .switch{display:inline-flex;gap:10px;align-items:center;font-weight:var(--w-med);color:var(--text-1);cursor:pointer;white-space:nowrap}
 .switch input{appearance:none;-webkit-appearance:none;width:32px;height:18px;border-radius:999px;background:var(--border-2);position:relative;margin:0;cursor:pointer;flex:none;transition:background-color var(--d-fast) var(--e-out)}
 .switch input::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgb(0 0 0 / 0.35);transition:transform var(--d-base) var(--e-spring)}
-.switch input:checked{background:var(--success)}
+.switch input:checked{background:var(--accent)}
 .switch input:checked::after{transform:translateX(14px)}
 
 .badge{display:inline-flex;align-items:center;gap:6px;height:20px;padding:0 8px;border-radius:999px;background:var(--hover);color:var(--text-2);font:var(--w-med) 11px/1 var(--f-ui);white-space:nowrap}
@@ -230,7 +231,8 @@ body.exploring #gl{cursor:grab;touch-action:none}
 .stage-foot>span{overflow:hidden;text-overflow:ellipsis}
 .simflag{display:inline-flex;align-items:center;gap:6px;color:var(--warning);flex:none}
 .simflag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.simflag.real{color:var(--success)}
+.simflag.real{color:var(--text-2)}
+.simflag.real::before{width:9px;height:5px;border-radius:0;background:none;border:solid currentColor;border-width:0 0 2px 2px;transform:translateY(-2px) rotate(-45deg)}
 
 .compass{position:absolute;right:16px;top:16px;z-index:2;width:76px;height:76px;border-radius:50%;background:var(--surface-2);box-shadow:0 0 0 .5px var(--border-2),0 0 0 5px rgb(var(--glass-rgb) / 0.6),var(--sh-float);pointer-events:none;transition:opacity var(--d-base) var(--e-out)}
 .compass .dial{position:absolute;inset:0;border-radius:50%}
@@ -381,7 +383,7 @@ ol.plan{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:s}
 ol.plan li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;color:var(--text-3)}
 ol.plan li::before{content:counter(s);font:500 11px/1.7 var(--f-data);letter-spacing:0;color:var(--text-3)}
 ol.plan li.done{color:var(--text-1)}
-ol.plan li.done::before{color:var(--success)}
+ol.plan li.done::before{content:"\2713";color:var(--accent-text);font-weight:600}
 .foot{font-size:12px;color:var(--text-3);display:grid;gap:4px}
 
 /* ---------- dialogs ---------- */
@@ -516,12 +518,9 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
 
 <div class="filt" role="region" aria-label="Map layers and data">
   <div class="seg-track multi" role="toolbar" aria-label="Map layers" id="exploreBar">
-    <button id="exRisk" aria-pressed="true"><i></i>Risk</button><button id="exMotion" aria-pressed="true"><i></i>Motion</button><button id="exRoads" aria-pressed="false"><i></i>Streets</button><button id="exBld" aria-pressed="true"><i></i>Buildings</button><button id="exSat" aria-pressed="false"><i></i>Daylight</button>
+    <button id="exRisk" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Risk</button><button id="exMotion" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Motion</button><button id="exRoads" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Streets</button><button id="exBld" aria-pressed="true"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Buildings</button><button id="exSat" aria-pressed="false"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daylight</button>
   </div>
-  <div class="filt-r">
-    <label class="switch" for="realOnly" title="Score from terrain and rain alone, without the simulated ground motion"><span>Real data only</span><input type="checkbox" id="realOnly"></label>
-    <button id="exReal" aria-pressed="false" hidden>Real data only</button>
-  </div>
+  <input type="checkbox" id="realOnly" checked hidden><button id="exReal" aria-pressed="true" hidden></button>
 </div>
 
 <div class="main">
@@ -553,7 +552,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
       <div><div class="chart-cap" style="margin-bottom:4px"><span id="tsCap">Motion record</span></div><canvas id="tsChart" role="img" aria-label="Ground displacement over time for the selected point"></canvas></div>
     </div></aside>
     </div>
-    <div class="stage-foot"><span class="hint">Click a slope to inspect it · Drag to orbit · Scroll to zoom</span><span class="simflag" id="simflag">Ground motion layer: simulated sample</span></div>
+    <div class="stage-foot"><span class="hint">Click a slope to inspect it · Drag to orbit · Scroll to zoom</span><span class="simflag real" id="simflag">Score from real terrain and gauge rain</span></div>
   </div>
 
   <main class="view"><div class="view-scroll" id="viewScroll">
@@ -566,7 +565,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
     </div>
     <div class="tile"><h3 style="font-size:12px;color:var(--text-3);font-weight:var(--w-med);margin-bottom:4px">Latest gauge reading</h3><p class="body" id="nowLine"></p></div>
     <div class="row"><a class="btn sm" href="#storm" data-go="storm">Set a storm</a><a class="btn sm" href="#backtest" data-go="backtest">See the backtest</a><a class="btn sm ghost" href="#method" data-go="method">What is real here</a></div>
-    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span><b>Ground motion is simulated</b> and the risk score is a placeholder until the model is trained. Terrain, imagery, rain, streets, buildings and reported slides are real.</span></div>
+    <div class="notice"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10.5v4M12 17v.2"/></svg><span><b>The score uses real data only</b>: terrain and gauge rain. It is a placeholder formula until the model is trained. The ground motion view is a simulated sample and does not feed the score.</span></div>
     <p class="foot"><span>A hackathon prototype. It shows relative risk on sample data. For safety decisions, follow the National Weather Service and your city.</span></p>
   </section>
 
@@ -608,7 +607,7 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
   </section>
 
   <section id="replay">
-    <div class="card-h"><h3>Winter 2023, replayed day by day.</h3><span class="badge quiet"><i class="dot ok"></i>Real gauge rain</span></div>
+    <div class="card-h"><h3>Winter 2023, replayed day by day.</h3><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real gauge rain</span></div>
     <p class="body">Real gauge rain from Lafayette and Moraga drives the map. Beacons mark slides reported at the time.</p>
     <div class="date"><span id="rpDate">Dec 20, 2022</span><small><span class="num" id="rpRain">0</span> mm fell in the next 72 hours. Soil wetness <span class="num" id="rpApi">0</span> mm. Season total <span class="num" id="rpSeason">0</span> mm.</small></div>
     <label class="ctl" for="rpScrub"><span class="vh">Day of the winter</span><input type="range" id="rpScrub" min="0" max="100" value="0" step="1"><span class="ends"><span>Dec 20, 2022</span><span>April 2023</span></span></label>
@@ -693,14 +692,14 @@ dialog#outlook{width:720px;max-height:min(88dvh,780px)}
     <div class="group">
       <h3>Where each layer comes from</h3>
       <ul class="src-list">
-        <li><b>Elevation</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">USGS 3DEP through AWS Terrain Tiles, 29 m grid</span></li>
-        <li><b>Satellite imagery</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">Sentinel-2 scenes of 2023-04-19 and 2026-11-04</span></li>
-        <li><b>Rainfall</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">NOAA GHCN-Daily, 6 gauges, 2015 to 2026-11-14</span></li>
-        <li><b>Streets</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">Overture Maps, 1,625 named streets</span></li>
-        <li><b>Buildings</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">Overture Maps, 41,494 footprints</span></li>
-        <li><b>Reported slides</b><span class="badge quiet"><i class="dot ok"></i>real</span><span class="what">10 from city and local news reports, street-level positions</span></li>
-        <li><b>Ground motion</b><span class="badge warn">simulated</span><span class="what">Stand-in for OPERA DISP-S1 InSAR</span></li>
-        <li><b>Risk score</b><span class="badge quiet"><i class="dot idle"></i>placeholder</span><span class="what">Fixed formula until the model is trained</span></li>
+        <li><b>Elevation</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">USGS 3DEP through AWS Terrain Tiles, 29 m grid</span></li>
+        <li><b>Satellite imagery</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Sentinel-2 scenes of 2023-04-19 and 2026-11-04</span></li>
+        <li><b>Rainfall</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">NOAA GHCN-Daily, 6 gauges, 2015 to 2026-11-14</span></li>
+        <li><b>Streets</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Overture Maps, 1,625 named streets</span></li>
+        <li><b>Buildings</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">Overture Maps, 41,494 footprints</span></li>
+        <li><b>Reported slides</b><span class="badge quiet"><svg class="ic ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>real</span><span class="what">10 from city and local news reports, street-level positions</span></li>
+        <li><b>Ground motion</b><span class="badge warn">simulated</span><span class="what">Stand-in for OPERA DISP-S1 InSAR. Shown on the map, not used in the score</span></li>
+        <li><b>Risk score</b><span class="badge quiet">placeholder</span><span class="what">Fixed formula until the model is trained</span></li>
       </ul>
     </div>
     <div class="group">

@@ -369,7 +369,7 @@
   function setReal(on) {
     Mo.opts.motion = on ? 0 : 1; gsap.to(U.uUseMotion, { value: on ? 0 : 1, duration: reduce ? 0 : 0.6 });
     $('#realOnly').checked = on; $('#exReal').setAttribute('aria-pressed', on);
-    const f = $('#simflag'); f.textContent = on ? 'Real data only: terrain and gauge rain' : 'Ground motion layer: simulated sample'; f.classList.toggle('real', on);
+    const f = $('#simflag'); f.textContent = on ? 'Score from real terrain and gauge rain' : 'Score includes simulated ground motion'; f.classList.toggle('real', on);
     stormStats(); if (sel) renderInspector(); renderBacktest();
   }
   const SENS = { '-6.5': 'Fewer alerts', '-5.7': 'Balanced', '-4.9': 'More alerts' };
@@ -744,7 +744,7 @@ End with one sentence saying what the tool results say about the ground motion i
   window.addEventListener('keydown', e => { if (tour && e.key === 'Escape') stopTour(); });
 
   /* ------------------------------------------------ first paint + entrances */
-  setStorm(92, 156); setReplay(D0, true); enter(ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'top'); drawSeries(null);
+  setReal(true); setStorm(92, 156); setReplay(D0, true); enter(ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'top'); drawSeries(null);
   setTimeout(renderBacktest, 900);
   { const p = PRESETS.today(), sc = { r72: p.r72, api: p.api, era: 0, amt: 0 }, rk = Mo.rankStreets(sc, 1), ld = addDays(RNOW.start, lastNow);
     $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The map in this view shows a 140 mm storm on wet soil.`; }
