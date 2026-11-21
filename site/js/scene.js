@@ -129,8 +129,12 @@
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h;
-    camera.fov = w / h < 0.8 ? 58 : 36; camera.updateProjectionMatrix();
+    camera.fov = w / h < 0.8 ? 58 : 36;
+    if (shiftPx > 0.5) camera.setViewOffset(w, h, -shiftPx, 0, w, h); else if (camera.view) camera.clearViewOffset();
+    camera.updateProjectionMatrix();
   }
+  let shiftPx = 0;
+  function setShift(px) { shiftPx = px; const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; if (px > 0.5) camera.setViewOffset(w, h, -px, 0, w, h); else if (camera.view) camera.clearViewOffset(); camera.updateProjectionMatrix(); }
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.05, (now - last) / 1000); last = now; if (!reduced) clock += dt; uniforms.uTime.value = clock;
@@ -200,5 +204,5 @@
   }
 
   window.GTScene = { build, cam, orbit, get u() { return uniforms; }, get rain() { return rain.material.uniforms.uAmt; }, addMarker, addLabel, showStreet, showPath, highlight, pick, focusPose, worldOf,
-    setReduced(v) { reduced = v; }, resize };
+    setReduced(v) { reduced = v; }, resize, setShift };
 })();

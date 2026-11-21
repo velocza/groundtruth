@@ -64,7 +64,8 @@
 
   /* ------------------------------------------------ storm panel */
   const r72El = $('#r72'), apiEl = $('#api');
-  const fill = el => el.style.setProperty('--fill', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
+  const fill = el => { const f = (el.value - el.min) / (el.max - el.min); el.style.setProperty('--fill', (f * 100) + '%'); el.style.setProperty('--tw', Math.round(8 + f * Math.max(0, el.clientWidth - 16)) + 'px'); };
+  const refill = () => $$('input[type=range]').forEach(fill);
   let statTimer = 0, lastRank = null, lastArea = null, lastBld = null, listTab = 'top';
   const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
   let watch = store.get('gt.watch', []).filter(n => G.streets.some(s => s.n === n));
@@ -166,7 +167,14 @@
     method: { risk: 0.5, motion: 0.3, roads: 0, splitVis: 0, dim: 0.2, bld: 0 }
   };
   const ORDER = ['top', 'motion', 'storm', 'replay', 'backtest', 'inspect', 'ask', 'method'];
-  const NAMES = { top: 'Overview', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
+  const NAMES = { top: 'GroundTruth', motion: 'Ground motion', storm: 'Storm', replay: '2023 replay', backtest: 'Backtest', inspect: 'Slopes', ask: 'Ask', method: 'Data and method' };
+  const SUBS = { top: 'Landslide watch for Lafayette, Orinda and Moraga', motion: 'Sentinel-1 radar, a pass every 12 days · simulated sample', storm: 'Set a rain forecast and see what it exposes', replay: 'Real gauge rain, December 2022 to April 2023', backtest: 'The score checked against the slides that were reported', inspect: 'One 30 m cell at a time', ask: 'Check a street by name', method: 'What is real, what is simulated and what comes next' };
+  const SPLIT = { storm: 1, backtest: 1, ask: 1, method: 1 };       // long views sit beside the map; short ones float over it
+  const shiftO = { v: 0 };
+  function updShift(now) {
+    const on = $('.app').dataset.mode === 'overlay' && window.innerWidth > 900, px = on ? ($('.view').offsetWidth + 12) / 2 : 0;
+    gsap.to(shiftO, { v: px, duration: reduce || now ? 0 : 0.7, ease: 'power3.inOut', overwrite: true, onUpdate: () => Sc.setShift(shiftO.v) });
+  }
   let active = 'top', exploring = false, replayDay = D0;
   Object.assign(Sc.cam, POSES.top);
 
@@ -180,8 +188,9 @@
   function enter(id) {
     if (exploring) return;
     active = id; applyLook(id);
-    $$('.rail a').forEach(a => a.dataset.go === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-    ORDER.forEach(k => $('#' + k).classList.toggle('on', k === id)); $('#crumb').textContent = NAMES[id];
+    $$('.rail a.nav').forEach(a => a.dataset.go === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+    ORDER.forEach(k => $('#' + k).classList.toggle('on', k === id)); $('#viewTitle').textContent = NAMES[id]; $('#viewSub').textContent = SUBS[id];
+    $('.app').dataset.mode = SPLIT[id] ? 'split' : 'overlay'; Sc.resize(); updShift();
     if (id === 'top') pushScenario({ r72: 140, api: 230, era: 0, amt: 0 });
     else if (id === 'motion' || id === 'method') pushScenario({ r72: 0, api: 60, era: 0, amt: 0 });
     else if (id === 'replay') setReplay(replayDay, true);
@@ -193,7 +202,7 @@
     if (id !== 'ask' && id !== 'storm') { Sc.showStreet(null); streetOn = -1; if (id !== 'inspect' && id !== 'backtest') Sc.highlight(0, 0, false); }
     if (id !== 'inspect') Sc.showPath(null);
     if (reduce) Object.assign(Sc.cam, POSES[id]);
-    requestAnimationFrame(() => { if (id === 'replay') drawRain(); if (id === 'backtest') drawTimeline(); });
+    requestAnimationFrame(() => { refill(); if (id === 'replay') drawRain(); if (id === 'backtest') drawTimeline(); });
   }
   function go(id, quiet) {                                        // switch the view: panel, look, camera
     if (!POSES[id]) return;
@@ -201,7 +210,7 @@
     gsap.to(Sc.cam, { ...POSES[id], duration: reduce ? 0 : 1.3, ease: 'power3.inOut', overwrite: true });
     const vs = $('#viewScroll'); vs.scrollTop = 0;
     if (!quiet && getComputedStyle(document.body).overflowY !== 'hidden') { const r = $('.rail').getBoundingClientRect(); if (r.top < 0) window.scrollTo(0, window.scrollY + r.top - 8); }
-    const a = $(`.rail a[data-go="${id}"]`); if (a && a.scrollIntoView && a.parentNode.scrollWidth > a.parentNode.clientWidth) a.parentNode.scrollLeft = a.offsetLeft - 40;
+    const a = $(`.rail a.nav[data-go="${id}"]`); if (a && a.scrollIntoView && a.parentNode.scrollWidth > a.parentNode.clientWidth) a.parentNode.scrollLeft = a.offsetLeft - 40;
   }
   document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); go(a.dataset.go); });
 
@@ -519,7 +528,7 @@
   /* ------------------------------------------------ explore mode */
   const exBtn = $('#exploreBtn');
   function setExplore(on) {
-    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.textContent = on ? 'Back to view' : 'Free look';
+    exploring = on; document.body.classList.toggle('exploring', on); exBtn.setAttribute('aria-pressed', on); exBtn.title = on ? 'Leave free look' : 'Free look'; exBtn.setAttribute('aria-label', exBtn.title); requestAnimationFrame(refill);
     if (on) {
       const c = Sc.cam, dx = c.px - c.tx, dz = c.pz - c.tz; Object.assign(Sc.orbit, { tx: c.tx, tz: c.tz, dist: Math.hypot(dx, c.py, dz), az: Math.atan2(dx, dz), el: Math.atan2(c.py, Math.hypot(dx, dz)), on: true });
       pushScenario({ r72: S.r72, api: S.api, era: 0, amt: 0 }); syncExplore(); showEvents(false); samplePts.forEach(p => p.ring.show(true));
@@ -534,6 +543,15 @@
   exBtn.addEventListener('click', () => setExplore(!exploring));
   ['#exRisk', '#exMotion', '#exRoads', '#exBld', '#exSat'].forEach(id => $(id).addEventListener('click', e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); if (!exploring) setExplore(true); else syncExplore(); }));
   window.addEventListener('keydown', e => { if (e.key === 'Escape' && exploring) setExplore(false); });
+  /* round map controls and the compass */
+  const zoom = k => { if (!exploring) setExplore(true); gsap.to(Sc.orbit, { dist: Math.max(3, Math.min(28, Sc.orbit.dist * k)), duration: reduce ? 0 : 0.35, ease: 'power3.out', overwrite: 'auto' }); };
+  $('#zoomIn').addEventListener('click', () => zoom(0.78)); $('#zoomOut').addEventListener('click', () => zoom(1.28));
+  $('#resetBtn').addEventListener('click', () => go(active, true));
+  { const dial = $('#dial'), hub = $('#hub'), DIR = ['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE']; let lastAz = 9;
+    const spin = () => { const c = Sc.cam, az = exploring ? Sc.orbit.az : Math.atan2(c.px - c.tx, c.pz - c.tz);
+      if (Math.abs(az - lastAz) > 0.002) { lastAz = az; const deg = az * 180 / Math.PI; dial.style.transform = `rotate(${deg.toFixed(1)}deg)`; hub.textContent = DIR[((Math.round(deg / 45) % 8) + 8) % 8]; }
+      requestAnimationFrame(spin); };
+    spin(); }
 
   /* ------------------------------------------------ street agent */
   const norm = s => s.toLowerCase().replace(/[.,?!']/g, '').replace(/\bst\b/g, 'street').replace(/\brd\b/g, 'road').replace(/\bdr\b/g, 'drive').replace(/\bblvd\b/g, 'boulevard').replace(/\bave\b/g, 'avenue').replace(/\bln\b/g, 'lane').replace(/\bct\b/g, 'court').replace(/\bsaint\b/g, 'st').replace(/\s+/g, ' ').trim();
@@ -731,18 +749,16 @@ End with one sentence saying what the tool results say about the ground motion i
   { const p = PRESETS.today(), sc = { r72: p.r72, api: p.api, era: 0, amt: 0 }, rk = Mo.rankStreets(sc, 1), ld = addDays(RNOW.start, lastNow);
     $('#nowLine').textContent = `Latest gauge reading, ${dstr(ld)}: ${fmt(p.r72)} mm in three days, soil wetness ${fmt(p.api)} mm, ${rk.elevated} streets at Elevated or High. ${(se => se.pct == null ? '' : `Season rain since October 1: ${fmt(se.total)} mm, ${fmt(se.pct)}% of the average for this date over ${se.years} other years. `)(seasonStats(HN - 1))}The map in this view shows a 140 mm storm on wet soil.`; }
   const redraw = () => { if (active === 'replay') drawRain(); if (active === 'backtest') drawTimeline(); if (sel) renderInspector(); };
-  window.addEventListener('resize', redraw);
+  window.addEventListener('resize', () => { redraw(); refill(); updShift(true); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
 
   /* segmented tracks: one thumb glides to the pressed tab */
-  $$('.seg-track').forEach(tr => {
+  $$('.seg-track:not(.multi)').forEach(tr => {
     const th = document.createElement('i'); th.className = 'thumb'; th.setAttribute('aria-hidden', 'true'); tr.prepend(th);
     const place = () => { const b = tr.querySelector('button[aria-pressed="true"]'); if (!b || !b.offsetWidth) { th.style.width = '0'; return; } th.style.width = b.offsetWidth + 'px'; th.style.transform = `translateX(${b.offsetLeft}px)`; };
     new MutationObserver(place).observe(tr, { attributes: true, attributeFilter: ['aria-pressed'], subtree: true, childList: true, characterData: true });
     if (window.ResizeObserver) new ResizeObserver(place).observe(tr); place();
   });
-  /* pointer light on large glass cards */
-  $$('.lit').forEach(el => el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px'); }));
   /* theme */
   function setTheme(t, save) {
     document.documentElement.dataset.theme = t; $$('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === t));
@@ -785,6 +801,6 @@ End with one sentence saying what the tool results say about the ground motion i
   pollSimulation(); setInterval(pollSimulation, 2000);
   if (!reduce) {
     gsap.from(Sc.cam, { py: '+=4', pz: '+=6', duration: 2.2, ease: 'power3.out' });
-    gsap.from('.bar, .rail, .kpis, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });
+    gsap.from('.rail, .top, .head, .filt, .stage, .view', { y: 6, autoAlpha: 0, duration: 0.28, ease: 'power3.out', stagger: 0.04, clearProps: 'all' });
   }
 })();
